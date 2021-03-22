@@ -3,4 +3,4 @@
 from zope.i18nmessageid import MessageFactory
 
 
-_ = MessageFactory('collective.classification.folder')
+_ = MessageFactory("collective.classification.folder")

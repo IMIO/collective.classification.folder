@@ -4,7 +4,7 @@ from plone.app.testing import (
     applyProfile,
     FunctionalTesting,
     IntegrationTesting,
-    PLONE_FIXTURE
+    PLONE_FIXTURE,
     PloneSandboxLayer,
 )
 from plone.testing import z2
@@ -21,13 +21,15 @@ class CollectiveClassificationFolderLayer(PloneSandboxLayer):
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
         import plone.app.dexterity
+
         self.loadZCML(package=plone.app.dexterity)
         import plone.restapi
+
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=collective.classification.folder)
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'collective.classification.folder:default')
+        applyProfile(portal, "collective.classification.folder:default")
 
 
 COLLECTIVE_CLASSIFICATION_FOLDER_FIXTURE = CollectiveClassificationFolderLayer()
@@ -35,13 +37,13 @@ COLLECTIVE_CLASSIFICATION_FOLDER_FIXTURE = CollectiveClassificationFolderLayer()
 
 COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING = IntegrationTesting(
     bases=(COLLECTIVE_CLASSIFICATION_FOLDER_FIXTURE,),
-    name='CollectiveClassificationFolderLayer:IntegrationTesting',
+    name="CollectiveClassificationFolderLayer:IntegrationTesting",
 )
 
 
 COLLECTIVE_CLASSIFICATION_FOLDER_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(COLLECTIVE_CLASSIFICATION_FOLDER_FIXTURE,),
-    name='CollectiveClassificationFolderLayer:FunctionalTesting',
+    name="CollectiveClassificationFolderLayer:FunctionalTesting",
 )
 
 
@@ -51,5 +53,5 @@ COLLECTIVE_CLASSIFICATION_FOLDER_ACCEPTANCE_TESTING = FunctionalTesting(
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE,
     ),
-    name='CollectiveClassificationFolderLayer:AcceptanceTesting',
+    name="CollectiveClassificationFolderLayer:AcceptanceTesting",
 )
