@@ -3,5 +3,29 @@
   <permissions>
   <!-- -*- extra stuff goes here -*- -->
 
+    <permission name="collective.classification.folder: Add ClassificationSubfolder" acquire="True">
+      <role name="Manager"/>
+      <role name="Site Administrator"/>
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+
+
+    <permission name="collective.classification.folder: Add ClassificationFolder" acquire="True">
+      <role name="Manager"/>
+      <role name="Site Administrator"/>
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+
+
+    <permission name="collective.classification.folder: Add ClassificationFolders" acquire="True">
+      <role name="Manager"/>
+      <role name="Site Administrator"/>
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+
+
   </permissions>
 </rolemap>

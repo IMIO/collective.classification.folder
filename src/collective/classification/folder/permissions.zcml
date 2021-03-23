@@ -6,6 +6,24 @@
   <configure zcml:condition="installed AccessControl.security">
   <!-- -*- extra stuff goes here -*- -->
 
+    <permission
+        id="collective.classification.folder.AddClassificationSubfolder"
+        title="collective.classification.folder: Add ClassificationSubfolder"
+    />
+
+
+    <permission
+        id="collective.classification.folder.AddClassificationFolder"
+        title="collective.classification.folder: Add ClassificationFolder"
+    />
+
+
+    <permission
+        id="collective.classification.folder.AddClassificationFolders"
+        title="collective.classification.folder: Add ClassificationFolders"
+    />
+
+
 
   </configure>
 
