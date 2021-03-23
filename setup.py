@@ -61,6 +61,7 @@ setup(
         "plone.app.relationfield",
         "plone.app.lockingbehavior",
         "plone.schema",
+        "collective.classification.tree",
     ],
     extras_require={
         "test": [

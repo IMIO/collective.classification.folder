@@ -27,6 +27,7 @@ class CollectiveClassificationFolderLayer(PloneSandboxLayer):
 
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=collective.classification.folder)
+        self.loadZCML(package=collective.classification.tree)
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, "collective.classification.folder:default")
