@@ -1,0 +1,19 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  i18n_domain="plone">
+
+    <include package="plone.behavior" file="meta.zcml"/>
+
+    <plone:behavior
+        name="collective.classification.folder.classification_folder"
+        title="ClassificationFolder"
+        description="This behavior provides a classification folder selection field"
+        provides=".classification_folder.IClassificationFolder"
+        factory=".classification_folder.ClassificationFolder"
+        marker=".classification_folder.IClassificationFolderMarker"
+        />
+  
+</configure>
