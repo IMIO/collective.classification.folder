@@ -10,6 +10,11 @@ class IClassificationFolders(model.Schema):
     """ Marker interface and Dexterity Python Schema for ClassificationFolders
     """
 
+    title = schema.TextLine(
+        title=_(u"Title"),
+        description=_(u"Name of the folders container"),
+    )
+
 
 @implementer(IClassificationFolders)
 class ClassificationFolders(Container):
