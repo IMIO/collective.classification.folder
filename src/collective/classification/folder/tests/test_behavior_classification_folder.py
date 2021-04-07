@@ -19,7 +19,10 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_behavior_classification_folder(self):
-        behavior = getUtility(IBehavior, 'collective.classification.folder.classification_folder')
+        behavior = getUtility(
+            IBehavior,
+            "collective.classification.folder.behaviors.classification_folder.IClassificationFolder",
+        )
         self.assertEqual(
             behavior.marker,
             IClassificationFolderMarker,
