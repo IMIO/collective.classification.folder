@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from collective.classification.folder import _
+from collective.classification.folder.browser.widget import FolderAutocompleteMultiFieldWidget
 from collective.classification.folder.content.vocabularies import ClassificationFolderSourceBinder
 from plone import schema
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
-from plone.formwidget.autocomplete import AutocompleteMultiFieldWidget
 from plone.supermodel import model
 from zope.component import adapter
 from zope.interface import Interface
@@ -22,7 +22,7 @@ class IClassificationFolder(model.Schema):
     """
     """
 
-    form.widget(classification_folders=AutocompleteMultiFieldWidget)
+    form.widget(classification_folders=FolderAutocompleteMultiFieldWidget)
     classification_folders = schema.List(
         title=_(u"Classification folders"),
         description=_(u"List of folders / subfolders in which this content is filed"),
