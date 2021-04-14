@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="collective.classification.folder">
+
+    <subscriber
+        for=".classification_folders.IClassificationFolders
+             zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".classification_folders.on_create"
+        />
+
+    <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
+
+</configure>

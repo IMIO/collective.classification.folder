@@ -14,8 +14,10 @@
   <!--<includeDependencies package="." />-->
 
   <include package="collective.classification.tree" />
+  <include package="eea.facetednavigation" />
 
   <include package=".browser" />
+  <include package=".content" />
 
   <include file="permissions.zcml" />
 

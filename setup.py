@@ -62,6 +62,7 @@ setup(
         "plone.app.lockingbehavior",
         "plone.schema",
         "collective.classification.tree",
+        "eea.facetednavigation",
     ],
     extras_require={
         "test": [

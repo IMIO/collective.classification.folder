@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<object name="portal_css" meta_type="Stylesheets Registry">
+
+ <!-- Faceted View -->
+ <stylesheet id="++resource++collective.classification.folder-faceted.css"
+             bundle="collective-classification-folder" />
+
+</object>

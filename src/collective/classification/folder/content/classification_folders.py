@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import os.path
+
+from collective.classification.folder import _
+from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from plone.dexterity.content import Container
 from plone.supermodel import model
 from zope import schema
 from zope.interface import implementer
-from collective.classification.folder import _
 
 
 class IClassificationFolders(model.Schema):
@@ -20,3 +23,14 @@ class IClassificationFolders(model.Schema):
 class ClassificationFolders(Container):
     """
     """
+
+
+def on_create(obj, event):
+    faceted_subtyper = obj.unrestrictedTraverse("@@faceted_subtyper")
+    faceted_subtyper.enable()
+
+    faceted_exportimport = obj.unrestrictedTraverse("@@faceted_exportimport")
+    xml = obj.unrestrictedTraverse("classification-folders-faceted.xml")()
+    faceted_exportimport._import_xml(import_file=xml)
+
+    IFacetedLayout(obj).update_layout("folders-listing-view")

@@ -3,6 +3,7 @@
   <version>1000</version>
   <dependencies>
     <dependency>profile-collective.classification.tree:default</dependency>
+    <dependency>profile-eea.facetednavigation:default</dependency>
     <dependency>profile-plone.app.dexterity:default</dependency>
   </dependencies>
 </metadata>
