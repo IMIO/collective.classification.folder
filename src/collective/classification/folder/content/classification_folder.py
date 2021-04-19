@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 
+from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
+from collective.classification.folder import _
+from eea.facetednavigation.events import FacetedEnabledEvent
+from eea.facetednavigation.events import FacetedWillBeEnabledEvent
+from eea.facetednavigation.layout.interfaces import IFacetedLayout
+from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
+from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
+from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
 from plone.dexterity.content import Container
 from plone.supermodel import model
 from zope import schema
+from zope.event import notify
 from zope.interface import implementer
-from collective.classification.folder import _
+from zope.interface import alsoProvides
 
 
 class IClassificationFolder(model.Schema):
@@ -57,3 +66,17 @@ class IClassificationFolder(model.Schema):
 class ClassificationFolder(Container):
     """
     """
+
+
+def on_create(obj, event):
+    notify(FacetedWillBeEnabledEvent(obj))
+    alsoProvides(obj, IClassificationFacetedNavigable)
+    if not IDisableSmartFacets.providedBy(obj):
+        alsoProvides(obj, IDisableSmartFacets)
+    if not IHidePloneLeftColumn.providedBy(obj):
+        alsoProvides(obj, IHidePloneLeftColumn)
+    if not IHidePloneRightColumn.providedBy(obj):
+        alsoProvides(obj, IHidePloneRightColumn)
+    notify(FacetedEnabledEvent(obj))
+
+    IFacetedLayout(obj).update_layout("folder-listing-view")

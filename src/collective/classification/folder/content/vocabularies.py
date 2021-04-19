@@ -104,8 +104,10 @@ class ClassificationFolderGroups(object):
 
     def build_folder_groups(self):
         dic = {}
-        folder_brains = api.content.find(
-            object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder"
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        folder_brains = portal_catalog.searchResults(
+            object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder",
+            sort_on="getObjPositionInParent",
         )
         for folder_brain in folder_brains:
             folder_obj = folder_brain.getObject()

@@ -27,6 +27,28 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="eea.facetednavigation.interfaces.IPossibleFacetedNavigable"
+      name="classification-folder-faceted.xml"
+      template="templates/classification-folder-faceted.xml"
+      permission="eea.faceted.configure"
+      />
+
+  <faceted:view
+      name="folder-listing-view"
+      template="templates/folder-listing.pt"
+      for="collective.classification.folder.content.classification_folder.IClassificationFolder"
+      title="Folder listing view"
+      permission="zope2.View"
+      />
+
+  <adapter
+      for=".faceted.IClassificationFacetedNavigable"
+      provides="eea.facetednavigation.interfaces.ICriteria"
+      factory=".faceted.Criteria"
+      />
+
+
   <!-- Set overrides folder for Just-a-Bunch-Of-Templates product -->
   <include package="z3c.jbot" file="meta.zcml" />
   <browser:jbot

@@ -10,6 +10,12 @@
         handler=".classification_folders.on_create"
         />
 
+    <subscriber
+        for=".classification_folder.IClassificationFolder
+             zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".classification_folder.on_create"
+        />
+
     <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
 
 </configure>

@@ -3,4 +3,7 @@
  <index name="ClassificationFolderSort" meta_type="FieldIndex">
   <indexed_attr value="ClassificationFolderSort"/>
  </index>
+ <index name="classification_folders" meta_type="KeywordIndex">
+  <indexed_attr value="classification_folders"/>
+ </index>
 </object>
