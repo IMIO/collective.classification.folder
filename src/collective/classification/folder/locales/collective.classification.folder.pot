@@ -1,0 +1,152 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-04-21 13:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: collective.classification.folder\n"
+
+#: ../profiles/default/registry.xml
+msgid "A classification folder's position in its hierarchy"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationFolder.xml
+msgid "Classification Folder"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationFolders.xml
+msgid "Classification Folders"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationSubfolder.xml
+msgid "Classification Subfolder"
+msgstr ""
+
+#: ../content/classification_folder.py:39
+msgid "Classification categories"
+msgstr ""
+
+#: ../setuphandlers.py:16
+msgid "Classification folder faceted configuration"
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "Classification folder sort"
+msgstr ""
+
+#: ../behaviors/classification_folder.py:27
+msgid "Classification folders"
+msgstr ""
+
+#: ../content/classification_folder.py:32
+msgid "Classification identifier"
+msgstr ""
+
+#: ../content/classification_folder.py:63
+msgid "Classification informations"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationFolders.xml
+msgid "Container for Classification Folder elements"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationFolder.xml
+#: ../profiles/default/types/ClassificationFolders.xml
+#: ../profiles/default/types/ClassificationSubfolder.xml
+msgid "Edit"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationFolder.xml
+msgid "Equivalent to a paper binder"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationSubfolder.xml
+msgid "Equivalent to a paper folder"
+msgstr ""
+
+#: ../browser/configure.zcml:43
+msgid "Folder listing view"
+msgstr ""
+
+#: ../browser/configure.zcml:28
+msgid "Folders listing view"
+msgstr ""
+
+#: ../content/classification_folder.py:48
+msgid "ID of the service that are in charge of this folder"
+msgstr ""
+
+#: ../content/classification_folder.py:55
+msgid "ID of the services that can access this folder"
+msgstr ""
+
+#: ../content/classification_folder.py:64
+msgid "Informations"
+msgstr ""
+
+#: ../configure.zcml:27
+msgid "Installs the collective.classification.folder add-on."
+msgstr ""
+
+#: ../content/classification_folder.py:40
+msgid "List of categories / subcategories"
+msgstr ""
+
+#: ../behaviors/classification_folder.py:28
+msgid "List of folders / subfolders in which this content is filed"
+msgstr ""
+
+#: ../profiles/default/registry.xml
+msgid "Metadata"
+msgstr ""
+
+#: ../content/classification_folder.py:28
+#: ../content/classification_folders.py:18
+msgid "Name of the folders container"
+msgstr ""
+
+#: ../content/classification_folder.py:47
+msgid "Service in charge"
+msgstr ""
+
+#: ../content/classification_folder.py:54
+msgid "Services in copy"
+msgstr ""
+
+#: ../content/classification_folder.py:27
+#: ../content/classification_folders.py:17
+msgid "Title"
+msgstr ""
+
+#: ../configure.zcml:36
+msgid "Uninstalls the collective.classification.folder add-on."
+msgstr ""
+
+#: ../content/classification_folder.py:33
+msgid "Unique identifier of the folder"
+msgstr ""
+
+#: ../profiles/default/types/ClassificationFolder.xml
+#: ../profiles/default/types/ClassificationFolders.xml
+#: ../profiles/default/types/ClassificationSubfolder.xml
+msgid "View"
+msgstr ""
+
+#: ../configure.zcml:27
+msgid "collective.classification.folder"
+msgstr ""
+
+#: ../configure.zcml:36
+msgid "collective.classification.folder (uninstall)"
+msgstr ""
