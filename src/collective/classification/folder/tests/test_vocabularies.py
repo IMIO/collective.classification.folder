@@ -28,14 +28,14 @@ class ClassificationFolderSourceTest(unittest.TestCase):
 
         self.folders = api.content.create(
             container=self.portal,
-            type="Classification Folders",
+            type="ClassificationFolders",
             id="folders",
             title=u"Folders",
         )
 
         self.folder1 = api.content.create(
             container=self.folders,
-            type="Classification Folder",
+            type="ClassificationFolder",
             id="folder1",
             title=u"Folder 1",
             services_in_copy=["group1"],
@@ -44,7 +44,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
 
         self.folder2 = api.content.create(
             container=self.folders,
-            type="Classification Folder",
+            type="ClassificationFolder",
             id="folder2",
             title=u"Folder 2",
             services_in_copy=[],
@@ -72,7 +72,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
 
         self.subfolder = api.content.create(
             container=self.folder1,
-            type='Classification Subfolder',
+            type='ClassificationSubfolder',
             id='subfolder1',
             title='Subfolder 1',
             services_in_copy=[],

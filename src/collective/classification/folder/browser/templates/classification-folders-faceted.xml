@@ -54,8 +54,8 @@
    <property name="vocabulary"></property>
    <property name="catalog">portal_catalog</property>
    <property name="default">
-    <element value="Classification Folder"/>
-    <element value="Classification Subfolder"/>
+    <element value="ClassificationFolder"/>
+    <element value="ClassificationSubfolder"/>
    </property>
    <property name="position">right</property>
    <property name="section">default</property>

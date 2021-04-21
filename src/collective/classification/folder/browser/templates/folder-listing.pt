@@ -74,7 +74,7 @@
         </dl>
 
         <dl tal:define="parent python:context.aq_parent"
-            tal:condition="python: parent.portal_type == 'Classification Folder'">
+            tal:condition="python: parent.portal_type == 'ClassificationFolder'">
           <dt>Title</dt>
           <dd tal:content="parent/title"></dd>
 

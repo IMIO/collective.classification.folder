@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="Classification Subfolder"
+    name="ClassificationSubfolder"
     meta_type="Dexterity FTI"
     i18n:domain="collective.classification.folder">
 
@@ -13,7 +13,7 @@
       name="description">Equivalent to a paper folder</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">Classification Subfolder</property>
+  <property name="factory">ClassificationSubfolder</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
@@ -36,7 +36,7 @@
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++Classification Subfolder</property>
+  <property name="add_view_expr">string:${folder_url}/++add++ClassificationSubfolder</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>

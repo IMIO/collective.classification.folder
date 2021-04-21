@@ -22,7 +22,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
-            'Classification Folders',
+            'ClassificationFolders',
             self.portal,
             'classification_folder',
             title='Parent container',
@@ -30,16 +30,16 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
         self.parent = self.portal[parent_id]
 
     def test_ct_classification_folder_schema(self):
-        fti = queryUtility(IDexterityFTI, name='Classification Folder')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolder')
         schema = fti.lookupSchema()
         self.assertEqual(IClassificationFolder, schema)
 
     def test_ct_classification_folder_fti(self):
-        fti = queryUtility(IDexterityFTI, name='Classification Folder')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolder')
         self.assertTrue(fti)
 
     def test_ct_classification_folder_factory(self):
-        fti = queryUtility(IDexterityFTI, name='Classification Folder')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolder')
         factory = fti.factory
         obj = createObject(factory)
 
@@ -54,7 +54,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
         obj = api.content.create(
             container=self.parent,
-            type='Classification Folder',
+            type='ClassificationFolder',
             id='classification_folder',
         )
 
@@ -67,7 +67,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
 
     def test_ct_classification_folder_globally_not_addable(self):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
-        fti = queryUtility(IDexterityFTI, name='Classification Folder')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolder')
         self.assertFalse(
             fti.global_allow,
             u'{0} is globally addable!'.format(fti.id)
@@ -75,14 +75,14 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
 
     def test_ct_classification_folder_filter_content_type_true(self):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
-        fti = queryUtility(IDexterityFTI, name='Classification Folder')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolder')
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
             fti.id,
             self.portal,
             'classification_folder_id',
-            title='Classification Folder container',
-         )
+            title='ClassificationFolder container',
+        )
         self.parent = self.portal[parent_id]
         with self.assertRaises(InvalidParameterError):
             api.content.create(

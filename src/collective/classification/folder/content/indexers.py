@@ -6,7 +6,7 @@ from plone.indexer.decorator import indexer
 @indexer(IClassificationFolder)
 def classification_folder_sort(folder):
     elements = []
-    if folder.portal_type == "Classification Subfolder":
+    if folder.portal_type == "ClassificationSubfolder":
         elements.append(folder.title)
         folder = aq_parent(folder)
     elements.append(folder.title)

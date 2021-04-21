@@ -22,16 +22,16 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_ct_classification_folders_schema(self):
-        fti = queryUtility(IDexterityFTI, name='Classification Folders')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolders')
         schema = fti.lookupSchema()
         self.assertEqual(IClassificationFolders, schema)
 
     def test_ct_classification_folders_fti(self):
-        fti = queryUtility(IDexterityFTI, name='Classification Folders')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolders')
         self.assertTrue(fti)
 
     def test_ct_classification_folders_factory(self):
-        fti = queryUtility(IDexterityFTI, name='Classification Folders')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolders')
         factory = fti.factory
         obj = createObject(factory)
 
@@ -46,7 +46,7 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
         obj = api.content.create(
             container=self.portal,
-            type='Classification Folders',
+            type='ClassificationFolders',
             id='classification_folders',
         )
 
@@ -59,7 +59,7 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
 
     def test_ct_classification_folders_globally_addable(self):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
-        fti = queryUtility(IDexterityFTI, name='Classification Folders')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolders')
         self.assertTrue(
             fti.global_allow,
             u'{0} is not globally addable!'.format(fti.id)
@@ -67,14 +67,14 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
 
     def test_ct_classification_folders_filter_content_type_true(self):
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
-        fti = queryUtility(IDexterityFTI, name='Classification Folders')
+        fti = queryUtility(IDexterityFTI, name='ClassificationFolders')
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
             fti.id,
             self.portal,
             'classification_folders_id',
-            title='Classification Folders container',
-         )
+            title='ClassificationFolders container',
+        )
         self.parent = self.portal[parent_id]
         with self.assertRaises(InvalidParameterError):
             api.content.create(

@@ -55,7 +55,7 @@ class ClassificationFolderSource(object):
             brains = api.content.find(UID=folder_uid)
             if brains:
                 folder = brains[0].getObject()
-                if folder.portal_type == "Classification Subfolder":
+                if folder.portal_type == "ClassificationSubfolder":
                     parent = aq_parent(folder)
                     title = u"{0} >> {1}".format(parent.title, folder.title)
                 else:
@@ -112,7 +112,7 @@ class ClassificationFolderGroups(object):
         for folder_brain in folder_brains:
             folder_obj = folder_brain.getObject()
             groups = folder_obj.services_in_copy or []
-            if folder_obj.portal_type == "Classification Subfolder":
+            if folder_obj.portal_type == "ClassificationSubfolder":
                 parent_groups = aq_parent(folder_obj).services_in_copy or []
                 groups = list(set(groups).union(parent_groups))
             dic[folder_brain.UID] = groups
