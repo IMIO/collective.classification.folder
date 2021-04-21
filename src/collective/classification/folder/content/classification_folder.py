@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
 from collective.classification.folder import _
+from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
+from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
 from eea.facetednavigation.events import FacetedEnabledEvent
 from eea.facetednavigation.events import FacetedWillBeEnabledEvent
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
 from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
+from plone.autoform import directives as form
 from plone.dexterity.content import Container
+from plone.formwidget.autocomplete import AutocompleteMultiFieldWidget
 from plone.supermodel import model
 from zope import schema
 from zope.event import notify
-from zope.interface import implementer
 from zope.interface import alsoProvides
+from zope.interface import implementer
 
 
 class IClassificationFolder(model.Schema):
@@ -31,11 +34,12 @@ class IClassificationFolder(model.Schema):
         required=False,
     )
 
+    form.widget(classification_categories=AutocompleteMultiFieldWidget)
     classification_categories = schema.List(
         title=_(u"Classification categories"),
         description=_(u"List of categories / subcategories"),
         value_type=schema.Choice(
-            values=[]  # TODO: get source from collective.classification.tree
+            source=ClassificationTreeSourceBinder(),
         ),
     )
 
