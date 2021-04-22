@@ -4,6 +4,10 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="collective.classification.folder">
 
+    <class class="collective.classification.folder.content.classification_subfolder.ClassificationSubfolder">
+      <implements interface="eea.facetednavigation.subtypes.interfaces.IPossibleFacetedNavigable" />
+    </class>
+
     <subscriber
         for=".classification_folders.IClassificationFolders
              zope.lifecycleevent.interfaces.IObjectAddedEvent"
