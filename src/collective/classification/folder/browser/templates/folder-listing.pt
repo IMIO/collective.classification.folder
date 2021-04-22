@@ -104,14 +104,12 @@
 
         <div metal:use-macro="context/batch_macros/macros/navigation" />
 
-        <ul class="folder-list">
-          <li tal:repeat="brain folderContents">
-            <a tal:define="css_class python:brain.portal_type.replace(' ', '-')"
-               tal:attributes="href brain/getURL;
-                               class css_class"
-               tal:content="brain/Title" />
-          </li>
-        </ul>
+        <div style="clear: both;"></div>
+        <div class="eea-preview-items"
+                 tal:condition="batch/sequence_length"
+                 tal:define="table_view nocall:context/@@faceted-table-view;">
+          <span tal:replace="structure python:table_view.render_table(batch)" />
+        </div>
 
         <div metal:use-macro="context/batch_macros/macros/navigation" />
 

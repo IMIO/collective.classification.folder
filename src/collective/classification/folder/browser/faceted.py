@@ -1,3 +1,5 @@
+from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
+from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
@@ -61,3 +63,33 @@ class Criteria(eeaCriteria):
         })
         self.criteria.append(sort_criterion)
 
+
+class FoldersFacetedTableView(FacetedTableView):
+    def _getViewFields(self):
+        """Returns fields we want to show in the table."""
+
+        return [
+            u"pretty_link",
+            u"ModificationDate",
+            u"CreationDate",
+        ]
+
+
+class FolderFacetedTableView(FacetedTableView):
+    def _getViewFields(self):
+        """Returns fields we want to show in the table."""
+
+        return [
+            u"pretty_link",
+            u"ModificationDate",
+            u"CreationDate",
+        ]
+
+
+class FolderTitleColumn(PrettyLinkColumn):
+
+    params = {
+        "showIcons": True,
+        "showContentIcon": True,
+        "display_tag_title": False,
+    }

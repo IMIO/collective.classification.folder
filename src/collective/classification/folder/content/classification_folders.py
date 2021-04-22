@@ -33,4 +33,4 @@ def on_create(obj, event):
     xml = obj.unrestrictedTraverse("classification-folders-faceted.xml")()
     faceted_exportimport._import_xml(import_file=xml)
 
-    IFacetedLayout(obj).update_layout("folders-listing-view")
+    IFacetedLayout(obj).update_layout("faceted-table-items")

@@ -19,13 +19,28 @@
       permission="eea.faceted.configure"
       />
 
-  <faceted:view
-      name="folders-listing-view"
-      template="templates/folders-listing.pt"
+  <browser:view
       for="collective.classification.folder.content.classification_folders.IClassificationFolders"
-      title="Folders listing view"
+      name="faceted-table-view"
+      class=".faceted.FoldersFacetedTableView"
       permission="zope2.View"
       />
+
+  <browser:view
+      for="collective.classification.folder.content.classification_folder.IClassificationFolder"
+      name="faceted-table-view"
+      class=".faceted.FolderFacetedTableView"
+      permission="zope2.View"
+      />
+
+      <adapter
+        for="collective.classification.folder.content.classification_folders.IClassificationFolders
+             zope.publisher.interfaces.browser.IBrowserRequest
+             collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+        factory="collective.classification.folder.browser.faceted.FolderTitleColumn"
+        provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+        name="pretty_link"
+        />
 
   <browser:page
       for="eea.facetednavigation.interfaces.IPossibleFacetedNavigable"
