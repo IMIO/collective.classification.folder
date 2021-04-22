@@ -15,6 +15,8 @@
 
   <include package="collective.classification.tree" />
   <include package="eea.facetednavigation" />
+  <include package="collective.eeafaceted.z3ctable"/>
+  <include package="imio.prettylink" />
 
   <include package=".browser" />
   <include package=".content" />

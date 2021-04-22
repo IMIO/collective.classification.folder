@@ -63,6 +63,8 @@ setup(
         "plone.schema",
         "collective.classification.tree",
         "eea.facetednavigation",
+        "collective.eeafaceted.z3ctable",
+        "imio.prettylink",
     ],
     extras_require={
         "test": [
