@@ -1,4 +1,7 @@
+from Products.CMFPlone.utils import safe_unicode
+from collective.classification.folder import _
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
+from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
@@ -69,6 +72,7 @@ class FoldersFacetedTableView(FacetedTableView):
         """Returns fields we want to show in the table."""
 
         return [
+            u"classification_identifier",
             u"pretty_link",
             u"ModificationDate",
             u"CreationDate",
@@ -93,3 +97,16 @@ class FolderTitleColumn(PrettyLinkColumn):
         "showContentIcon": True,
         "display_tag_title": False,
     }
+
+
+class ClassificationFolderIdColumn(BaseColumn):
+        header = _(u'Classification identifier')
+        sort_index = 'classification_identifier'
+        weight = 0
+
+        def renderCell(self, item):
+            value = self.getValue(item)
+            if not value:
+                value = u'-'
+            value = safe_unicode(value)
+            return value

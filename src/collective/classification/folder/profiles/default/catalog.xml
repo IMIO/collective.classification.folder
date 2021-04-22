@@ -2,8 +2,12 @@
 <object name="portal_catalog">
  <index name="ClassificationFolderSort" meta_type="FieldIndex">
   <indexed_attr value="ClassificationFolderSort"/>
- </index>
  <index name="classification_folders" meta_type="KeywordIndex">
   <indexed_attr value="classification_folders"/>
  </index>
+ </index>
+ <index name="classification_identifier" meta_type="FieldIndex">
+  <indexed_attr value="classification_identifier"/>
+ </index>
+ <column value="classification_identifier"/>
 </object>
