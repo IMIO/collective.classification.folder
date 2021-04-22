@@ -1,4 +1,5 @@
 from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser import BrowserView
 from collective.classification.folder import _
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
@@ -8,6 +9,8 @@ from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
 from persistent.list import PersistentList
 from plone import api
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 
 class IClassificationFacetedNavigable(IFacetedNavigable):
@@ -88,6 +91,14 @@ class FolderFacetedTableView(FacetedTableView):
             u"ModificationDate",
             u"CreationDate",
         ]
+
+
+class FolderListingView(BrowserView):
+
+    def categories_vocabulary(self):
+        return getUtility(
+            IVocabularyFactory, "collective.classification.vocabularies:tree"
+        )(self.context)
 
 
 class FolderTitleColumn(PrettyLinkColumn):

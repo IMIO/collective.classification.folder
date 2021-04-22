@@ -45,6 +45,7 @@
         b_start python:request.get('b_start', 0);
         batch python:isinstance(folderContents, Batch) and folderContents or Batch(folderContents, 100, int(b_start), orphan=2);">
 
+      <tal:vars tal:define="categories_voc self/categories_vocabulary">
         <dl>
           <dt>Title</dt>
           <dd tal:content="context/title"></dd>
@@ -55,7 +56,7 @@
           <dt>Classification categories</dt>
           <dd>
             <ul tal:repeat="category context/classification_categories">
-              <li tal:content="category"></li>
+              <li tal:content="python:categories_voc.getTerm(category).title"></li>
             </ul>
           </dd>
 
@@ -101,6 +102,7 @@
           <dt>Classification informations</dt>
           <dd tal:content="parent/classification_informations"></dd>
         </dl>
+      </tal:vars>
 
         <div metal:use-macro="context/batch_macros/macros/navigation" />
 

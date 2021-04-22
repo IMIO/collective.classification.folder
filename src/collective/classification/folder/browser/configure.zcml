@@ -61,6 +61,7 @@
       name="folder-listing-view"
       template="templates/folder-listing.pt"
       for="collective.classification.folder.content.classification_folder.IClassificationFolder"
+      class=".faceted.FolderListingView"
       title="Folder listing view"
       permission="zope2.View"
       />
