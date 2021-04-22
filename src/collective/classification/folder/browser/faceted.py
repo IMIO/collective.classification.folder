@@ -27,10 +27,10 @@ class Criteria(eeaCriteria):
         self.criteria = PersistentList()
 
         for crit in self._criteria():
-            if crit.index != u'classification_folders':
+            if crit.index != u"classification_folders" or crit.widget != u"sorting":
                 self.criteria.append(crit)
 
-        criterion = Criterion(**{
+        select_criterion = Criterion(**{
             '_cid_': u'restrictfolder',
             "widget": u'select',
             "title": u'Classification folder',
@@ -48,4 +48,16 @@ class Criteria(eeaCriteria):
             "sortreversed": u'False',
             "default": original_context_uid,
         })
-        self.criteria.append(criterion)
+        self.criteria.append(select_criterion)
+
+        sort_criterion = Criterion(**{
+            "_cid_": u"sorton",
+            "title": u"Sort on",
+            "position": u"top",
+            "section": u"default",
+            "hidden": u"True",
+            "default": u"created(reverse)",
+            "widget": u"sorting",
+        })
+        self.criteria.append(sort_criterion)
+
