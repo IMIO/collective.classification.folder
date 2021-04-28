@@ -13,7 +13,9 @@
   <include package="imio.prettylink" />
 
   <include package=".browser" />
+  <include package=".behaviors" />
   <include package=".content" />
+  <include package=".form" />
 
   <include file="permissions.zcml" />
 
@@ -40,5 +42,10 @@
     name="collective.classification.folder-hiddenprofiles"
     />
 
+  <utility
+    component=".vocabularies.import_keys_vocabulary_factory"
+    name="collective.classification.vocabularies:folders_import_keys"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
 
 </configure>
