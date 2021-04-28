@@ -22,4 +22,10 @@
 
     <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
 
+    <adapter
+        for="collective.classification.folder.behaviors.classification_folder.IClassificationFolderMarker"
+        factory=".localroles.LocalRoleAdapter"
+        provides="borg.localrole.interfaces.ILocalRoleProvider"
+        />
+
 </configure>

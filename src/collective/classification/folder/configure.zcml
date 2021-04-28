@@ -12,6 +12,7 @@
   <include package="collective.eeafaceted.z3ctable"/>
   <include package="imio.prettylink" />
   <include package="plone.restapi" />
+  <include package="borg.localrole" />
 
   <include package=".browser" />
   <include package=".behaviors" />

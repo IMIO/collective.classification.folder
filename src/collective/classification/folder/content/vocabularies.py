@@ -33,12 +33,12 @@ class ClassificationFolderSource(object):
         return self.vocabulary.__len__()
 
     def get_results(self):
-        all_folders = ClassificationFolderGroups()
+        all_reading_folder_groups = ClassificationFolderGroups().reader_groups
 
         if getSecurityManager().checkPermission("Manage Portal", self.context):
             accessible_folder_uids = [
                 folder_uid
-                for (folder_uid, folder_groups) in all_folders
+                for (folder_uid, folder_groups) in all_reading_folder_groups.items()
             ]
         else:
             user = api.user.get_current()
@@ -46,7 +46,7 @@ class ClassificationFolderSource(object):
             user_groups = set([group.id for group in api.group.get_groups(user=user) if group])
             accessible_folder_uids = [
                 folder_uid
-                for (folder_uid, folder_groups) in all_folders
+                for (folder_uid, folder_groups) in all_reading_folder_groups.items()
                 if user_groups.intersection(folder_groups)
             ]
 
@@ -100,9 +100,11 @@ class IClassificationFolderGroups(Interface):
 class ClassificationFolderGroups(object):
 
     def __init__(self):
-        self.folder_groups = self.build_folder_groups()
+        self.reader_groups = {}
+        self.editor_groups = {}
+        self.enumerate_groups()
 
-    def build_folder_groups(self):
+    def enumerate_groups(self):
         dic = {}
         portal_catalog = api.portal.get_tool('portal_catalog')
         folder_brains = portal_catalog.searchResults(
@@ -111,14 +113,13 @@ class ClassificationFolderGroups(object):
         )
         for folder_brain in folder_brains:
             folder_obj = folder_brain.getObject()
-            groups = folder_obj.services_in_copy or []
+            reader_groups = folder_obj.services_in_copy or []
+            editor_groups = [folder_obj.service_in_charge] if folder_obj.service_in_charge else []
             if folder_obj.portal_type == "ClassificationSubfolder":
-                parent_groups = aq_parent(folder_obj).services_in_copy or []
-                groups = list(set(groups).union(parent_groups))
-            dic[folder_brain.UID] = groups
-
-        return dic
-
-    def __iter__(self):
-        for (folder_uid, folder_groups) in self.folder_groups.items():
-            yield (folder_uid, folder_groups)
+                parent_obj = aq_parent(folder_obj)
+                parent_reader_groups = parent_obj.services_in_copy or []
+                reader_groups = list(set(reader_groups).union(parent_reader_groups))
+                parent_editor_groups = [parent_obj.service_in_charge] if parent_obj.service_in_charge else []
+                editor_groups = list(set(editor_groups).union(parent_editor_groups))
+            self.reader_groups[folder_brain.UID] = reader_groups
+            self.editor_groups[folder_brain.UID] = editor_groups
