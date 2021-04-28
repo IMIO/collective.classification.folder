@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os.path
 
 from collective.classification.folder import _
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
