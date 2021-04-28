@@ -11,11 +11,13 @@
   <include package="eea.facetednavigation" />
   <include package="collective.eeafaceted.z3ctable"/>
   <include package="imio.prettylink" />
+  <include package="plone.restapi" />
 
   <include package=".browser" />
   <include package=".behaviors" />
   <include package=".content" />
   <include package=".form" />
+  <include package=".services" />
 
   <include file="permissions.zcml" />
 
