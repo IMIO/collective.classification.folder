@@ -86,6 +86,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 
 class ImportSecondStepView(FormWrapper):
     form = ImportFormSecondStep
+    index = ViewPageTemplateFile("import.pt")
 
     @property
     def data(self):

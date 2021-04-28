@@ -1,0 +1,115 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master">
+<head>
+  <metal:block fill-slot="style_slot">
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="/++resource++collective.classification.folder/progressbar.css">
+  </metal:block>
+</head>
+<body>
+
+<metal:slot metal:fill-slot="header" i18n:domain="cmf_default">
+  <h1 tal:content="view/label">View Title</h1>
+</metal:slot>
+
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
+  <div id="layout-contents" tal:condition="not: view/finished">
+    <span tal:replace="structure view/contents" />
+  </div>
+
+  <tal:block condition="view/finished">
+  <div class="progress" id="progress" style="width:80%; height:10px; margin:5em 0 5em 0; left:10%; position:relative;"></div>
+  <div id="import">
+    <tal:while repeat="data view/data">
+    <span data-method="" data-json=""
+          tal:attributes="data-method python:data[0];
+                          data-json python:data[1];"></span>
+    </tal:while>
+  </div>
+  <script type="text/javascript" src="/++resource++collective.classification.folder/progressbar.min.js"></script>
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
+      var bar = new ProgressBar.Line("#progress", {
+        strokeWidth: 4,
+        easing: 'easeInOut',
+        duration: 1200,
+        color: '#CCC',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: {width: '100%', height: '100%'},
+        text: {
+          style: {
+            // Text color.
+            // Default: same as stroke color (options.color)
+            color: '#999',
+            position: 'absolute',
+            right: '0',
+            top: '30px',
+            padding: 0,
+            margin: 0,
+            transform: null
+          },
+          autoStyleContainer: false
+        },
+        from: {color: '#CCC'},
+        to: {color: '#777'},
+        step: (state, bar) => {
+          var text = ""
+          if (bar.current) {
+            text = bar.current + " / " + bar.total + " - "
+          }
+          bar.setText(text + Math.round(bar.value() * 100) + ' %');
+        }
+      });
+
+      var elements = $("#import span");
+      var progress = 0;
+      bar.total = elements.length;
+      bar.current = 0;
+      var ajax_call = function(self) {
+        $.ajax(
+          {
+            url: "@import",
+            contentType: "application/json",
+            data: JSON.stringify($(self).data("json")),
+            type: $(self).data("method"),
+            dataType: "json",
+            headers: {"accept": "application/json"},
+            success: function(data, status, xhr) {
+              progress = progress + 1.0 / elements.length;
+              bar.animate(progress);
+              $(self).remove();
+              next_call();
+            },
+            error: function(xhr, status, error) {
+              // XXX Handle error
+              progress = progress + 1.0 / elements.length;
+              bar.animate(progress);
+              $(self).remove();
+              next_call();
+            },
+          }
+        );
+      };
+      var next_call = function() {
+        var element = $("#import span").first()
+        if (element.length > 0) {
+          bar.current = bar.current + 1;
+          ajax_call(element);
+        } else {
+          bar.current = bar.total;
+          bar.animate(1.0);
+        }
+      };
+
+      $("#ajax-spinner").remove();
+      next_call();
+    });
+  </script>
+  </tal:block>
+</metal:slot>
+</body>
+</html>
