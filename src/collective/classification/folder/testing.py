@@ -32,6 +32,7 @@ class CollectiveClassificationFolderLayer(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, "collective.classification.folder:default")
+        setRoles(portal, TEST_USER_ID, ["Manager"])
 
 
 COLLECTIVE_CLASSIFICATION_FOLDER_FIXTURE = CollectiveClassificationFolderLayer()
