@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective import dexteritytextindexer
 from collective.classification.folder import _
 from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
@@ -23,17 +24,20 @@ class IClassificationFolder(model.Schema):
     """ Marker interface and Dexterity Python Schema for ClassificationFolder
     """
 
+    dexteritytextindexer.searchable("title")
     title = schema.TextLine(
         title=_(u"Name"),
         description=_(u"Name of the folder"),
     )
 
+    dexteritytextindexer.searchable("classification_identifier")
     classification_identifier = schema.TextLine(
         title=_(u"Classification identifier"),
         description=_(u"Unique identifier of the folder"),
         required=False,
     )
 
+    dexteritytextindexer.searchable("classification_categories")
     form.widget(classification_categories=AutocompleteMultiFieldWidget)
     classification_categories = schema.List(
         title=_(u"Classification categories"),
@@ -59,6 +63,7 @@ class IClassificationFolder(model.Schema):
         required=False,
     )
 
+    dexteritytextindexer.searchable("classification_informations")
     classification_informations = schema.TextLine(
         title=_(u"Classification informations"),
         description=_(u"Informations"),

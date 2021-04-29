@@ -65,6 +65,7 @@ setup(
         "eea.facetednavigation",
         "collective.eeafaceted.z3ctable",
         "imio.prettylink",
+        "collective.dexteritytextindexer",
     ],
     extras_require={
         "test": [

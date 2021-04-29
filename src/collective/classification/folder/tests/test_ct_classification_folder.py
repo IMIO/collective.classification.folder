@@ -90,3 +90,34 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
                 type='Document',
                 title='My Content',
             )
+
+    def test_searchable_text_indexation(self):
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
+
+        category_container = api.content.create(
+            id="container", type="ClassificationContainer", container=self.portal
+        )
+        category = createObject("ClassificationCategory")
+        category.identifier = u"123456789"
+        category.title = u"Category_title_123"
+        category_container._add_element(category)
+
+        classification_folder = api.content.create(
+            container=self.parent,
+            type='ClassificationFolder',
+            id='classification_folder_searchable',
+            title=u"title_123",
+            classification_identifier=u"classification_identifier_123",
+            classification_categories=[category.UID()],
+            classification_informations=u"classification_informations_123",
+        )
+        classification_folder.reindexObject(idxs=["SearchableText"])
+
+        for text in (
+            u"title_123",
+            u"classification_identifier_123",
+            u"123456789",
+            u"Category_title_123",
+            u"classification_informations_123",
+        ):
+            self.assertEquals(len(api.content.find(SearchableText=text)), 1)
