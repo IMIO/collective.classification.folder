@@ -23,7 +23,7 @@
   <criterion name="c0">
    <property name="widget">resultsperpage</property>
    <property name="title">Results per page</property>
-   <property name="default">5</property>
+   <property name="default">20</property>
    <property name="position">right</property>
    <property name="section">default</property>
    <property name="hidden">True</property>
