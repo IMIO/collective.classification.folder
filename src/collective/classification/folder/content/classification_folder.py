@@ -10,14 +10,17 @@ from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
 from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
+from plone import api
 from plone.autoform import directives as form
 from plone.dexterity.content import Container
 from plone.formwidget.autocomplete import AutocompleteMultiFieldWidget
 from plone.supermodel import model
 from zope import schema
 from zope.event import notify
+from zope.interface import Invalid
 from zope.interface import alsoProvides
 from zope.interface import implementer
+from zope.interface import invariant
 
 
 class IClassificationFolder(model.Schema):
@@ -69,6 +72,17 @@ class IClassificationFolder(model.Schema):
         description=_(u"Informations"),
         required=False,
     )
+
+    @invariant
+    def unique_identifier_invariant(data):
+        brains = api.content.find(
+            context=api.portal.get(),
+            classification_identifier=data.classification_identifier,
+        )
+        if len(brains) != 0 and brains[0].UID != api.content.get_uuid(data):
+            raise Invalid(
+                _(u"The classification identifier must be unique to this folder.")
+            )
 
 
 @implementer(IClassificationFolder)

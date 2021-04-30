@@ -8,6 +8,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import createObject
 from zope.component import queryUtility
+from zope.schema import getValidationErrors
 
 import unittest
 
@@ -121,3 +122,99 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
             u"classification_informations_123",
         ):
             self.assertEquals(len(api.content.find(SearchableText=text)), 1)
+
+
+class ClassificationFolderUniquenessTest(unittest.TestCase):
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def setUp(self):
+        """Custom shared utility setup for tests."""
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        portal_types = self.portal.portal_types
+        parent_id = portal_types.constructContent(
+            "ClassificationFolders",
+            self.portal,
+            "classification_folder",
+            title="Parent container",
+        )
+        self.parent = self.portal[parent_id]
+
+        self.category_container = api.content.create(
+            id="container", type="ClassificationContainer", container=self.portal
+        )
+        self.category = createObject("ClassificationCategory")
+        self.category.identifier = u"123456789"
+        self.category.title = u"Category title"
+        self.category_container._add_element(self.category)
+
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
+        first_classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder_1",
+            title=u"Folder 1",
+            classification_identifier=u"unique",
+        )
+        first_classification_folder.reindexObject()
+
+    def tearDown(self):
+        api.content.delete(self.parent)
+        api.content.delete(self.category_container)
+
+    def test_classification_add_unacceptable(self):
+        second_classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder_2",
+            title=u"Folder 2",
+            classification_categories=[self.category.UID()],
+            classification_identifier=u"unique",
+        )
+        errors = getValidationErrors(
+            IClassificationFolder, second_classification_folder
+        )
+        self.assertEquals(len(errors), 1)
+
+    def test_classification_edit_acceptable(self):
+        second_classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder_2",
+            title=u"Folder 2",
+            classification_categories=[self.category.UID()],
+            classification_identifier=u"future acceptable",
+        )
+        errors = getValidationErrors(
+            IClassificationFolder, second_classification_folder
+        )
+        self.assertEquals(len(errors), 0)
+
+        second_classification_folder.classification_identifier = u"still acceptable"
+        errors = getValidationErrors(
+            IClassificationFolder, second_classification_folder
+        )
+        self.assertEquals(len(errors), 0)
+
+    def test_classification_edit_unacceptable(self):
+        second_classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder_2",
+            title=u"Folder 2",
+            classification_categories=[self.category.UID()],
+            classification_identifier=u"future unacceptable",
+        )
+        second_classification_folder.reindexObject()
+
+        errors = getValidationErrors(
+            IClassificationFolder, second_classification_folder
+        )
+        self.assertEquals(len(errors), 0)
+
+        second_classification_folder.classification_identifier = u"unique"
+        errors = getValidationErrors(
+            IClassificationFolder, second_classification_folder
+        )
+        self.assertEquals(len(errors), 1)
