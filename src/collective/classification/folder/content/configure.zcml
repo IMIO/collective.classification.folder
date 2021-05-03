@@ -20,6 +20,12 @@
         handler=".classification_folder.on_create"
         />
 
+    <subscriber
+        for=".classification_folder.IClassificationFolder
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler=".classification_folder.on_delete"
+        />
+
     <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
 
     <adapter

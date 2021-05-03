@@ -6,6 +6,7 @@ from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
+from zExceptions import Redirect
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.schema import getValidationErrors
@@ -122,6 +123,64 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
             u"classification_informations_123",
         ):
             self.assertEquals(len(api.content.find(SearchableText=text)), 1)
+
+
+class ClassificationFolderIntegrityTest(unittest.TestCase):
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def setUp(self):
+        """Custom shared utility setup for tests."""
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        portal_types = self.portal.portal_types
+        parent_id = portal_types.constructContent(
+            "ClassificationFolders",
+            self.portal,
+            "classification_folders",
+            title="Parent container",
+        )
+        self.parent = self.portal[parent_id]
+
+        fti = queryUtility(IDexterityFTI, name="Document")
+        behaviors = list(fti.behaviors)
+        behavior_name = "collective.classification.folder.behaviors.classification_folder.IClassificationFolder"
+        if behavior_name not in behaviors:
+            behaviors.append(behavior_name)
+        fti._updateProperty("behaviors", tuple(behaviors))
+
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
+        self.classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder",
+        )
+        self.classification_folder.reindexObject()
+
+    def tearDown(self):
+        api.content.delete(self.parent)
+
+    def test_delete_not_referenced_folder(self):
+        api.content.delete(self.classification_folder)
+
+    def test_delete_referenced_folder(self):
+        classification_folder_uid = api.content.get_uuid(self.classification_folder)
+        document = api.content.create(
+            container=self.portal,
+            type="Document",
+            id="document-referencing",
+            classification_folders=[classification_folder_uid],
+        )
+        document.reindexObject(idxs=["classification_folders"])
+
+        brains = api.content.find(
+            context=self.portal, classification_folders=classification_folder_uid
+        )
+        self.assertEquals(len(brains), 1)
+        self.assertEquals(api.content.get_uuid(document), brains[0].UID)
+
+        with self.assertRaises(Redirect):
+            api.content.delete(self.classification_folder)
 
 
 class ClassificationFolderUniquenessTest(unittest.TestCase):

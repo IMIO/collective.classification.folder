@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from Products.statusmessages.interfaces import IStatusMessage
 from collective import dexteritytextindexer
 from collective.classification.folder import _
 from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
@@ -15,7 +16,9 @@ from plone.autoform import directives as form
 from plone.dexterity.content import Container
 from plone.formwidget.autocomplete import AutocompleteMultiFieldWidget
 from plone.supermodel import model
+from zExceptions import Redirect
 from zope import schema
+from zope.component import getMultiAdapter
 from zope.event import notify
 from zope.interface import Invalid
 from zope.interface import alsoProvides
@@ -108,3 +111,20 @@ def on_create(obj, event):
     notify(FacetedEnabledEvent(obj))
 
     IFacetedLayout(obj).update_layout("folder-listing-view")
+
+
+def on_delete(obj, event):
+    obj_uid = api.content.get_uuid(obj)
+    linked_content = api.content.find(classification_folders=obj_uid)
+    if linked_content:
+        IStatusMessage(obj.REQUEST).addStatusMessage(
+            _(
+                "cannot_delete_referenced_folder",
+                default="This folder cannot be deleted because it is referenced elsewhere",
+            ),
+            type="warning",
+        )
+        view_url = getMultiAdapter(
+            (obj, obj.REQUEST), name=u"plone_context_state"
+        ).view_url()
+        raise Redirect(view_url)
