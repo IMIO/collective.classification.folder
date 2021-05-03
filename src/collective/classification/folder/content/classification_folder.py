@@ -75,11 +75,16 @@ class IClassificationFolder(model.Schema):
 
     @invariant
     def unique_identifier_invariant(data):
+        try:
+            data_uuid = api.content.get_uuid(data)
+        except TypeError:
+            return
+
         brains = api.content.find(
             context=api.portal.get(),
             classification_identifier=data.classification_identifier,
         )
-        if len(brains) != 0 and brains[0].UID != api.content.get_uuid(data):
+        if len(brains) != 0 and brains[0].UID != data_uuid:
             raise Invalid(
                 _(u"The classification identifier must be unique to this folder.")
             )
