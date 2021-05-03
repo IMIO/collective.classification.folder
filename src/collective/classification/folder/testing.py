@@ -26,11 +26,22 @@ class CollectiveClassificationFolderLayer(PloneSandboxLayer):
         self.loadZCML(package=plone.app.dexterity)
         import plone.restapi
 
+        import plone.app.contenttypes
+        self.loadZCML(package=plone.app.contenttypes)
+        import plone.app.event.dx
+        self.loadZCML(package=plone.app.event.dx)
+        import Products.DateRecurringIndex
+        z2.installProduct(app, 'Products.DateRecurringIndex')
+
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=collective.classification.folder)
         self.loadZCML(package=collective.classification.tree)
 
+    def tearDownZope(self, app):
+        z2.uninstallProduct(app, 'Products.DateRecurringIndex')
+
     def setUpPloneSite(self, portal):
+        applyProfile(portal, "plone.app.contenttypes:default")
         applyProfile(portal, "collective.classification.folder:default")
         setRoles(portal, TEST_USER_ID, ["Manager"])
 
