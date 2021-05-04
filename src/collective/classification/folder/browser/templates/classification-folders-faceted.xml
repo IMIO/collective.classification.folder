@@ -4,8 +4,8 @@
  <criteria>
   <criterion name="c1">
    <property name="widget">text</property>
-   <property name="title">title</property>
-   <property name="index">Title</property>
+   <property name="title">Search</property>
+   <property name="index">SearchableText</property>
    <property name="onlyallelements">True</property>
    <property name="wildcard">True</property>
    <property name="position">center</property>
