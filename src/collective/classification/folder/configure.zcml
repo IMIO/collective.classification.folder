@@ -13,6 +13,8 @@
   <include package="imio.prettylink" />
   <include package="plone.restapi" />
   <include package="borg.localrole" />
+  <include package="dexterity.localrolesfield"/>
+  <include package="plone.app.lockingbehavior"/>
   <include package="collective.dexteritytextindexer" />
 
   <include package=".browser" />

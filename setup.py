@@ -66,6 +66,7 @@ setup(
         "collective.eeafaceted.z3ctable",
         "imio.prettylink",
         "collective.dexteritytextindexer",
+        "dexterity.localrolesfield",
     ],
     extras_require={
         "test": [

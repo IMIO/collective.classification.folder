@@ -28,10 +28,11 @@
 
     <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
 
-    <adapter
-        for="collective.classification.folder.behaviors.classification_folder.IClassificationFolderMarker"
-        factory=".localroles.LocalRoleAdapter"
-        provides="borg.localrole.interfaces.ILocalRoleProvider"
+
+    <utility
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        factory=".vocabularies.services_vocabulary"
+        name="collective.classification.folder.vocabularies.services"
         />
 
 </configure>

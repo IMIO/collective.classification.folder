@@ -5,6 +5,8 @@ from collective import dexteritytextindexer
 from collective.classification.folder import _
 from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
+from dexterity.localrolesfield.field import LocalRoleField
+from dexterity.localrolesfield.field import LocalRolesField
 from eea.facetednavigation.events import FacetedEnabledEvent
 from eea.facetednavigation.events import FacetedWillBeEnabledEvent
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
@@ -24,6 +26,7 @@ from zope.interface import Invalid
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import invariant
+from zope.schema.fieldproperty import FieldProperty
 
 
 class IClassificationFolder(model.Schema):
@@ -53,19 +56,17 @@ class IClassificationFolder(model.Schema):
         ),
     )
 
-    service_in_charge = schema.Choice(
+    service_in_charge = LocalRoleField(
         title=_(u"Service in charge"),
         description=_(u"ID of the service that are in charge of this folder"),
-        vocabulary="plone.app.vocabularies.Groups",
+        vocabulary="collective.classification.folder.vocabularies.services",
         required=False,
     )
 
-    services_in_copy = schema.List(
+    services_in_copy = LocalRolesField(
         title=_(u"Services in copy"),
         description=_(u"ID of the services that can access this folder"),
-        value_type=schema.Choice(
-            vocabulary="plone.app.vocabularies.Groups"
-        ),
+        value_type=schema.Choice(vocabulary="collective.classification.folder.vocabularies.services"),
         required=False,
     )
 
@@ -97,6 +98,9 @@ class IClassificationFolder(model.Schema):
 class ClassificationFolder(Container):
     """
     """
+
+    service_in_charge = FieldProperty(IClassificationFolder[u"service_in_charge"])
+    services_in_copy = FieldProperty(IClassificationFolder[u"services_in_copy"])
 
 
 def on_create(obj, event):

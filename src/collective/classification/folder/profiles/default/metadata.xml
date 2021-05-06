@@ -4,6 +4,7 @@
   <dependencies>
     <dependency>profile-collective.classification.tree:default</dependency>
     <dependency>profile-collective.eeafaceted.z3ctable:default</dependency>
+    <dependency>profile-dexterity.localrolesfield:default</dependency>
     <dependency>profile-eea.facetednavigation:default</dependency>
     <dependency>profile-plone.app.dexterity:default</dependency>
   </dependencies>

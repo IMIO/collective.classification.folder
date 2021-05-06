@@ -3,6 +3,7 @@
 from .classification_folder import IClassificationFolder
 from plone.dexterity.content import Item
 from zope.interface import implementer
+from zope.schema.fieldproperty import FieldProperty
 
 
 class IClassificationSubfolder(IClassificationFolder):
@@ -14,3 +15,6 @@ class IClassificationSubfolder(IClassificationFolder):
 class ClassificationSubfolder(Item):
     """
     """
+
+    service_in_charge = FieldProperty(IClassificationFolder[u"service_in_charge"])
+    services_in_copy = FieldProperty(IClassificationFolder[u"services_in_copy"])

@@ -5,9 +5,11 @@ from Acquisition import aq_parent
 from operator import itemgetter
 from plone import api
 from z3c.formwidget.query.interfaces import IQuerySource
+from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -123,3 +125,8 @@ class ClassificationFolderGroups(object):
                 editor_groups = list(set(editor_groups).union(parent_editor_groups))
             self.reader_groups[folder_brain.UID] = reader_groups
             self.editor_groups[folder_brain.UID] = editor_groups
+
+
+def services_vocabulary(context=None):
+    factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
+    return factory
