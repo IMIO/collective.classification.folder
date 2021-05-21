@@ -78,7 +78,7 @@ class TestImportForm(unittest.TestCase):
 
     def test_second_step_import_basic(self):
         """Test importing csv data"""
-        form = importform.ImportFormSecondStep(self.folders, {})
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
         form.data = []
         annotations = IAnnotations(self.folders)
         annotation = annotations[importform.ANNOTATION_KEY] = PersistentDict()
@@ -95,6 +95,7 @@ class TestImportForm(unittest.TestCase):
             "column_5": "title",
         }
         self.assertEqual(0, len(self.folders))
+        form.update()
         form._import(data)
         self.assertEqual(2, len(form.data))
         self.assertEqual(["POST", "POST"], [e[0] for e in form.data])
