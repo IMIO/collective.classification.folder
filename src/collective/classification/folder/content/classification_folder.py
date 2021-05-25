@@ -127,7 +127,11 @@ def on_create(obj, event):
 
 def on_delete(obj, event):
     obj_uid = api.content.get_uuid(obj)
-    linked_content = api.content.find(classification_folders=obj_uid)
+    try:
+        linked_content = api.content.find(classification_folders=obj_uid)
+    except api.exc.CannotGetPortalError:
+        # This happen when we try to remove plone object
+        return
     if linked_content:
         IStatusMessage(obj.REQUEST).addStatusMessage(
             _(
