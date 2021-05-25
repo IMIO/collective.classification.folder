@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from collective.classification.folder import _
-from collective.classification.folder.browser.widget import FolderAutocompleteMultiFieldWidget
-from collective.classification.folder.content.vocabularies import ClassificationFolderSourceBinder
+from collective.classification.folder.browser.widget import (
+    FolderAutocompleteMultiFieldWidget,
+)
+from collective.classification.folder.content.vocabularies import (
+    ClassificationFolderSourceBinder,
+)
+from collective.classification.tree.behaviors.classification import (
+    IClassificationCategory,
+)
 from plone import schema
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
-from plone.supermodel import model
 from zope.component import adapter
-from zope.interface import Interface
-from zope.interface import implementer
-from zope.interface import provider
+from zope.interface import implementer, Interface, provider
 
 
 class IClassificationFolderMarker(Interface):
@@ -18,7 +22,7 @@ class IClassificationFolderMarker(Interface):
 
 
 @provider(IFormFieldProvider)
-class IClassificationFolder(model.Schema):
+class IClassificationFolder(IClassificationCategory):
     """
     """
 
