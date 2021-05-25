@@ -45,61 +45,61 @@
         b_start python:request.get('b_start', 0);
         batch python:isinstance(folderContents, Batch) and folderContents or Batch(folderContents, 100, int(b_start), orphan=2);">
 
-      <tal:vars tal:define="categories_voc self/categories_vocabulary">
+      <tal:vars tal:define="categories_voc self/categories_vocabulary" i18n:domain="collective.classification.folder">
         <dl>
-          <dt>Title</dt>
+          <dt i18n:translate="">Name</dt>
           <dd tal:content="context/title"></dd>
 
-          <dt>Classification identifier</dt>
+          <dt i18n:translate="">Classification identifier</dt>
           <dd tal:content="context/classification_identifier"></dd>
 
-          <dt>Classification categories</dt>
+          <dt i18n:translate="">Classification categories</dt>
           <dd>
             <ul tal:repeat="category context/classification_categories">
               <li tal:content="python:categories_voc.getTerm(category).title"></li>
             </ul>
           </dd>
 
-          <dt>Service in charge</dt>
+          <dt i18n:translate="">Service in charge</dt>
           <dd tal:content="context/service_in_charge"></dd>
 
-          <dt>Services in copy</dt>
+          <dt i18n:translate="">Services in copy</dt>
           <dd>
             <ul tal:repeat="service context/services_in_copy">
               <li tal:content="service"></li>
             </ul>
           </dd>
 
-          <dt>Classification informations</dt>
+          <dt i18n:translate="">Classification informations</dt>
           <dd tal:content="context/classification_informations"></dd>
         </dl>
 
         <dl tal:define="parent python:context.aq_parent"
             tal:condition="python: parent.portal_type == 'ClassificationFolder'">
-          <dt>Title</dt>
+          <dt i18n:translate="">Nom</dt>
           <dd tal:content="parent/title"></dd>
 
-          <dt>Classification identifier</dt>
+          <dt i18n:translate="">Classification identifier</dt>
           <dd tal:content="parent/classification_identifier"></dd>
 
-          <dt>Classification categories</dt>
+          <dt i18n:translate="">Classification categories</dt>
           <dd>
             <ul tal:repeat="category parent/classification_categories">
-              <li tal:content="category"></li>
+              <li tal:content="python:categories_voc.getTerm(category).title"></li>
             </ul>
           </dd>
 
-          <dt>Service in charge</dt>
+          <dt i18n:translate="">Service in charge</dt>
           <dd tal:content="parent/service_in_charge"></dd>
 
-          <dt>Services in copy</dt>
+          <dt i18n:translate="">Services in copy</dt>
           <dd>
             <ul tal:repeat="service parent/services_in_copy">
               <li tal:content="service"></li>
             </ul>
           </dd>
 
-          <dt>Classification informations</dt>
+          <dt i18n:translate="">Classification informations</dt>
           <dd tal:content="parent/classification_informations"></dd>
         </dl>
       </tal:vars>
