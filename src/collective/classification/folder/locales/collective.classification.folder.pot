@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-04-21 13:48+0000\n"
+"POT-Creation-Date: 2021-05-25 10:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,8 @@ msgstr ""
 msgid "Classification Subfolder"
 msgstr ""
 
-#: ../content/classification_folder.py:39
+#: ../content/classification_folder.py:52
+#: ../vocabularies.py:12
 msgid "Classification categories"
 msgstr ""
 
@@ -45,15 +46,16 @@ msgstr ""
 msgid "Classification folder sort"
 msgstr ""
 
-#: ../behaviors/classification_folder.py:27
+#: ../behaviors/classification_folder.py:31
 msgid "Classification folders"
 msgstr ""
 
-#: ../content/classification_folder.py:32
+#: ../browser/faceted.py:114
+#: ../content/classification_folder.py:44
 msgid "Classification identifier"
 msgstr ""
 
-#: ../content/classification_folder.py:63
+#: ../content/classification_folder.py:75
 msgid "Classification informations"
 msgstr ""
 
@@ -75,35 +77,40 @@ msgstr ""
 msgid "Equivalent to a paper folder"
 msgstr ""
 
-#: ../browser/configure.zcml:43
+#: ../browser/configure.zcml:67
 msgid "Folder listing view"
 msgstr ""
 
-#: ../browser/configure.zcml:28
-msgid "Folders listing view"
-msgstr ""
-
-#: ../content/classification_folder.py:48
+#: ../content/classification_folder.py:61
 msgid "ID of the service that are in charge of this folder"
 msgstr ""
 
-#: ../content/classification_folder.py:55
+#: ../content/classification_folder.py:68
 msgid "ID of the services that can access this folder"
 msgstr ""
 
-#: ../content/classification_folder.py:64
+#: ../vocabularies.py:10
+msgid "Identifier"
+msgstr ""
+
+#: ../form/importform.py:30
+msgid "Import folders"
+msgstr ""
+
+#: ../content/classification_folder.py:76
+#: ../vocabularies.py:13
 msgid "Informations"
 msgstr ""
 
-#: ../configure.zcml:27
+#: ../configure.zcml:35
 msgid "Installs the collective.classification.folder add-on."
 msgstr ""
 
-#: ../content/classification_folder.py:40
+#: ../content/classification_folder.py:53
 msgid "List of categories / subcategories"
 msgstr ""
 
-#: ../behaviors/classification_folder.py:28
+#: ../behaviors/classification_folder.py:32
 msgid "List of folders / subfolders in which this content is filed"
 msgstr ""
 
@@ -111,29 +118,44 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-#: ../content/classification_folder.py:28
-#: ../content/classification_folders.py:18
+#: ../content/classification_folder.py:38
+#: ../vocabularies.py:11
+msgid "Name"
+msgstr ""
+
+#: ../content/classification_folder.py:39
+msgid "Name of the folder"
+msgstr ""
+
+#: ../content/classification_folders.py:17
 msgid "Name of the folders container"
 msgstr ""
 
-#: ../content/classification_folder.py:47
+#: ../vocabularies.py:9
+msgid "Parent Identifier"
+msgstr ""
+
+#: ../content/classification_folder.py:60
 msgid "Service in charge"
 msgstr ""
 
-#: ../content/classification_folder.py:54
+#: ../content/classification_folder.py:67
 msgid "Services in copy"
 msgstr ""
 
-#: ../content/classification_folder.py:27
-#: ../content/classification_folders.py:17
+#: ../content/classification_folder.py:93
+msgid "The classification identifier must be unique to this folder."
+msgstr ""
+
+#: ../content/classification_folders.py:16
 msgid "Title"
 msgstr ""
 
-#: ../configure.zcml:36
+#: ../configure.zcml:44
 msgid "Uninstalls the collective.classification.folder add-on."
 msgstr ""
 
-#: ../content/classification_folder.py:33
+#: ../content/classification_folder.py:45
 msgid "Unique identifier of the folder"
 msgstr ""
 
@@ -143,10 +165,15 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: ../configure.zcml:27
+#. Default: "This folder cannot be deleted because it is referenced elsewhere"
+#: ../content/classification_folder.py:125
+msgid "cannot_delete_referenced_folder"
+msgstr ""
+
+#: ../configure.zcml:35
 msgid "collective.classification.folder"
 msgstr ""
 
-#: ../configure.zcml:36
+#: ../configure.zcml:44
 msgid "collective.classification.folder (uninstall)"
 msgstr ""
