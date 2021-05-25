@@ -72,6 +72,14 @@
       factory=".faceted.Criteria"
       />
 
+  <browser:page
+    name="classification_helper"
+    for="collective.classification.folder.content.classification_folders.IClassificationFolders"
+    class="collective.classification.tree.browser.helper.ClassificationHelper"
+    permission="cmf.AddPortalContent"
+    allowed_interface="collective.classification.tree.browser.helper.IClassificationHelper"
+    />
+
 
   <!-- Set overrides folder for Just-a-Bunch-Of-Templates product -->
   <include package="z3c.jbot" file="meta.zcml" />
