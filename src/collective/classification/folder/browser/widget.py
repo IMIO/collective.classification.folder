@@ -67,7 +67,7 @@ class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
                 parse: %(parseFunction)s,
                 extraParams: {'categories':
                     function() {
-                        return $("input[name='form.widgets.IClassificationCategory.classification_categories:list']")
+                        return $("input[name='form.widgets.IClassificationFolder.classification_categories:list']")
                             .map(function() {
                                 return this.value;
                             }).get().join("|");
