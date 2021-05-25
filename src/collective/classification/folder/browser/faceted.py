@@ -1,6 +1,8 @@
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from collective.classification.folder import _
+from collective.classification.folder.content.vocabularies import ServiceInChargeSource
+from collective.classification.folder.content.vocabularies import ServiceInCopySource
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
@@ -96,11 +98,38 @@ class FolderFacetedTableView(FacetedTableView):
 
 
 class FolderListingView(BrowserView):
-
     def categories_vocabulary(self):
         return getUtility(
             IVocabularyFactory, "collective.classification.vocabularies:tree"
         )(self.context)
+
+    @property
+    def service_in_charge_vocabulary(self):
+        if not hasattr(self, "_service_in_charge"):
+            self._service_in_charge = ServiceInChargeSource(self.context).vocabulary
+        return self._service_in_charge
+
+    @property
+    def service_in_copy_vocabulary(self):
+        if not hasattr(self, "_service_in_copy"):
+            self._service_in_copy = ServiceInCopySource(self.context).vocabulary
+        return self._service_in_copy
+
+    def get_service_in_charge(self, value):
+        if not value:
+            return
+        try:
+            return self.service_in_charge_vocabulary.getTerm(value).title
+        except LookupError:
+            return
+
+    def get_service_in_copy(self, value):
+        if not value:
+            return
+        try:
+            return self.service_in_copy_vocabulary.getTerm(value).title
+        except LookupError:
+            return
 
 
 class FolderTitleColumn(PrettyLinkColumn):

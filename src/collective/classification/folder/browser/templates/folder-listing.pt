@@ -45,7 +45,8 @@
         b_start python:request.get('b_start', 0);
         batch python:isinstance(folderContents, Batch) and folderContents or Batch(folderContents, 100, int(b_start), orphan=2);">
 
-      <tal:vars tal:define="categories_voc self/categories_vocabulary" i18n:domain="collective.classification.folder">
+      <tal:vars tal:define="categories_voc self/categories_vocabulary;"
+                i18n:domain="collective.classification.folder">
         <dl>
           <dt i18n:translate="">Name</dt>
           <dd tal:content="context/title"></dd>
@@ -61,12 +62,12 @@
           </dd>
 
           <dt i18n:translate="">Service in charge</dt>
-          <dd tal:content="context/service_in_charge"></dd>
+          <dd tal:content="python:self.get_service_in_charge(context.service_in_charge)"></dd>
 
           <dt i18n:translate="">Services in copy</dt>
           <dd>
             <ul tal:repeat="service context/services_in_copy">
-              <li tal:content="service"></li>
+              <li tal:content="python:self.get_service_in_copy(service)"></li>
             </ul>
           </dd>
 
@@ -90,12 +91,12 @@
           </dd>
 
           <dt i18n:translate="">Service in charge</dt>
-          <dd tal:content="parent/service_in_charge"></dd>
+          <dd tal:content="python:self.get_service_in_charge(parent.service_in_charge)"></dd>
 
           <dt i18n:translate="">Services in copy</dt>
           <dd>
             <ul tal:repeat="service parent/services_in_copy">
-              <li tal:content="service"></li>
+              <li tal:content="python:self.get_service_in_copy(service)"></li>
             </ul>
           </dd>
 
