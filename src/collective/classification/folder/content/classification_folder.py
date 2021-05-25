@@ -3,7 +3,15 @@
 from Products.statusmessages.interfaces import IStatusMessage
 from collective import dexteritytextindexer
 from collective.classification.folder import _
-from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
+from collective.classification.folder.browser.faceted import (
+    IClassificationFacetedNavigable,
+)
+from collective.classification.folder.content.vocabularies import (
+    ServiceInChargeSourceBinder,
+)
+from collective.classification.folder.content.vocabularies import (
+    ServiceInCopySourceBinder,
+)
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
 from dexterity.localrolesfield.field import LocalRoleField
 from dexterity.localrolesfield.field import LocalRolesField
@@ -22,16 +30,15 @@ from zExceptions import Redirect
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.event import notify
-from zope.interface import Invalid
 from zope.interface import alsoProvides
 from zope.interface import implementer
+from zope.interface import Invalid
 from zope.interface import invariant
 from zope.schema.fieldproperty import FieldProperty
 
 
 class IClassificationFolder(model.Schema):
-    """ Marker interface and Dexterity Python Schema for ClassificationFolder
-    """
+    """Marker interface and Dexterity Python Schema for ClassificationFolder"""
 
     dexteritytextindexer.searchable("title")
     title = schema.TextLine(
@@ -59,14 +66,16 @@ class IClassificationFolder(model.Schema):
     service_in_charge = LocalRoleField(
         title=_(u"Service in charge"),
         description=_(u"ID of the service that are in charge of this folder"),
-        vocabulary="collective.classification.folder.vocabularies.services",
+        source=ServiceInChargeSourceBinder(),
         required=False,
     )
 
     services_in_copy = LocalRolesField(
         title=_(u"Services in copy"),
         description=_(u"ID of the services that can access this folder"),
-        value_type=schema.Choice(vocabulary="collective.classification.folder.vocabularies.services"),
+        value_type=schema.Choice(
+            source=ServiceInCopySourceBinder(),
+        ),
         required=False,
     )
 
@@ -96,8 +105,7 @@ class IClassificationFolder(model.Schema):
 
 @implementer(IClassificationFolder)
 class ClassificationFolder(Container):
-    """
-    """
+    """ """
 
     service_in_charge = FieldProperty(IClassificationFolder[u"service_in_charge"])
     services_in_copy = FieldProperty(IClassificationFolder[u"services_in_copy"])

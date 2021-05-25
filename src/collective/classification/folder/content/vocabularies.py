@@ -2,12 +2,15 @@
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
+from collective.classification.folder.interfaces import IServiceInCharge
+from collective.classification.folder.interfaces import IServiceInCopy
 from operator import itemgetter
 from plone import api
 from z3c.formwidget.query.interfaces import IQuerySource
 from zope.component import getUtility
-from zope.interface import Interface
+from zope.component import queryAdapter
 from zope.interface import implementer
+from zope.interface import Interface
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
@@ -16,12 +19,12 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 @implementer(IQuerySource)
 class ClassificationFolderSource(object):
-
     def __init__(self, context):
         self.context = context
         self.results = self.get_results()
         terms = [
-            SimpleTerm(value=pair[0], token=pair[0], title=pair[1]) for pair in self.results
+            SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
+            for pair in self.results
         ]
         self.vocabulary = SimpleVocabulary(terms)
 
@@ -45,7 +48,9 @@ class ClassificationFolderSource(object):
         else:
             user = api.user.get_current()
             # `if group` is necessary because get_groups can return None values
-            user_groups = set([group.id for group in api.group.get_groups(user=user) if group])
+            user_groups = set(
+                [group.id for group in api.group.get_groups(user=user) if group]
+            )
             accessible_folder_uids = [
                 folder_uid
                 for (folder_uid, folder_groups) in all_reading_folder_groups.items()
@@ -63,7 +68,9 @@ class ClassificationFolderSource(object):
                 else:
                     title = folder.title
                 categories = folder.classification_categories or []
-                results.append((folder_uid, title, categories))  # TODO: fix title indexation
+                results.append(
+                    (folder_uid, title, categories)
+                )  # TODO: fix title indexation
 
         return sorted(results, key=itemgetter(1))
 
@@ -89,7 +96,6 @@ class ClassificationFolderSource(object):
 
 @implementer(IContextSourceBinder)
 class ClassificationFolderSourceBinder(object):
-
     def __call__(self, context):
         return ClassificationFolderSource(context)
 
@@ -100,15 +106,13 @@ class IClassificationFolderGroups(Interface):
 
 @implementer(IClassificationFolderGroups)
 class ClassificationFolderGroups(object):
-
     def __init__(self):
         self.reader_groups = {}
         self.editor_groups = {}
         self.enumerate_groups()
 
     def enumerate_groups(self):
-        dic = {}
-        portal_catalog = api.portal.get_tool('portal_catalog')
+        portal_catalog = api.portal.get_tool("portal_catalog")
         folder_brains = portal_catalog.searchResults(
             object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder",
             sort_on="getObjPositionInParent",
@@ -116,17 +120,118 @@ class ClassificationFolderGroups(object):
         for folder_brain in folder_brains:
             folder_obj = folder_brain.getObject()
             reader_groups = folder_obj.services_in_copy or []
-            editor_groups = [folder_obj.service_in_charge] if folder_obj.service_in_charge else []
+            editor_groups = (
+                [folder_obj.service_in_charge] if folder_obj.service_in_charge else []
+            )
             if folder_obj.portal_type == "ClassificationSubfolder":
                 parent_obj = aq_parent(folder_obj)
                 parent_reader_groups = parent_obj.services_in_copy or []
                 reader_groups = list(set(reader_groups).union(parent_reader_groups))
-                parent_editor_groups = [parent_obj.service_in_charge] if parent_obj.service_in_charge else []
+                parent_editor_groups = (
+                    [parent_obj.service_in_charge]
+                    if parent_obj.service_in_charge
+                    else []
+                )
                 editor_groups = list(set(editor_groups).union(parent_editor_groups))
             self.reader_groups[folder_brain.UID] = reader_groups
             self.editor_groups[folder_brain.UID] = editor_groups
 
 
-def services_vocabulary(context=None):
+def services_in_charge_vocabulary(context=None):
+    adapter = queryAdapter(context, IServiceInCharge)
+    if adapter:
+        return adapter()
     factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
     return factory
+
+
+def services_in_copy_vocabulary(context=None):
+    adapter = queryAdapter(context, IServiceInCopy)
+    if adapter:
+        return adapter()
+    factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
+    return factory
+
+
+@implementer(IQuerySource)
+class BaseSourceVocabulary(object):
+    def __init__(self, context):
+        self.context = context
+        self._vocabulary = None
+
+    def __contains__(self, term):
+        return self.vocabulary.__contains__(term)
+
+    def __iter__(self):
+        return self.vocabulary.__iter__()
+
+    def __len__(self):
+        return self.vocabulary.__len__()
+
+    @property
+    def _verified_user(self):
+        """Inspired by https://github.com/plone/plone.formwidget.autocomplete/issues/15
+        Return the current request user based on cookie credentials"""
+        if api.user.is_anonymous():
+            portal = api.portal.get()
+            app = portal.__parent__
+            request = portal.REQUEST
+            creds = portal.acl_users.credentials_cookie_auth.extractCredentials(request)
+            user = None
+            if "login" in creds and creds["login"]:
+                # first try the portal (non-admin accounts)
+                user = portal.acl_users.authenticate(
+                    creds["login"], creds["password"], request
+                )
+                if not user:
+                    # now try the app (i.e. the admin account)
+                    user = app.acl_users.authenticate(
+                        creds["login"], creds["password"], request
+                    )
+            return user
+        else:
+            return api.user.get_current()
+
+    def getTerm(self, value):
+        return self.vocabulary.getTerm(value)
+
+    def getTermByToken(self, value):
+        return self.vocabulary.getTermByToken(value)
+
+    def search(self, query_string):
+        q = query_string.lower()
+        results = []
+        for term in self.vocabulary:
+            if q in term.title.lower():
+                results.append(term)
+        return results
+
+
+class ServiceInCopySource(BaseSourceVocabulary):
+    @property
+    def vocabulary(self):
+        if not self._vocabulary:
+            with api.env.adopt_user(user=self._verified_user):
+                self._vocabulary = services_in_copy_vocabulary(self.context)
+        return self._vocabulary
+
+
+@implementer(IContextSourceBinder)
+class ServiceInCopySourceBinder(object):
+    def __call__(self, context):
+        return ServiceInCopySource(context)
+
+
+class ServiceInChargeSource(BaseSourceVocabulary):
+    @property
+    def vocabulary(self):
+        if not self._vocabulary:
+            with api.env.adopt_user(user=self._verified_user):
+                self._vocabulary = services_in_charge_vocabulary(self.context)
+        return self._vocabulary
+
+
+@implementer(IContextSourceBinder)
+class ServiceInChargeSourceBinder(object):
+    def __call__(self, context):
+        return ServiceInChargeSource(context)

@@ -28,11 +28,16 @@
 
     <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
 
+    <utility
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        factory=".vocabularies.services_in_charge_vocabulary"
+        name="collective.classification.folder.vocabularies:services_in_charge"
+        />
 
     <utility
         provides="zope.schema.interfaces.IVocabularyFactory"
-        factory=".vocabularies.services_vocabulary"
-        name="collective.classification.folder.vocabularies.services"
+        factory=".vocabularies.services_in_charge_vocabulary"
+        name="collective.classification.folder.vocabularies:services_in_copy"
         />
 
 </configure>
