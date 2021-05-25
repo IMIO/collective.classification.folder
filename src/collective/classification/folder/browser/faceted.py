@@ -21,12 +21,10 @@ class IClassificationFacetedNavigable(IFacetedNavigable):
 
 
 class Criteria(eeaCriteria):
-    """ Handle criteria
-    """
+    """Handle criteria"""
 
     def __init__(self, context):
-        """ Handle criteria
-        """
+        """Handle criteria"""
         original_context_uid = api.content.get_uuid(context)
         super(Criteria, self).__init__(context)
 
@@ -38,35 +36,39 @@ class Criteria(eeaCriteria):
             if crit.index != u"classification_folders" or crit.widget != u"sorting":
                 self.criteria.append(crit)
 
-        select_criterion = Criterion(**{
-            '_cid_': u'restrictfolder',
-            "widget": u'select',
-            "title": u'Classification folder',
-            "index": u'classification_folders',
-            "vocabulary": u'',
-            "catalog": u'portal_catalog',
-            "hidealloption": u'False',
-            "position": u'right',
-            "section": u'default',
-            "hidden": u'True',
-            "custom_css": u'',
-            "count": u'False',
-            "sortcountable": u'False',
-            "hidezerocount": u'False',
-            "sortreversed": u'False',
-            "default": original_context_uid,
-        })
+        select_criterion = Criterion(
+            **{
+                "_cid_": u"restrictfolder",
+                "widget": u"select",
+                "title": u"Classification folder",
+                "index": u"classification_folders",
+                "vocabulary": u"",
+                "catalog": u"portal_catalog",
+                "hidealloption": u"False",
+                "position": u"right",
+                "section": u"default",
+                "hidden": u"True",
+                "custom_css": u"",
+                "count": u"False",
+                "sortcountable": u"False",
+                "hidezerocount": u"False",
+                "sortreversed": u"False",
+                "default": original_context_uid,
+            }
+        )
         self.criteria.append(select_criterion)
 
-        sort_criterion = Criterion(**{
-            "_cid_": u"sorton",
-            "title": u"Sort on",
-            "position": u"top",
-            "section": u"default",
-            "hidden": u"True",
-            "default": u"created(reverse)",
-            "widget": u"sorting",
-        })
+        sort_criterion = Criterion(
+            **{
+                "_cid_": u"sorton",
+                "title": u"Sort on",
+                "position": u"top",
+                "section": u"default",
+                "hidden": u"True",
+                "default": u"created(reverse)",
+                "widget": u"sorting",
+            }
+        )
         self.criteria.append(sort_criterion)
 
 
@@ -111,13 +113,13 @@ class FolderTitleColumn(PrettyLinkColumn):
 
 
 class ClassificationFolderIdColumn(BaseColumn):
-        header = _(u'Classification identifier')
-        sort_index = 'classification_identifier'
-        weight = 0
+    header = _(u"Classification identifier")
+    sort_index = "classification_identifier"
+    weight = 0
 
-        def renderCell(self, item):
-            value = self.getValue(item)
-            if not value:
-                value = u'-'
-            value = safe_unicode(value)
-            return value
+    def renderCell(self, item):
+        value = self.getValue(item)
+        if not value:
+            value = u"-"
+        value = safe_unicode(value)
+        return value
