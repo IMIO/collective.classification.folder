@@ -67,6 +67,7 @@ setup(
         "imio.prettylink",
         "collective.dexteritytextindexer",
         "dexterity.localrolesfield",
+        "collective.z3cform.chosen",
     ],
     extras_require={
         "test": [

@@ -13,6 +13,7 @@ from collective.classification.folder.content.vocabularies import (
     ServiceInCopySourceBinder,
 )
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
+from collective.z3cform.chosen.widget import ChosenMultiFieldWidget
 from dexterity.localrolesfield.field import LocalRoleField
 from dexterity.localrolesfield.field import LocalRolesField
 from eea.facetednavigation.events import FacetedEnabledEvent
@@ -70,6 +71,7 @@ class IClassificationFolder(model.Schema):
         required=False,
     )
 
+    form.widget(services_in_copy=ChosenMultiFieldWidget)
     services_in_copy = LocalRolesField(
         title=_(u"Services in copy"),
         description=_(u"ID of the services that can access this folder"),

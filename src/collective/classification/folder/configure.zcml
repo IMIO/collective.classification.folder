@@ -16,6 +16,7 @@
   <include package="dexterity.localrolesfield"/>
   <include package="plone.app.lockingbehavior"/>
   <include package="collective.dexteritytextindexer" />
+  <include package="collective.z3cform.chosen" />
 
   <include package=".browser" />
   <include package=".behaviors" />
