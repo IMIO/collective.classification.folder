@@ -79,8 +79,8 @@ class FoldersFacetedTableView(FacetedTableView):
         """Returns fields we want to show in the table."""
 
         return [
-            u"classification_identifier",
             u"pretty_link",
+            u"classification_identifier",
             u"ModificationDate",
             u"CreationDate",
         ]
