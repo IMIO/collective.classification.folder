@@ -48,9 +48,6 @@
       <tal:vars tal:define="categories_voc self/categories_vocabulary;"
                 i18n:domain="collective.classification.folder">
         <dl>
-          <dt i18n:translate="">Name</dt>
-          <dd tal:content="context/title"></dd>
-
           <dt i18n:translate="">Classification identifier</dt>
           <dd tal:content="context/classification_identifier"></dd>
 
