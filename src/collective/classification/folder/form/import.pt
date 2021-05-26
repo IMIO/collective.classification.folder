@@ -24,7 +24,7 @@
   <p class="discreet" i18n:translate="">This import may take a while depending of the number of elements.
   If the process is interrupted (e.g. by closing your browser) it can be resumed easely by starting import process again</p>
   <div class="progress" id="progress" style="width:80%; height:10px; margin:5em 0 5em 0; left:10%; position:relative;"></div>
-  <div id="import">
+  <div id="import" data-url="" tal:attributes="data-url context/absolute_url">
     <tal:while repeat="data view/data">
     <span data-method="" data-json=""
           tal:attributes="data-method python:data[0];
@@ -104,7 +104,13 @@
         } else {
           bar.current = bar.total;
           bar.animate(1.0);
+          redirect();
         }
+      };
+      var redirect = function() {
+        setInterval(function() {
+          window.location.replace($("#import").data("url"));
+        }, 3000);
       };
 
       $("#ajax-spinner").remove();
