@@ -47,62 +47,111 @@
 
       <tal:vars tal:define="categories_voc self/categories_vocabulary;"
                 i18n:domain="collective.classification.folder">
-        <dl>
-          <dt i18n:translate="">Classification identifier</dt>
-          <dd tal:content="context/classification_identifier"></dd>
-
-          <dt i18n:translate="">Classification categories</dt>
-          <dd>
-            <ul tal:repeat="category context/classification_categories">
-              <li tal:content="python:categories_voc.getTerm(category).title"></li>
-            </ul>
-          </dd>
-
-          <dt i18n:translate="">Service in charge</dt>
-          <dd tal:content="python:self.get_service_in_charge(context.service_in_charge)"></dd>
-
-          <dt i18n:translate="">Services in copy</dt>
-          <dd>
-            <ul tal:repeat="service context/services_in_copy">
-              <li tal:content="python:self.get_service_in_copy(service)"></li>
-            </ul>
-          </dd>
-
-          <dt i18n:translate="">Classification informations</dt>
-          <dd tal:content="context/classification_informations"></dd>
-        </dl>
+        <table class="no-style-table" width="100%">
+          <tr>
+            <td class="table_widget_label">
+              <label i18n:translate="">Classification identifier</label>
+            </td>
+            <td class="table_widget_value" tal:content="context/classification_identifier"></td>
+          </tr>
+          <tr>
+            <td class="table_widget_label">
+              <label i18n:translate="">Classification categories</label>
+            </td>
+            <td class="table_widget_value">
+              <ul tal:repeat="category context/classification_categories">
+                <li tal:content="python:categories_voc.getTerm(category).title"></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="table_widget_label">
+              <label i18n:translate="">Service in charge</label>
+            </td>
+            <td class="table_widget_value" tal:content="python:self.get_service_in_charge(context.service_in_charge)"></td>
+          </tr>
+          <tr>
+            <td class="table_widget_label">
+              <label i18n:translate="">Services in copy</label>
+            </td>
+            <td class="table_widget_value">
+              <ul tal:repeat="service context/services_in_copy">
+                <li tal:content="python:self.get_service_in_copy(service)"></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="table_widget_label">
+              <label i18n:translate="">Classification informations</label>
+            </td>
+            <td class="table_widget_value" tal:content="context/classification_informations"></td>
+          </tr>
+        </table>
 
         <dl tal:define="parent python:context.aq_parent"
-            tal:condition="python: parent.portal_type == 'ClassificationFolder'">
-          <dt i18n:translate="">Nom</dt>
-          <dd tal:content="parent/title"></dd>
-
-          <dt i18n:translate="">Classification identifier</dt>
-          <dd tal:content="parent/classification_identifier"></dd>
-
-          <dt i18n:translate="">Classification categories</dt>
-          <dd>
-            <ul tal:repeat="category parent/classification_categories">
-              <li tal:content="python:categories_voc.getTerm(category).title"></li>
-            </ul>
+            tal:condition="python: parent.portal_type == 'ClassificationFolder'"
+            id="container-collapsible"
+            class="collapsible collapsedBlockCollapsible collapsedOnLoad">
+          <dt class="collapsibleHeader" i18n:translate="">Classification Folder</dt>
+          <dd class="collapsibleContent" id="classification_folder_details">
+            <dl>
+              <table class="no-style-table" width="100%">
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Name</label>
+                  </td>
+                  <td class="table_widget_value" tal:content="parent/title"></td>
+                </tr>
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Classification identifier</label>
+                  </td>
+                  <td class="table_widget_value" tal:content="parent/classification_identifier"></td>
+                </tr>
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Classification categories</label>
+                  </td>
+                  <td class="table_widget_value">
+                    <ul tal:repeat="category parent/classification_categories">
+                      <li tal:content="python:categories_voc.getTerm(category).title"></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Service in charge</label>
+                  </td>
+                  <td class="table_widget_value" tal:content="python:self.get_service_in_charge(parent.service_in_charge)"></td>
+                </tr>
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Services in copy</label>
+                  </td>
+                  <td class="table_widget_value">
+                    <ul tal:repeat="service parent/services_in_copy">
+                      <li tal:content="python:self.get_service_in_copy(service)"></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Classification informations</label>
+                  </td>
+                  <td class="table_widget_value" tal:content="parent/classification_informations"></td>
+                </tr>
+              </table>
+            </dl>
           </dd>
-
-          <dt i18n:translate="">Service in charge</dt>
-          <dd tal:content="python:self.get_service_in_charge(parent.service_in_charge)"></dd>
-
-          <dt i18n:translate="">Services in copy</dt>
-          <dd>
-            <ul tal:repeat="service parent/services_in_copy">
-              <li tal:content="python:self.get_service_in_copy(service)"></li>
-            </ul>
-          </dd>
-
-          <dt i18n:translate="">Classification informations</dt>
-          <dd tal:content="parent/classification_informations"></dd>
         </dl>
       </tal:vars>
+      <script type="text/javascript">
+        jQuery(document).ready(function($) {
+          $(activateCollapsibles);
+        });
+      </script>
 
-        <div metal:use-macro="context/batch_macros/macros/navigation" />
+      <div metal:use-macro="context/batch_macros/macros/navigation" />
 
         <div style="clear: both;"></div>
         <div class="eea-preview-items"
