@@ -20,7 +20,9 @@
     <span tal:replace="structure view/contents" />
   </div>
 
-  <tal:block condition="view/finished">
+  <tal:block condition="view/finished" i18n:domain="collective.classification.folder">
+  <p class="discreet" i18n:translate="">This import may take a while depending of the number of elements.
+  If the process is interrupted (e.g. by closing your browser) it can be resumed easely by starting import process again</p>
   <div class="progress" id="progress" style="width:80%; height:10px; margin:5em 0 5em 0; left:10%; position:relative;"></div>
   <div id="import">
     <tal:while repeat="data view/data">
