@@ -61,16 +61,16 @@ class ClassificationFolderSource(object):
         for folder_uid in accessible_folder_uids:
             brains = api.content.find(UID=folder_uid)
             if brains:
+                categories = set([])
                 folder = brains[0].getObject()
                 if folder.portal_type == "ClassificationSubfolder":
                     parent = aq_parent(folder)
                     title = u"{0} >> {1}".format(parent.title, folder.title)
+                    categories.update(parent.classification_categories or [])
                 else:
                     title = folder.title
-                categories = folder.classification_categories or []
-                results.append(
-                    (folder_uid, title, categories)
-                )  # TODO: fix title indexation
+                categories.update(folder.classification_categories or [])
+                results.append((folder_uid, title, categories))  # TODO: fix title indexation
 
         return sorted(results, key=itemgetter(1))
 
@@ -85,13 +85,17 @@ class ClassificationFolderSource(object):
             categories_filter = []
         q = query_string.lower()
 
-        terms = []
+        terms_matching_query = []
+        terms_matching_query_and_category = []
         for (value, title, categories) in self.results:
-            if categories_filter and set(categories_filter).isdisjoint(categories):
-                continue
             if q in title.lower():
-                terms.append(self.getTerm(value))
-        return terms
+                term = self.getTerm(value)
+                if categories_filter and categories.intersection(categories_filter):
+                    terms_matching_query_and_category.append(term)
+                else:
+                    terms_matching_query.append(term)
+
+        return terms_matching_query_and_category or terms_matching_query
 
 
 @implementer(IContextSourceBinder)
