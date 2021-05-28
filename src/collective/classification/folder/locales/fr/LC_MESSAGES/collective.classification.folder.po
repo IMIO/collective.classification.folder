@@ -16,26 +16,26 @@ msgstr ""
 
 #: ../profiles/default/registry.xml
 msgid "A classification folder's position in its hierarchy"
-msgstr ""
+msgstr "Position d'une farde dans sa hiérarchie"
 
 #: ../browser/templates/folder-listing.pt:95
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
-msgstr "Dossier de classification"
+msgstr "Farde"
 
 #: ../profiles/default/types/ClassificationFolders.xml
 msgid "Classification Folders"
-msgstr "Dossiers de classification"
+msgstr "Dossiers"
 
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "Classification Subfolder"
-msgstr "Sous-dossier de classification"
+msgstr "Chemise"
 
 #: ../browser/templates/folder-listing.pt:59
 #: ../content/classification_folder.py:59
 #: ../vocabularies.py:12
 msgid "Classification categories"
-msgstr "Catégories de classification"
+msgstr "Codes de classement"
 
 #: ../setuphandlers.py:16
 msgid "Classification folder faceted configuration"
@@ -43,17 +43,17 @@ msgstr ""
 
 #: ../profiles/default/registry.xml
 msgid "Classification folder sort"
-msgstr ""
+msgstr "Tri des fardes"
 
 #: ../behaviors/classification_folder.py:31
 msgid "Classification folders"
-msgstr "Dossiers de classification"
+msgstr "Dossiers"
 
 #: ../browser/faceted.py:145
 #: ../browser/templates/folder-listing.pt:53
 #: ../content/classification_folder.py:51
 msgid "Classification identifier"
-msgstr "Identifiant de classification"
+msgstr "Identifiant unique"
 
 #: ../browser/templates/folder-listing.pt:85
 #: ../content/classification_folder.py:84
@@ -62,7 +62,7 @@ msgstr "Informations"
 
 #: ../profiles/default/types/ClassificationFolders.xml
 msgid "Container for Classification Folder elements"
-msgstr "Contenant pour les dossiers de classification"
+msgstr "Contenant pour les fardes"
 
 #: ../profiles/default/types/ClassificationFolder.xml
 #: ../profiles/default/types/ClassificationFolders.xml
@@ -72,11 +72,11 @@ msgstr "Modifier"
 
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Equivalent to a paper binder"
-msgstr "Représente une chemise"
+msgstr "Représente une farde"
 
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "Equivalent to a paper folder"
-msgstr "Représente une farde"
+msgstr "Représente une chemise"
 
 #: ../browser/configure.zcml:67
 msgid "Folder listing view"
@@ -84,11 +84,11 @@ msgstr ""
 
 #: ../content/classification_folder.py:68
 msgid "ID of the service that are in charge of this folder"
-msgstr "Service traitant de ce dossier"
+msgstr "Service traitant"
 
 #: ../content/classification_folder.py:75
 msgid "ID of the services that can access this folder"
-msgstr "Services en copie de ce dossier"
+msgstr "Services en copie"
 
 #: ../vocabularies.py:10
 msgid "Identifier"
@@ -109,11 +109,11 @@ msgstr ""
 
 #: ../content/classification_folder.py:60
 msgid "List of categories / subcategories"
-msgstr "Liste des catégories / sous-catégories"
+msgstr "Liste des codes de classement associés"
 
 #: ../behaviors/classification_folder.py:32
 msgid "List of folders / subfolders in which this content is filed"
-msgstr "Liste des dossiers / sous-dossiers dans lesquels ce contenu est classé"
+msgstr "Liste des codes de classement associés"
 
 #: ../profiles/default/registry.xml
 msgid "Metadata"
@@ -123,15 +123,15 @@ msgstr ""
 #: ../content/classification_folder.py:45
 #: ../vocabularies.py:11
 msgid "Name"
-msgstr "Nom"
+msgstr "Titre"
 
 #: ../content/classification_folder.py:46
 msgid "Name of the folder"
-msgstr "Nom du dossier"
+msgstr "Intitulé"
 
 #: ../content/classification_folders.py:17
 msgid "Name of the folders container"
-msgstr "Nom du dossier"
+msgstr "Intitulé"
 
 #: ../vocabularies.py:9
 msgid "Parent Identifier"
