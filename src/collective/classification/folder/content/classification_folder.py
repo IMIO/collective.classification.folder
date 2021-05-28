@@ -44,13 +44,13 @@ class IClassificationFolder(model.Schema):
     dexteritytextindexer.searchable("title")
     title = schema.TextLine(
         title=_(u"Name"),
-        description=_(u"Name of the folder"),
+        # description=_(u"Name of the folder"),
     )
 
     dexteritytextindexer.searchable("classification_identifier")
     classification_identifier = schema.TextLine(
         title=_(u"Classification identifier"),
-        description=_(u"Unique identifier of the folder"),
+        # description=_(u"Unique identifier of the folder"),
         required=False,
     )
 
@@ -58,7 +58,7 @@ class IClassificationFolder(model.Schema):
     form.widget(classification_categories=AutocompleteMultiFieldWidget)
     classification_categories = schema.List(
         title=_(u"Classification categories"),
-        description=_(u"List of categories / subcategories"),
+        # description=_(u"List of categories / subcategories"),
         value_type=schema.Choice(
             source=ClassificationTreeSourceBinder(),
         ),
@@ -66,7 +66,7 @@ class IClassificationFolder(model.Schema):
 
     service_in_charge = LocalRoleField(
         title=_(u"Service in charge"),
-        description=_(u"ID of the service that are in charge of this folder"),
+        # description=_(u"ID of the service that are in charge of this folder"),
         source=ServiceInChargeSourceBinder(),
         required=False,
     )
@@ -74,7 +74,7 @@ class IClassificationFolder(model.Schema):
     form.widget(services_in_copy=ChosenMultiFieldWidget)
     services_in_copy = LocalRolesField(
         title=_(u"Services in copy"),
-        description=_(u"ID of the services that can access this folder"),
+        # description=_(u"ID of the services that can access this folder"),
         value_type=schema.Choice(
             source=ServiceInCopySourceBinder(),
         ),
@@ -84,7 +84,7 @@ class IClassificationFolder(model.Schema):
     dexteritytextindexer.searchable("classification_informations")
     classification_informations = schema.TextLine(
         title=_(u"Classification informations"),
-        description=_(u"Informations"),
+        # description=_(u"Informations"),
         required=False,
     )
 

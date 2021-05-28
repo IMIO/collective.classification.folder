@@ -14,7 +14,7 @@ class IClassificationFolders(model.Schema):
 
     title = schema.TextLine(
         title=_(u"Title"),
-        description=_(u"Name of the folders container"),
+        # description=_(u"Name of the folders container"),
     )
 
 
