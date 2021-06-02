@@ -86,6 +86,15 @@
             </td>
             <td class="table_widget_value" tal:content="context/classification_informations"></td>
           </tr>
+          <tr>
+            <td class="table_widget_label">
+              <label i18n:translate="">Archived</label>
+            </td>
+            <td class="table_widget_value">
+              <span tal:condition="context/archived" i18n:translate="">Yes</span>
+              <span tal:condition="not: context/archived" i18n:translate="">No</span>
+            </td>
+          </tr>
         </table>
 
         <dl tal:define="parent python:context.aq_parent"
@@ -139,6 +148,15 @@
                     <label i18n:translate="">Classification informations</label>
                   </td>
                   <td class="table_widget_value" tal:content="parent/classification_informations"></td>
+                </tr>
+                <tr>
+                  <td class="table_widget_label">
+                    <label i18n:translate="">Archived</label>
+                  </td>
+                  <td class="table_widget_value">
+                    <span tal:condition="parent/archived" i18n:translate="">Yes</span>
+                    <span tal:condition="not: parent/archived" i18n:translate="">No</span>
+                  </td>
                 </tr>
               </table>
             </dl>

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-06-02 18:54+0000\n"
+"POT-Creation-Date: 2021-06-02 19:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,11 +21,12 @@ msgstr ""
 msgid "A classification folder's position in its hierarchy"
 msgstr ""
 
+#: ../browser/templates/folder-listing.pt:91
 #: ../content/classification_folder.py:92
 msgid "Archived"
 msgstr ""
 
-#: ../browser/templates/folder-listing.pt:95
+#: ../browser/templates/folder-listing.pt:104
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
 msgstr ""
@@ -113,10 +114,14 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-#: ../browser/templates/folder-listing.pt:101
+#: ../browser/templates/folder-listing.pt:110
 #: ../content/classification_folder.py:46
 #: ../vocabularies.py:11
 msgid "Name"
+msgstr ""
+
+#: ../browser/templates/folder-listing.pt:95
+msgid "No"
 msgstr ""
 
 #: ../vocabularies.py:9
@@ -153,6 +158,10 @@ msgstr ""
 #: ../profiles/default/types/ClassificationFolders.xml
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "View"
+msgstr ""
+
+#: ../browser/templates/folder-listing.pt:94
+msgid "Yes"
 msgstr ""
 
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
