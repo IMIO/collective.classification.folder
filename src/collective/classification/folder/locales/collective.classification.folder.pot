@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-05-26 18:01+0000\n"
+"POT-Creation-Date: 2021-06-02 18:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,10 @@ msgstr ""
 msgid "A classification folder's position in its hierarchy"
 msgstr ""
 
+#: ../content/classification_folder.py:92
+msgid "Archived"
+msgstr ""
+
 #: ../browser/templates/folder-listing.pt:95
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
@@ -35,7 +39,7 @@ msgid "Classification Subfolder"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:59
-#: ../content/classification_folder.py:59
+#: ../content/classification_folder.py:60
 #: ../vocabularies.py:12
 msgid "Classification categories"
 msgstr ""
@@ -52,14 +56,14 @@ msgstr ""
 msgid "Classification folders"
 msgstr ""
 
-#: ../browser/faceted.py:145
+#: ../browser/faceted.py:150
 #: ../browser/templates/folder-listing.pt:53
-#: ../content/classification_folder.py:51
+#: ../content/classification_folder.py:52
 msgid "Classification identifier"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:85
-#: ../content/classification_folder.py:84
+#: ../content/classification_folder.py:86
 msgid "Classification informations"
 msgstr ""
 
@@ -85,14 +89,6 @@ msgstr ""
 msgid "Folder listing view"
 msgstr ""
 
-#: ../content/classification_folder.py:68
-msgid "ID of the service that are in charge of this folder"
-msgstr ""
-
-#: ../content/classification_folder.py:75
-msgid "ID of the services that can access this folder"
-msgstr ""
-
 #: ../vocabularies.py:10
 msgid "Identifier"
 msgstr ""
@@ -101,17 +97,12 @@ msgstr ""
 msgid "Import folders"
 msgstr ""
 
-#: ../content/classification_folder.py:85
 #: ../vocabularies.py:13
 msgid "Informations"
 msgstr ""
 
-#: ../configure.zcml:35
+#: ../configure.zcml:36
 msgid "Installs the collective.classification.folder add-on."
-msgstr ""
-
-#: ../content/classification_folder.py:60
-msgid "List of categories / subcategories"
 msgstr ""
 
 #: ../behaviors/classification_folder.py:32
@@ -123,17 +114,9 @@ msgid "Metadata"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:101
-#: ../content/classification_folder.py:45
+#: ../content/classification_folder.py:46
 #: ../vocabularies.py:11
 msgid "Name"
-msgstr ""
-
-#: ../content/classification_folder.py:46
-msgid "Name of the folder"
-msgstr ""
-
-#: ../content/classification_folders.py:17
-msgid "Name of the folders container"
 msgstr ""
 
 #: ../vocabularies.py:9
@@ -141,16 +124,16 @@ msgid "Parent Identifier"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:69
-#: ../content/classification_folder.py:67
+#: ../content/classification_folder.py:68
 msgid "Service in charge"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:75
-#: ../content/classification_folder.py:74
+#: ../content/classification_folder.py:76
 msgid "Services in copy"
 msgstr ""
 
-#: ../content/classification_folder.py:102
+#: ../content/classification_folder.py:110
 msgid "The classification identifier must be unique to this folder."
 msgstr ""
 
@@ -162,12 +145,8 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: ../configure.zcml:44
+#: ../configure.zcml:45
 msgid "Uninstalls the collective.classification.folder add-on."
-msgstr ""
-
-#: ../content/classification_folder.py:52
-msgid "Unique identifier of the folder"
 msgstr ""
 
 #: ../profiles/default/types/ClassificationFolder.xml
@@ -177,14 +156,14 @@ msgid "View"
 msgstr ""
 
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
-#: ../content/classification_folder.py:137
+#: ../content/classification_folder.py:145
 msgid "cannot_delete_referenced_folder"
 msgstr ""
 
-#: ../configure.zcml:35
+#: ../configure.zcml:36
 msgid "collective.classification.folder"
 msgstr ""
 
-#: ../configure.zcml:44
+#: ../configure.zcml:45
 msgid "collective.classification.folder (uninstall)"
 msgstr ""

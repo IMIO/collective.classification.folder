@@ -88,6 +88,12 @@ class IClassificationFolder(model.Schema):
         required=False,
     )
 
+    archived = schema.Bool(
+        title=_(u"Archived"),
+        required=False,
+        default=False,
+    )
+
     @invariant
     def unique_identifier_invariant(data):
         try:
