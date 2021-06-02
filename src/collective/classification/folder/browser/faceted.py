@@ -140,6 +140,11 @@ class FolderTitleColumn(PrettyLinkColumn):
         "display_tag_title": False,
     }
 
+    def contentValue(self, item):
+        if hasattr(item, "get_full_title"):
+            return item.get_full_title()
+        return None
+
 
 class ClassificationFolderIdColumn(BaseColumn):
     header = _(u"Classification identifier")
