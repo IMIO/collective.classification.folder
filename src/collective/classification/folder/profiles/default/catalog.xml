@@ -14,4 +14,9 @@
  </index>
  <column value="classification_identifier"/>
 
+ <index name="service_in_charge" meta_type="FieldIndex">
+  <indexed_attr value="service_in_charge"/>
+ </index>
+ <column value="service_in_charge"/>
+
 </object>
