@@ -33,23 +33,6 @@
       permission="zope2.View"
       />
 
-      <adapter
-        for="collective.classification.folder.content.classification_folders.IClassificationFolders
-             zope.publisher.interfaces.browser.IBrowserRequest
-             collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
-        factory="collective.classification.folder.browser.faceted.FolderTitleColumn"
-        provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
-        name="pretty_link"
-        />
-
-  <adapter
-     for="collective.classification.folder.content.classification_folders.IClassificationFolders
-          zope.publisher.interfaces.browser.IBrowserRequest
-          collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
-     factory="collective.classification.folder.browser.faceted.ClassificationFolderIdColumn"
-     provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
-     name="classification_identifier" />
-
   <browser:page
       for="eea.facetednavigation.interfaces.IPossibleFacetedNavigable"
       name="classification-folder-faceted.xml"
@@ -78,6 +61,44 @@
     class=".helper.ClassificationHelper"
     permission="cmf.AddPortalContent"
     allowed_interface="collective.classification.tree.browser.helper.IClassificationHelper"
+    />
+
+  <!-- columns -->
+
+  <adapter
+    for="collective.classification.folder.content.classification_folders.IClassificationFolders
+         zope.publisher.interfaces.browser.IBrowserRequest
+         collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+    factory="collective.classification.folder.browser.faceted.FolderTitleColumn"
+    provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+    name="pretty_link"
+    />
+
+  <adapter
+    for="collective.classification.folder.content.classification_folders.IClassificationFolders
+         zope.publisher.interfaces.browser.IBrowserRequest
+         collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+    factory="collective.classification.folder.browser.faceted.ClassificationFolderIdColumn"
+    provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+    name="classification_identifier"
+    />
+
+  <adapter
+    for="collective.classification.folder.content.classification_folders.IClassificationFolders
+         zope.publisher.interfaces.browser.IBrowserRequest
+         collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+    factory="collective.classification.folder.browser.faceted.ClassificationTreatingGroupColumn"
+    provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+    name="classification_treating_group"
+    />
+
+  <adapter
+    for="collective.classification.folder.content.classification_folders.IClassificationFolders
+         zope.publisher.interfaces.browser.IBrowserRequest
+         collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+    factory="collective.classification.folder.browser.faceted.ClassificationTreeIdentifiersColumn"
+    provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+    name="classification_tree_identifiers"
     />
 
 

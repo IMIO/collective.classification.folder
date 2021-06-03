@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from collective.classification.folder import _
@@ -5,6 +7,7 @@ from collective.classification.folder.content.vocabularies import ServiceInCharg
 from collective.classification.folder.content.vocabularies import ServiceInCopySource
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
+from collective.eeafaceted.z3ctable.columns import VocabularyColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
@@ -81,6 +84,8 @@ class FoldersFacetedTableView(FacetedTableView):
         return [
             u"pretty_link",
             u"classification_identifier",
+            u"classification_tree_identifiers",
+            u"classification_treating_group",
             u"ModificationDate",
             u"CreationDate",
         ]
@@ -149,7 +154,6 @@ class FolderTitleColumn(PrettyLinkColumn):
 class ClassificationFolderIdColumn(BaseColumn):
     header = _(u"Classification identifier")
     sort_index = "classification_identifier"
-    weight = 0
 
     def renderCell(self, item):
         value = self.getValue(item)
@@ -157,3 +161,21 @@ class ClassificationFolderIdColumn(BaseColumn):
             value = u"-"
         value = safe_unicode(value)
         return value
+
+
+class ClassificationTreatingGroupColumn(VocabularyColumn):
+    header = _(u"Service in charge")
+    attrName = u"service_in_charge"
+
+    @property
+    def _cached_vocab_instance(self):
+        if not hasattr(self, "_cached_vocab_instance_value"):
+            vocabulary = ServiceInChargeSource(self.context).vocabulary
+            self._cached_vocab_instance_value = vocabulary
+        return self._cached_vocab_instance_value
+
+
+class ClassificationTreeIdentifiersColumn(VocabularyColumn):
+    header = _(u"Classification categories")
+    attrName = u"classification_categories"
+    vocabulary = u"collective.classification.vocabularies:tree"
