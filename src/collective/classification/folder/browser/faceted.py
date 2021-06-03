@@ -78,9 +78,10 @@ class Criteria(eeaCriteria):
 
 
 class FoldersFacetedTableView(FacetedTableView):
+    ignoreColumnWeight = True
+
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
-
         return [
             u"pretty_link",
             u"classification_identifier",
@@ -92,13 +93,16 @@ class FoldersFacetedTableView(FacetedTableView):
 
 
 class FolderFacetedTableView(FacetedTableView):
+    ignoreColumnWeight = True
+
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
-
         return [
             u"pretty_link",
+            u"review_state",
             u"ModificationDate",
             u"CreationDate",
+            u"actions",
         ]
 
 
