@@ -23,5 +23,5 @@ class ClassificationSubfolder(Item):
     def get_full_title(self):
         parent = aq_parent(self)
         if parent:
-            return u"{0} / {1}".format(parent.Title(), self.Title())
+            return u"{0} / {1}".format(parent.Title().decode('utf8'), self.Title().decode('utf8'))
         return self.Title()
