@@ -5,6 +5,9 @@ from Products.Five.browser import BrowserView
 from collective.classification.folder import _
 from collective.classification.folder.content.vocabularies import ServiceInChargeSource
 from collective.classification.folder.content.vocabularies import ServiceInCopySource
+from collective.classification.folder.content.vocabularies import (
+    ClassificationFolderSource,
+)
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import VocabularyColumn
@@ -183,3 +186,47 @@ class ClassificationTreeIdentifiersColumn(VocabularyColumn):
     header = _(u"Classification categories")
     attrName = u"classification_categories"
     vocabulary = u"collective.classification.vocabularies:tree"
+
+
+class ClassificationFoldersColumn(VocabularyColumn):
+    header = _(u"Classification folders")
+    attrName = u"classification_folders"
+
+    @property
+    def _cached_vocab_instance(self):
+        if not hasattr(self, "_cached_vocab_instance_value"):
+            vocabulary = ClassificationFolderSource(self.context).vocabulary
+            self._cached_vocab_instance_value = vocabulary
+        return self._cached_vocab_instance_value
+
+    def _render_link(self, value):
+        return u"<a href='{url}' target='_blank'>{value}</a>".format(
+            url=api.content.get(UID=value).absolute_url(),
+            value=safe_unicode(self._cached_vocab_instance.getTerm(value).title),
+        )
+
+    def renderCell(self, item):
+        value = self.getValue(item)
+        if not value or value == self.ignored_value:
+            return u"-"
+
+        # caching when several same values in same column
+        if self.use_caching:
+            res = self._get_cached_result(value)
+            if res:
+                return res
+
+        # make sure we have an iterable
+        if not hasattr(value, "__iter__"):
+            value = [value]
+        res = []
+        for v in value:
+            try:
+                res.append(safe_unicode(self._render_link(v)))
+            except LookupError:
+                # in case an element is not in the vocabulary, add the value
+                res.append(safe_unicode(v))
+        res = ", ".join(res)
+        if self.use_caching:
+            self._store_cached_result(value, res)
+        return res
