@@ -119,6 +119,23 @@
     name="classification_tree_identifiers"
     />
 
+  <!-- faceted autocomplete -->
+
+  <browser:view
+    for="*"
+    provides="eea.faceted.vocabularies.autocomplete.IAutocompleteSuggest"
+    name="folder-autocomplete-suggest"
+    class=".autocomplete.FolderSuggest"
+    permission="zope2.View"
+    />
+
+  <browser:view
+    for="*"
+    provides="eea.faceted.vocabularies.autocomplete.IAutocompleteSuggest"
+    name="classificationcategory-autocomplete-suggest"
+    class=".autocomplete.ClassificationCategorySuggest"
+    permission="zope2.View"
+    />
 
   <!-- Set overrides folder for Just-a-Bunch-Of-Templates product -->
   <include package="z3c.jbot" file="meta.zcml" />
