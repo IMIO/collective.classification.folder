@@ -14,7 +14,9 @@ from plone import schema
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from zope.component import adapter
-from zope.interface import implementer, Interface, provider
+from zope.interface import implementer
+from zope.interface import Interface
+from zope.interface import provider
 
 
 class IClassificationFolderMarker(Interface):
@@ -52,3 +54,13 @@ class ClassificationFolder(object):
     @classification_folders.setter
     def classification_folders(self, value):
         self.context.classification_folders = value
+
+    @property
+    def classification_categories(self):
+        if hasattr(self.context, 'classification_categories'):
+            return self.context.classification_categories
+        return None
+
+    @classification_categories.setter
+    def classification_categories(self, value):
+        self.context.classification_categories = value
