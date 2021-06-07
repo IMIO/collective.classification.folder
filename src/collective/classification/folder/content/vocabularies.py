@@ -18,15 +18,10 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 
 @implementer(IQuerySource)
-class ClassificationFolderSource(object):
+class BaseSourceVocabulary(object):
     def __init__(self, context):
         self.context = context
-        self.results = self.get_results()
-        terms = [
-            SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
-            for pair in self.results
-        ]
-        self.vocabulary = SimpleVocabulary(terms)
+        self._vocabulary = None
 
     def __contains__(self, term):
         return self.vocabulary.__contains__(term)
@@ -36,6 +31,60 @@ class ClassificationFolderSource(object):
 
     def __len__(self):
         return self.vocabulary.__len__()
+
+    @property
+    def _verified_user(self):
+        """Inspired by https://github.com/plone/plone.formwidget.autocomplete/issues/15
+        Return the current request user based on cookie credentials"""
+        if api.user.is_anonymous():
+            portal = api.portal.get()
+            app = portal.__parent__
+            request = portal.REQUEST
+            creds = portal.acl_users.credentials_cookie_auth.extractCredentials(request)
+            user = None
+            if "login" in creds and creds["login"]:
+                # first try the portal (non-admin accounts)
+                user = portal.acl_users.authenticate(
+                    creds["login"], creds["password"], request
+                )
+                if not user:
+                    # now try the app (i.e. the admin account)
+                    user = app.acl_users.authenticate(
+                        creds["login"], creds["password"], request
+                    )
+            return user
+        else:
+            return api.user.get_current()
+
+    def getTerm(self, value):
+        print(self, value)
+        return self.vocabulary.getTerm(value)
+
+    def getTermByToken(self, value):
+        return self.vocabulary.getTermByToken(value)
+
+    def search(self, query_string):
+        q = query_string.lower()
+        results = []
+        for term in self.vocabulary:
+            if q in term.title.lower():
+                results.append(term)
+        return results
+
+
+@implementer(IQuerySource)
+class ClassificationFolderSource(BaseSourceVocabulary):
+    @property
+    def vocabulary(self):
+        if self._vocabulary is None:
+            with api.env.adopt_user(user=self._verified_user):
+                self.results = self.get_results()
+                terms = [
+                    SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
+                    for pair in self.results
+                ]
+                self._vocabulary = SimpleVocabulary(terms)
+        return self._vocabulary
 
     def get_results(self):
         all_reading_folder_groups = ClassificationFolderGroups().reader_groups
@@ -65,20 +114,14 @@ class ClassificationFolderSource(object):
                 folder = brains[0].getObject()
                 if folder.portal_type == "ClassificationSubfolder":
                     parent = aq_parent(folder)
-                    title = u"{0} >> {1}".format(parent.title, folder.title)
+                    title = u"{0} / {1}".format(parent.title, folder.title)
                     categories.update(parent.classification_categories or [])
                 else:
                     title = folder.title
                 categories.update(folder.classification_categories or [])
-                results.append((folder_uid, title, categories))  # TODO: fix title indexation
+                results.append((folder_uid, title, categories))
 
         return sorted(results, key=itemgetter(1))
-
-    def getTerm(self, value):
-        return self.vocabulary.getTerm(value)
-
-    def getTermByToken(self, value):
-        return self.vocabulary.getTermByToken(value)
 
     def search(self, query_string, categories_filter=None):
         if categories_filter is None:
@@ -155,60 +198,6 @@ def services_in_copy_vocabulary(context=None):
         return adapter()
     factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
     return factory
-
-
-@implementer(IQuerySource)
-class BaseSourceVocabulary(object):
-    def __init__(self, context):
-        self.context = context
-        self._vocabulary = None
-
-    def __contains__(self, term):
-        return self.vocabulary.__contains__(term)
-
-    def __iter__(self):
-        return self.vocabulary.__iter__()
-
-    def __len__(self):
-        return self.vocabulary.__len__()
-
-    @property
-    def _verified_user(self):
-        """Inspired by https://github.com/plone/plone.formwidget.autocomplete/issues/15
-        Return the current request user based on cookie credentials"""
-        if api.user.is_anonymous():
-            portal = api.portal.get()
-            app = portal.__parent__
-            request = portal.REQUEST
-            creds = portal.acl_users.credentials_cookie_auth.extractCredentials(request)
-            user = None
-            if "login" in creds and creds["login"]:
-                # first try the portal (non-admin accounts)
-                user = portal.acl_users.authenticate(
-                    creds["login"], creds["password"], request
-                )
-                if not user:
-                    # now try the app (i.e. the admin account)
-                    user = app.acl_users.authenticate(
-                        creds["login"], creds["password"], request
-                    )
-            return user
-        else:
-            return api.user.get_current()
-
-    def getTerm(self, value):
-        return self.vocabulary.getTerm(value)
-
-    def getTermByToken(self, value):
-        return self.vocabulary.getTermByToken(value)
-
-    def search(self, query_string):
-        q = query_string.lower()
-        results = []
-        for term in self.vocabulary:
-            if q in term.title.lower():
-                results.append(term)
-        return results
 
 
 class ServiceInCopySource(BaseSourceVocabulary):

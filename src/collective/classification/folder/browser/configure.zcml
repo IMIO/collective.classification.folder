@@ -8,7 +8,7 @@
   <browser:page
       name="autocomplete-search"
       for=".widget.IFolderAutocompleteWidget"
-      permission="zope.Public"
+      permission="zope2.View"
       class=".widget.FolderAutocompleteSearch"
       />
 

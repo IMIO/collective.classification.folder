@@ -6,16 +6,13 @@ from plone.formwidget.autocomplete.widget import AutocompleteSearch
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.widget import FieldWidget
 from zope.interface import implementer
-from zope.interface import implementer_only
 
 
 class IFolderAutocompleteWidget(IAutocompleteWidget):
-    """Marker interface for the folder autocomplete widget
-    """
+    """Marker interface for the folder autocomplete widget"""
 
 
 class FolderAutocompleteSearch(AutocompleteSearch):
-
     def __call__(self):
 
         # We want to check that the user was indeed allowed to access the
@@ -23,9 +20,9 @@ class FolderAutocompleteSearch(AutocompleteSearch):
         # applied yet during traversal.
         self.validate_access()
 
-        query = self.request.get('q', None)
+        query = self.request.get("q", None)
         if not query:
-            return ''
+            return ""
 
         # Update the widget before accessing the source.
         # The source was only bound without security applied
@@ -44,8 +41,12 @@ class FolderAutocompleteSearch(AutocompleteSearch):
         else:
             terms = set()
 
-        return '\n'.join(["%s|%s" % (t.token, t.title or t.token)
-                            for t in sorted(terms, key=lambda t: t.title)])
+        return "\n".join(
+            [
+                "%s|%s" % (t.token, t.title or t.token)
+                for t in sorted(terms, key=lambda t: t.title)
+            ]
+        )
 
 
 @implementer(IFolderAutocompleteWidget)
