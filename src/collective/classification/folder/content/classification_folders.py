@@ -9,8 +9,7 @@ from zope.interface import implementer
 
 
 class IClassificationFolders(model.Schema):
-    """ Marker interface and Dexterity Python Schema for ClassificationFolders
-    """
+    """Marker interface and Dexterity Python Schema for ClassificationFolders"""
 
     title = schema.TextLine(
         title=_(u"Title"),
@@ -20,8 +19,7 @@ class IClassificationFolders(model.Schema):
 
 @implementer(IClassificationFolders)
 class ClassificationFolders(Container):
-    """
-    """
+    """ """
 
 
 def on_create(obj, event):

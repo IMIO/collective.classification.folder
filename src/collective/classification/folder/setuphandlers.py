@@ -20,7 +20,7 @@ def create_classification_folder_facet():
 
     # backup location to avoid redirection after enabling the facets
     response_status = folder.REQUEST.RESPONSE.getStatus()
-    response_location = folder.REQUEST.RESPONSE.getHeader('location')
+    response_location = folder.REQUEST.RESPONSE.getHeader("location")
 
     faceted_subtyper = folder.unrestrictedTraverse("@@faceted_subtyper")
     faceted_subtyper.enable()
@@ -29,7 +29,7 @@ def create_classification_folder_facet():
     faceted_exportimport._import_xml(import_file=xml)
 
     folder.REQUEST.RESPONSE.status = response_status
-    folder.REQUEST.RESPONSE.setHeader('location', response_location or '')
+    folder.REQUEST.RESPONSE.setHeader("location", response_location or "")
 
 
 @implementer(INonInstallable)

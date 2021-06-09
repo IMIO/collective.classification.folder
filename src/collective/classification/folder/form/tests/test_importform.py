@@ -84,7 +84,9 @@ class TestImportForm(unittest.TestCase):
         annotation = annotations[importform.ANNOTATION_KEY] = PersistentDict()
         annotation["separator"] = u";"
         annotation["source"] = NamedBlobFile(
-            data=self._csv.read(), contentType=u"text/csv", filename=u"test.csv",
+            data=self._csv.read(),
+            contentType=u"text/csv",
+            filename=u"test.csv",
         )
         data = {
             "column_1": "classification_categories",

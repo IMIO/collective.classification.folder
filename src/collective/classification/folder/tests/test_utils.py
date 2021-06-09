@@ -229,7 +229,7 @@ class TestUtils(unittest.TestCase):
                                 "title": u"Folder 1.2",
                                 "classification_categories": [self._get_uid(u"001.2")],
                             },
-                        ]
+                        ],
                     }
                 ]
             },
@@ -290,7 +290,7 @@ class TestUtils(unittest.TestCase):
                                 "title": u"Folder 1.2 updated",
                                 "classification_categories": [self._get_uid(u"001.1")],
                             },
-                        ]
+                        ],
                     }
                 ]
             },

@@ -25,8 +25,7 @@ class IClassificationFolderMarker(Interface):
 
 @provider(IFormFieldProvider)
 class IClassificationFolder(IClassificationCategory):
-    """
-    """
+    """ """
 
     form.widget(classification_folders=FolderAutocompleteMultiFieldWidget)
     classification_folders = schema.List(
@@ -47,7 +46,7 @@ class ClassificationFolder(object):
 
     @property
     def classification_folders(self):
-        if hasattr(self.context, 'classification_folders'):
+        if hasattr(self.context, "classification_folders"):
             return self.context.classification_folders
         return None
 
@@ -57,7 +56,7 @@ class ClassificationFolder(object):
 
     @property
     def classification_categories(self):
-        if hasattr(self.context, 'classification_categories'):
+        if hasattr(self.context, "classification_categories"):
             return self.context.classification_categories
         return None
 

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-from collective.classification.folder.content.vocabularies import ClassificationFolderSource
-from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING  # noqa
+from collective.classification.folder.content.vocabularies import (
+    ClassificationFolderSource,
+)
+from collective.classification.folder.testing import (
+    COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
+)  # noqa
 from plone import api
 from plone.app.testing import login
 from plone.app.testing import setRoles
@@ -55,7 +59,9 @@ class ClassificationFolderSourceTest(unittest.TestCase):
     def test_available_folders_as_manager(self):
         source = ClassificationFolderSource(self.portal)
         terms = [(term.value, term.title) for term in source]
-        self.assertEqual([(self.folder1_uid, u"Folder 1"), (self.folder2_uid, u"Folder 2")], terms)
+        self.assertEqual(
+            [(self.folder1_uid, u"Folder 1"), (self.folder2_uid, u"Folder 2")], terms
+        )
 
     def test_available_folders_as_groupmember(self):
         login(self.portal, "user1")
@@ -73,9 +79,9 @@ class ClassificationFolderSourceTest(unittest.TestCase):
 
         self.subfolder = api.content.create(
             container=self.folder1,
-            type='ClassificationSubfolder',
-            id='subfolder1',
-            title='Subfolder 1',
+            type="ClassificationSubfolder",
+            id="subfolder1",
+            title="Subfolder 1",
             services_in_copy=[],
         )
         self.subfolder_uid = api.content.get_uuid(self.subfolder)
@@ -83,7 +89,13 @@ class ClassificationFolderSourceTest(unittest.TestCase):
 
         source = ClassificationFolderSource(self.portal)
         terms = [(term.value, term.title) for term in source]
-        self.assertEqual([(self.folder1_uid, u"Folder 1"), (self.subfolder_uid, u"Folder 1 >> Subfolder 1")], terms)
+        self.assertEqual(
+            [
+                (self.folder1_uid, u"Folder 1"),
+                (self.subfolder_uid, u"Folder 1 >> Subfolder 1"),
+            ],
+            terms,
+        )
 
 
 class ClassificationFolderSourceClassificationsTest(unittest.TestCase):

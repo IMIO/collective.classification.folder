@@ -21,20 +21,20 @@ class BasePost(add.FolderPost):
     def reply(self):
         data = json_body(self.request)
         children = []
-        if '__children__' in data:
-            children = data.pop('__children__')
-            self.request.set('BODY', json.dumps(data))
+        if "__children__" in data:
+            children = data.pop("__children__")
+            self.request.set("BODY", json.dumps(data))
         result = super(BasePost, self).reply()
         if children:
             results = []
             for child in children:
-                context = self.context.get(result['id'])
+                context = self.context.get(result["id"])
                 request = create_request(self.request, json.dumps(child))
                 child_request = BasePost()
                 child_request.context = context
                 child_request.request = request
                 results.append(child_request.reply())
-            result['__children__'] = results
+            result["__children__"] = results
         return result
 
 
