@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
+from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.component.interfaces import ComponentLookupError
 from zope.schema.interfaces import IVocabularyFactory
 
 
@@ -137,3 +139,42 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
             )
             elements.extend(element_importer(*args))
     return elements
+
+
+def evaluate_internal_reference(context, request, number_name, expr_name):
+    settings_iface = (
+        "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
+    )
+    number = api.portal.get_registry_record(
+        settings_iface.format(number_name),
+        default=1,
+    )
+    # we get the settings view
+    try:
+        portal_state = getMultiAdapter((context, request), name=u"plone_portal_state")
+        settings_view = getMultiAdapter(
+            (portal_state.portal(), request),
+            name=u"collectiveclassificationfolder-settings",
+        )
+    except ComponentLookupError:
+        return "Error getting view..."
+
+    # we evaluate the expression
+    expression = api.portal.get_registry_record(settings_iface.format(expr_name))
+    value = settings_view.evaluate_tal_expression(
+        expression,
+        context,
+        request,
+        portal_state.portal(),
+        number,
+    )
+    return value
+
+
+def increment_internal_reference(number_name):
+    settings_iface = (
+        "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
+    )
+    key = settings_iface.format(number_name)
+    number = api.portal.get_registry_record(key, default=1)
+    api.portal.set_registry_record(key, number + 1)

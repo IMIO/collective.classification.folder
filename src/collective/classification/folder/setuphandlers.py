@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+
 from Products.CMFPlone.interfaces import INonInstallable
 from collective.classification.folder import _
 from plone import api
+from plone.registry import field
+from plone.registry import Record
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 from zope.interface import implementer
 
 
@@ -32,6 +37,41 @@ def create_classification_folder_facet():
     folder.REQUEST.RESPONSE.setHeader("location", response_location or "")
 
 
+def set_registry():
+    registry = getUtility(IRegistry)
+    settings_iface = (
+        "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
+    )
+
+    key = settings_iface.format("folder_number")
+    if not registry.get(key):
+        registry_field = field.Int(title=u"folder_number")
+        registry_record = Record(registry_field)
+        registry_record.value = 1
+        registry.records[key] = registry_record
+
+    key = settings_iface.format("folder_talexpression")
+    if not registry.get(key):
+        registry_field = field.TextLine(title=u"folder_talexpression")
+        registry_record = Record(registry_field)
+        registry_record.value = u"python:'F%04d'%int(number)"
+        registry.records[key] = registry_record
+
+    key = settings_iface.format("subfolder_number")
+    if not registry.get(key):
+        registry_field = field.Int(title=u"subfolder_number")
+        registry_record = Record(registry_field)
+        registry_record.value = 1
+        registry.records[key] = registry_record
+
+    key = settings_iface.format("subfolder_talexpression")
+    if not registry.get(key):
+        registry_field = field.TextLine(title=u"subfolder_talexpression")
+        registry_record = Record(registry_field)
+        registry_record.value = u"python:'S%04d'%int(number)"
+        registry.records[key] = registry_record
+
+
 @implementer(INonInstallable)
 class HiddenProfiles(object):
     def getNonInstallableProfiles(self):
@@ -44,6 +84,7 @@ def post_install(context):
     # Do something at the end of the installation of this package.
 
     create_classification_folder_facet()
+    set_registry()
 
 
 def uninstall(context):

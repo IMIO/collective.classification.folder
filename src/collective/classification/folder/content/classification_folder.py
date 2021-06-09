@@ -3,6 +3,7 @@
 from Products.statusmessages.interfaces import IStatusMessage
 from collective import dexteritytextindexer
 from collective.classification.folder import _
+from collective.classification.folder import utils
 from collective.classification.folder.browser.faceted import (
     IClassificationFacetedNavigable,
 )
@@ -128,6 +129,9 @@ class ClassificationFolder(Container):
     service_in_charge = FieldProperty(IClassificationFolder[u"service_in_charge"])
     services_in_copy = FieldProperty(IClassificationFolder[u"services_in_copy"])
 
+    def _increment_internal_reference(self):
+        utils.increment_internal_reference("folder_number")
+
 
 def on_create(obj, event):
     notify(FacetedWillBeEnabledEvent(obj))
@@ -146,6 +150,9 @@ def on_create(obj, event):
         alsoProvides(obj, INextPrevNotNavigable)
 
     IFacetedLayout(obj).update_layout("folder-listing-view")
+
+    # We use a method to allow override by subfolder
+    obj._increment_internal_reference()
 
 
 def on_delete(obj, event):

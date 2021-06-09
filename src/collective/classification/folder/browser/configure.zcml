@@ -5,6 +5,8 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="collective.classification.folder">
 
+  <include package="plone.app.controlpanel" file="permissions.zcml" />
+
   <browser:page
       name="autocomplete-search"
       for=".widget.IFolderAutocompleteWidget"
@@ -61,6 +63,15 @@
     class=".helper.ClassificationHelper"
     permission="cmf.AddPortalContent"
     allowed_interface="collective.classification.tree.browser.helper.IClassificationHelper"
+    />
+
+  <!-- settings -->
+
+  <browser:page
+    name="collectiveclassificationfolder-settings"
+    for="Products.CMFCore.interfaces.ISiteRoot"
+    permission="plone.app.controlpanel.Site"
+    class=".settings.SettingsView"
     />
 
   <!-- columns -->

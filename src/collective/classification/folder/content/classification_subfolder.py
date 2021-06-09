@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_parent
+from collective.classification.folder import utils
 from collective.classification.folder.content.classification_folder import (
     IClassificationFolder,
 )
@@ -27,3 +28,6 @@ class ClassificationSubfolder(Item):
                 parent.Title().decode("utf8"), self.Title().decode("utf8")
             )
         return self.Title()
+
+    def _increment_internal_reference(self):
+        utils.increment_internal_reference("subfolder_number")

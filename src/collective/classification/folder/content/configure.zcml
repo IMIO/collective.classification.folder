@@ -50,6 +50,11 @@
 
   <adapter
     name="default"
+    factory=".dataprovider.FolderDataProvider"
+    />
+
+  <adapter
+    name="default"
     factory=".dataprovider.SubfolderDataProvider"
     />
 
