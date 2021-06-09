@@ -37,6 +37,15 @@ from zope.interface import Invalid
 from zope.interface import invariant
 from zope.schema.fieldproperty import FieldProperty
 
+import pkg_resources
+
+try:
+    pkg_resources.get_distribution("collective.querynextprev")
+except pkg_resources.DistributionNotFound:
+    HAS_QUERYNEXTPREV = False
+else:
+    HAS_QUERYNEXTPREV = True
+
 
 class IClassificationFolder(model.Schema):
     """Marker interface and Dexterity Python Schema for ClassificationFolder"""
@@ -129,6 +138,11 @@ def on_create(obj, event):
     if not IHidePloneRightColumn.providedBy(obj):
         alsoProvides(obj, IHidePloneRightColumn)
     notify(FacetedEnabledEvent(obj))
+
+    if HAS_QUERYNEXTPREV:
+        from collective.querynextprev.interfaces import INextPrevNotNavigable
+
+        alsoProvides(obj, INextPrevNotNavigable)
 
     IFacetedLayout(obj).update_layout("folder-listing-view")
 
