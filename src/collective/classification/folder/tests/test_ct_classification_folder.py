@@ -110,7 +110,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
             type="ClassificationFolder",
             id="classification_folder_searchable",
             title=u"title_123",
-            classification_identifier=u"classification_identifier_123",
+            internal_reference_no=u"internal_reference_no_123",
             classification_categories=[category.UID()],
             classification_informations=u"classification_informations_123",
         )
@@ -118,7 +118,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
 
         for text in (
             u"title_123",
-            u"classification_identifier_123",
+            u"internal_reference_no_123",
             u"123456789",
             u"Category_title_123",
             u"classification_informations_123",
@@ -215,7 +215,7 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             type="ClassificationFolder",
             id="classification_folder_1",
             title=u"Folder 1",
-            classification_identifier=u"unique",
+            internal_reference_no=u"unique",
         )
         first_classification_folder.reindexObject()
 
@@ -230,7 +230,7 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             id="classification_folder_2",
             title=u"Folder 2",
             classification_categories=[self.category.UID()],
-            classification_identifier=u"unique",
+            internal_reference_no=u"unique",
         )
         errors = getValidationErrors(
             IClassificationFolder, second_classification_folder
@@ -244,14 +244,14 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             id="classification_folder_2",
             title=u"Folder 2",
             classification_categories=[self.category.UID()],
-            classification_identifier=u"future acceptable",
+            internal_reference_no=u"future acceptable",
         )
         errors = getValidationErrors(
             IClassificationFolder, second_classification_folder
         )
         self.assertEquals(len(errors), 0)
 
-        second_classification_folder.classification_identifier = u"still acceptable"
+        second_classification_folder.internal_reference_no = u"still acceptable"
         errors = getValidationErrors(
             IClassificationFolder, second_classification_folder
         )
@@ -264,7 +264,7 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             id="classification_folder_2",
             title=u"Folder 2",
             classification_categories=[self.category.UID()],
-            classification_identifier=u"future unacceptable",
+            internal_reference_no=u"future unacceptable",
         )
         second_classification_folder.reindexObject()
 
@@ -273,7 +273,7 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
         )
         self.assertEquals(len(errors), 0)
 
-        second_classification_folder.classification_identifier = u"unique"
+        second_classification_folder.internal_reference_no = u"unique"
         errors = getValidationErrors(
             IClassificationFolder, second_classification_folder
         )

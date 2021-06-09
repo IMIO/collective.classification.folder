@@ -56,8 +56,8 @@ def importer(
         root = elements[0]
     method, root_element = root
     if children:
-        if "classification_identifier" not in root_element:
-            root_element["classification_identifier"] = identifier
+        if "internal_reference_no" not in root_element:
+            root_element["internal_reference_no"] = identifier
         root_element["__children__"] = children
     return method and "PATCH" or "POST", {"data": root_element and [root_element] or []}
 
@@ -74,7 +74,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
     """Format an element for import"""
     if parent:
         existing_elements = api.content.find(
-            context=parent, classification_identifier=identifier
+            context=parent, internal_reference_no=identifier
         )
     else:
         existing_elements = []
@@ -89,7 +89,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
         exist = True
     else:
         element["@type"] = portal_type
-        element["classification_identifier"] = identifier
+        element["internal_reference_no"] = identifier
 
     if not existing_element or existing_element.title != title:
         element["title"] = title
@@ -113,7 +113,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
 
     elements = []
     if exist is True and has_change is True:
-        element["classification_identifier"] = identifier
+        element["internal_reference_no"] = identifier
 
     if portal_type == "ClassificationFolder":
         element = (exist, element)
@@ -129,7 +129,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
         for child in children:
             args = (
                 exist and existing_element or None,
-                child["classification_identifier"],
+                child["internal_reference_no"],
                 child["title"],
                 child["data"],
                 child.get("_children"),

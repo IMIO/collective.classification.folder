@@ -44,7 +44,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             return []
         return [
             {
-                "classification_identifier": k,
+                "internal_reference_no": k,
                 "title": v[0],
                 "data": v[1],
                 "_children": self._process_data(data, key=k),
@@ -58,7 +58,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         for line in csv_reader:
             line_data = {v: line[k].decode(encoding) for k, v in mapping.items()}
             parent_identifier = line_data.pop("parent_identifier") or None
-            identifier = line_data.pop("classification_identifier")
+            identifier = line_data.pop("internal_reference_no")
             title = line_data.pop("title")
             if not identifier or not title:
                 continue
@@ -73,7 +73,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         return data
 
     def _import_node(self, node):
-        args = (None, node.pop("classification_identifier"), node.pop("title"))
+        args = (None, node.pop("internal_reference_no"), node.pop("title"))
         raw_data = utils.importer(
             self.context, *args, vocabulary=self.vocabulary, **node
         )

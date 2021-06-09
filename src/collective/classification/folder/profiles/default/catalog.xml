@@ -9,10 +9,10 @@
  </index>
  <column value="classification_folders"/>
 
- <index name="classification_identifier" meta_type="FieldIndex">
-  <indexed_attr value="classification_identifier"/>
+ <index name="internal_reference_no" meta_type="FieldIndex">
+  <indexed_attr value="internal_reference_no"/>
  </index>
- <column value="classification_identifier"/>
+ <column value="internal_reference_no"/>
 
  <index name="service_in_charge" meta_type="FieldIndex">
   <indexed_attr value="service_in_charge"/>

@@ -87,7 +87,7 @@ class FoldersFacetedTableView(FacetedTableView):
         """Returns fields we want to show in the table."""
         return [
             u"pretty_link",
-            u"classification_identifier",
+            u"internal_reference_no",
             u"classification_tree_identifiers",
             u"classification_treating_group",
             u"ModificationDate",
@@ -160,7 +160,7 @@ class FolderTitleColumn(PrettyLinkColumn):
 
 class ClassificationFolderIdColumn(BaseColumn):
     header = _(u"Classification identifier")
-    sort_index = "classification_identifier"
+    sort_index = "internal_reference_no"
 
     def renderCell(self, item):
         value = self.getValue(item)

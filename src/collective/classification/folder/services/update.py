@@ -22,11 +22,11 @@ class BasePatch(update.ContentPatch):
     def reply(self):
         data = json_body(self.request)
         children = []
-        identifier = data.pop("classification_identifier", None)
+        identifier = data.pop("internal_reference_no", None)
         if not identifier:
             raise ValueError(u"Missing identifier {0}".format(identifier))
         elements = api.content.find(
-            context=self.context, classification_identifier=identifier
+            context=self.context, internal_reference_no=identifier
         )
         if not elements:
             raise ValueError(u"There is no value for identifier {0}".format(identifier))

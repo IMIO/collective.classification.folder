@@ -52,7 +52,7 @@
             <td class="table_widget_label">
               <label i18n:translate="">Classification identifier</label>
             </td>
-            <td class="table_widget_value" tal:content="context/classification_identifier"></td>
+            <td class="table_widget_value" tal:content="context/internal_reference_no"></td>
           </tr>
           <tr>
             <td class="table_widget_label">
@@ -115,7 +115,7 @@
                   <td class="table_widget_label">
                     <label i18n:translate="">Classification identifier</label>
                   </td>
-                  <td class="table_widget_value" tal:content="parent/classification_identifier"></td>
+                  <td class="table_widget_value" tal:content="parent/internal_reference_no"></td>
                 </tr>
                 <tr>
                   <td class="table_widget_label">

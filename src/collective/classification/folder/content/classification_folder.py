@@ -39,6 +39,7 @@ from zope.schema.fieldproperty import FieldProperty
 
 import pkg_resources
 
+
 try:
     pkg_resources.get_distribution("collective.querynextprev")
 except pkg_resources.DistributionNotFound:
@@ -56,8 +57,8 @@ class IClassificationFolder(model.Schema):
         # description=_(u"Name of the folder"),
     )
 
-    dexteritytextindexer.searchable("classification_identifier")
-    classification_identifier = schema.TextLine(
+    dexteritytextindexer.searchable("internal_reference_no")
+    internal_reference_no = schema.TextLine(
         title=_(u"Classification identifier"),
         # description=_(u"Unique identifier of the folder"),
         required=False,
@@ -112,7 +113,7 @@ class IClassificationFolder(model.Schema):
 
         brains = api.content.find(
             context=api.portal.get(),
-            classification_identifier=data.classification_identifier,
+            internal_reference_no=data.internal_reference_no,
         )
         if len(brains) != 0 and brains[0].UID != data_uuid:
             raise Invalid(

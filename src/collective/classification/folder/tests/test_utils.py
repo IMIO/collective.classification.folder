@@ -73,7 +73,7 @@ class TestUtils(unittest.TestCase):
                 "data": [
                     {
                         "@type": "ClassificationFolder",
-                        "classification_identifier": u"F1",
+                        "internal_reference_no": u"F1",
                         "classification_informations": None,
                         "title": u"Folder 1",
                         "classification_categories": [self._get_uid(u"001")],
@@ -87,7 +87,7 @@ class TestUtils(unittest.TestCase):
         api.content.create(
             container=self.folders,
             type="ClassificationFolder",
-            classification_identifier="F1",
+            internal_reference_no="F1",
             title="Folder 1",
             classification_categories=[self._get_uid(u"001")],
         )
@@ -118,7 +118,7 @@ class TestUtils(unittest.TestCase):
             {
                 "data": [
                     {
-                        "classification_identifier": u"F1",
+                        "internal_reference_no": u"F1",
                         "title": "Folder 1 updated",
                         "classification_categories": [self._get_uid(u"001.1")],
                     }
@@ -137,12 +137,12 @@ class TestUtils(unittest.TestCase):
             data={"classification_categories": [u"001"]},
             _children=[
                 {
-                    "classification_identifier": u"F1.1",
+                    "internal_reference_no": u"F1.1",
                     "title": u"Folder 1.1",
                     "data": {"classification_categories": [u"001.1"]},
                 },
                 {
-                    "classification_identifier": u"F1.2",
+                    "internal_reference_no": u"F1.2",
                     "title": u"Folder 1.2",
                     "data": {"classification_categories": [u"001.2"]},
                 },
@@ -154,21 +154,21 @@ class TestUtils(unittest.TestCase):
                 "data": [
                     {
                         "@type": "ClassificationFolder",
-                        "classification_identifier": u"F1",
+                        "internal_reference_no": u"F1",
                         "classification_informations": None,
                         "title": u"Folder 1",
                         "classification_categories": [self._get_uid(u"001")],
                         "__children__": [
                             {
                                 "@type": "ClassificationSubfolder",
-                                "classification_identifier": u"F1.1",
+                                "internal_reference_no": u"F1.1",
                                 "classification_informations": None,
                                 "title": u"Folder 1.1",
                                 "classification_categories": [self._get_uid(u"001.1")],
                             },
                             {
                                 "@type": "ClassificationSubfolder",
-                                "classification_identifier": u"F1.2",
+                                "internal_reference_no": u"F1.2",
                                 "classification_informations": None,
                                 "title": u"Folder 1.2",
                                 "classification_categories": [self._get_uid(u"001.2")],
@@ -184,14 +184,14 @@ class TestUtils(unittest.TestCase):
         folder = api.content.create(
             container=self.folders,
             type="ClassificationFolder",
-            classification_identifier="F1",
+            internal_reference_no="F1",
             title="Folder 1",
             classification_categories=[self._get_uid(u"001")],
         )
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
-            classification_identifier="F1.1",
+            internal_reference_no="F1.1",
             title="Folder 1.1",
             classification_categories=[self._get_uid(u"001.1")],
         )
@@ -204,12 +204,12 @@ class TestUtils(unittest.TestCase):
             data={"classification_categories": [u"001"]},
             _children=[
                 {
-                    "classification_identifier": u"F1.1",
+                    "internal_reference_no": u"F1.1",
                     "title": u"Folder 1.1",
                     "data": {"classification_categories": [u"001.1"]},
                 },
                 {
-                    "classification_identifier": u"F1.2",
+                    "internal_reference_no": u"F1.2",
                     "title": u"Folder 1.2",
                     "data": {"classification_categories": [u"001.2"]},
                 },
@@ -220,11 +220,11 @@ class TestUtils(unittest.TestCase):
             {
                 "data": [
                     {
-                        "classification_identifier": u"F1",
+                        "internal_reference_no": u"F1",
                         "__children__": [
                             {
                                 "@type": "ClassificationSubfolder",
-                                "classification_identifier": u"F1.2",
+                                "internal_reference_no": u"F1.2",
                                 "classification_informations": None,
                                 "title": u"Folder 1.2",
                                 "classification_categories": [self._get_uid(u"001.2")],
@@ -240,21 +240,21 @@ class TestUtils(unittest.TestCase):
         folder = api.content.create(
             container=self.folders,
             type="ClassificationFolder",
-            classification_identifier="F1",
+            internal_reference_no="F1",
             title="Folder 1",
             classification_categories=[self._get_uid(u"001")],
         )
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
-            classification_identifier="F1.1",
+            internal_reference_no="F1.1",
             title="Folder 1.1",
             classification_categories=[self._get_uid(u"001.1")],
         )
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
-            classification_identifier="F1.2",
+            internal_reference_no="F1.2",
             title="Folder 1.2",
             classification_categories=[self._get_uid(u"001.2")],
         )
@@ -267,12 +267,12 @@ class TestUtils(unittest.TestCase):
             data={"classification_categories": [u"001"]},
             _children=[
                 {
-                    "classification_identifier": u"F1.1",
+                    "internal_reference_no": u"F1.1",
                     "title": u"Folder 1.1",
                     "data": {"classification_categories": [u"001.1"]},
                 },
                 {
-                    "classification_identifier": u"F1.2",
+                    "internal_reference_no": u"F1.2",
                     "title": u"Folder 1.2 updated",
                     "data": {"classification_categories": [u"001.1"]},
                 },
@@ -283,10 +283,10 @@ class TestUtils(unittest.TestCase):
             {
                 "data": [
                     {
-                        "classification_identifier": u"F1",
+                        "internal_reference_no": u"F1",
                         "__children__": [
                             {
-                                "classification_identifier": u"F1.2",
+                                "internal_reference_no": u"F1.2",
                                 "title": u"Folder 1.2 updated",
                                 "classification_categories": [self._get_uid(u"001.1")],
                             },

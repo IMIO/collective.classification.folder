@@ -69,7 +69,7 @@ class TestImportForm(unittest.TestCase):
 
     def _sort_processed_data(self, data):
         """Ensure that processed data are correctly sorted before comparison"""
-        data = sorted(data, key=itemgetter("classification_identifier"))
+        data = sorted(data, key=itemgetter("internal_reference_no"))
         for element in data:
             if not element["_children"]:
                 continue
@@ -91,7 +91,7 @@ class TestImportForm(unittest.TestCase):
         data = {
             "column_1": "classification_categories",
             "column_3": "parent_identifier",
-            "column_4": "classification_identifier",
+            "column_4": "internal_reference_no",
             "column_5": "title",
         }
         self.assertEqual(0, len(self.folders))
@@ -122,18 +122,18 @@ class TestImportForm(unittest.TestCase):
         }
         expected_results = [
             {
-                "classification_identifier": u"F1",
+                "internal_reference_no": u"F1",
                 "title": u"Folder 1",
                 "data": {"classification_categories": [u"001"]},
                 "_children": [
                     {
-                        "classification_identifier": u"F1.1",
+                        "internal_reference_no": u"F1.1",
                         "title": u"Folder 1.1",
                         "data": {"classification_categories": [u"001.1"]},
                         "_children": [],
                     },
                     {
-                        "classification_identifier": u"F1.2",
+                        "internal_reference_no": u"F1.2",
                         "title": u"Folder 1.2",
                         "data": {"classification_categories": [u"001.2"]},
                         "_children": [],
@@ -141,18 +141,18 @@ class TestImportForm(unittest.TestCase):
                 ],
             },
             {
-                "classification_identifier": u"F2",
+                "internal_reference_no": u"F2",
                 "title": u"Folder 2",
                 "data": {"classification_categories": [u"002"]},
                 "_children": [
                     {
-                        "classification_identifier": u"F2.1A",
+                        "internal_reference_no": u"F2.1A",
                         "title": u"Folder 2.1 A",
                         "data": {"classification_categories": [u"002.1"]},
                         "_children": [],
                     },
                     {
-                        "classification_identifier": u"F2.1B",
+                        "internal_reference_no": u"F2.1B",
                         "title": u"Folder 2.1 B",
                         "data": {"classification_categories": [u"002.1"]},
                         "_children": [],
@@ -170,7 +170,7 @@ class TestImportForm(unittest.TestCase):
         data = {
             "column_1": "classification_categories",
             "column_3": "parent_identifier",
-            "column_4": "classification_identifier",
+            "column_4": "internal_reference_no",
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
@@ -207,7 +207,7 @@ class TestImportForm(unittest.TestCase):
         data = {
             "column_1": "classification_categories",
             "column_3": "parent_identifier",
-            "column_4": "classification_identifier",
+            "column_4": "internal_reference_no",
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
