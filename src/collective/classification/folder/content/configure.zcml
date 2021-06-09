@@ -26,8 +26,6 @@
         handler=".classification_folder.on_delete"
         />
 
-    <adapter name="ClassificationFolderSort" factory=".indexers.classification_folder_sort" />
-
     <utility
         provides="zope.schema.interfaces.IVocabularyFactory"
         factory=".vocabularies.services_in_charge_vocabulary"
@@ -39,5 +37,15 @@
         factory=".vocabularies.services_in_charge_vocabulary"
         name="collective.classification.folder.vocabularies:services_in_copy"
         />
+
+  <adapter
+    name="ClassificationFolderSort"
+    factory=".indexers.classification_folder_sort"
+    />
+
+  <adapter
+    name="ClassificationSubfolder.SearchableTextIndexer"
+    factory=".indexers.ClassificationSubfolderSearchableText"
+    />
 
 </configure>

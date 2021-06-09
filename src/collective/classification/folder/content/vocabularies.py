@@ -57,7 +57,6 @@ class BaseSourceVocabulary(object):
             return api.user.get_current()
 
     def getTerm(self, value):
-        print(self, value)
         return self.vocabulary.getTerm(value)
 
     def getTermByToken(self, value):
