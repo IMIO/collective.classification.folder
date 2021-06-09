@@ -48,4 +48,9 @@
     factory=".indexers.ClassificationSubfolderSearchableText"
     />
 
+  <adapter
+    name="default"
+    factory=".dataprovider.SubfolderDataProvider"
+    />
+
 </configure>
