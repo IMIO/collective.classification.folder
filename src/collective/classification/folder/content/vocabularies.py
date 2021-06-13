@@ -22,6 +22,7 @@ class BaseSourceVocabulary(object):
     def __init__(self, context):
         self.context = context
         self._vocabulary = None
+        self._results = None
 
     def __contains__(self, term):
         return self.vocabulary.__contains__(term)
@@ -77,13 +78,18 @@ class ClassificationFolderSource(BaseSourceVocabulary):
     def vocabulary(self):
         if self._vocabulary is None:
             with api.env.adopt_user(user=self._verified_user):
-                self.results = self.get_results()
                 terms = [
                     SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
                     for pair in self.results
                 ]
                 self._vocabulary = SimpleVocabulary(terms)
         return self._vocabulary
+
+    @property
+    def results(self):
+        if self._results is None:
+            self._results = self.get_results()
+        return self._results
 
     def get_results(self):
         all_reading_folder_groups = ClassificationFolderGroups().reader_groups
