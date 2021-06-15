@@ -18,8 +18,8 @@ class IClassificationSubfolder(IClassificationFolder):
 class ClassificationSubfolder(Item):
     """ """
 
-    service_in_charge = FieldProperty(IClassificationFolder[u"service_in_charge"])
-    services_in_copy = FieldProperty(IClassificationFolder[u"services_in_copy"])
+    treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
+    recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
 
     def get_full_title(self):
         parent = aq_parent(self)

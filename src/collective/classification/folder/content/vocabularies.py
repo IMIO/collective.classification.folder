@@ -171,17 +171,17 @@ class ClassificationFolderGroups(object):
         )
         for folder_brain in folder_brains:
             folder_obj = folder_brain.getObject()
-            reader_groups = folder_obj.services_in_copy or []
+            reader_groups = folder_obj.recipient_groups or []
             editor_groups = (
-                [folder_obj.service_in_charge] if folder_obj.service_in_charge else []
+                [folder_obj.treating_groups] if folder_obj.treating_groups else []
             )
             if folder_obj.portal_type == "ClassificationSubfolder":
                 parent_obj = aq_parent(folder_obj)
-                parent_reader_groups = parent_obj.services_in_copy or []
+                parent_reader_groups = parent_obj.recipient_groups or []
                 reader_groups = list(set(reader_groups).union(parent_reader_groups))
                 parent_editor_groups = (
-                    [parent_obj.service_in_charge]
-                    if parent_obj.service_in_charge
+                    [parent_obj.treating_groups]
+                    if parent_obj.treating_groups
                     else []
                 )
                 editor_groups = list(set(editor_groups).union(parent_editor_groups))

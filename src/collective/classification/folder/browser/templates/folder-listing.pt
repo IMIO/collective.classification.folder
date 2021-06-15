@@ -68,14 +68,14 @@
             <td class="table_widget_label">
               <label i18n:translate="">Service in charge</label>
             </td>
-            <td class="table_widget_value" tal:content="python:self.get_service_in_charge(context.service_in_charge)"></td>
+            <td class="table_widget_value" tal:content="python:self.get_service_in_charge(context.treating_groups)"></td>
           </tr>
           <tr>
             <td class="table_widget_label">
               <label i18n:translate="">Services in copy</label>
             </td>
             <td class="table_widget_value">
-              <ul tal:repeat="service context/services_in_copy">
+              <ul tal:repeat="service context/recipient_groups">
                 <li tal:content="python:self.get_service_in_copy(service)"></li>
               </ul>
             </td>
@@ -131,14 +131,14 @@
                   <td class="table_widget_label">
                     <label i18n:translate="">Service in charge</label>
                   </td>
-                  <td class="table_widget_value" tal:content="python:self.get_service_in_charge(parent.service_in_charge)"></td>
+                  <td class="table_widget_value" tal:content="python:self.get_service_in_charge(parent.treating_groups)"></td>
                 </tr>
                 <tr>
                   <td class="table_widget_label">
                     <label i18n:translate="">Services in copy</label>
                   </td>
                   <td class="table_widget_value">
-                    <ul tal:repeat="service parent/services_in_copy">
+                    <ul tal:repeat="service parent/recipient_groups">
                       <li tal:content="python:self.get_service_in_copy(service)"></li>
                     </ul>
                   </td>

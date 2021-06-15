@@ -14,9 +14,14 @@
  </index>
  <column value="internal_reference_no"/>
 
- <index name="service_in_charge" meta_type="FieldIndex">
-  <indexed_attr value="service_in_charge"/>
+ <index name="treating_groups" meta_type="KeywordIndex">
+  <indexed_attr value="treating_groups"/>
  </index>
- <column value="service_in_charge"/>
+ <column value="treating_groups"/>
+
+ <index name="recipient_groups" meta_type="KeywordIndex">
+  <indexed_attr value="recipient_groups"/>
+ </index>
+ <column value="recipient_groups"/>
 
 </object>

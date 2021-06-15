@@ -75,15 +75,15 @@ class IClassificationFolder(model.Schema):
         ),
     )
 
-    service_in_charge = LocalRoleField(
+    treating_groups = LocalRoleField(
         title=_(u"Service in charge"),
         # description=_(u"ID of the service that are in charge of this folder"),
         source=ServiceInChargeSourceBinder(),
         required=False,
     )
 
-    form.widget(services_in_copy=ChosenMultiFieldWidget)
-    services_in_copy = LocalRolesField(
+    form.widget(recipient_groups=ChosenMultiFieldWidget)
+    recipient_groups = LocalRolesField(
         title=_(u"Services in copy"),
         # description=_(u"ID of the services that can access this folder"),
         value_type=schema.Choice(
@@ -126,8 +126,8 @@ class IClassificationFolder(model.Schema):
 class ClassificationFolder(Container):
     """ """
 
-    service_in_charge = FieldProperty(IClassificationFolder[u"service_in_charge"])
-    services_in_copy = FieldProperty(IClassificationFolder[u"services_in_copy"])
+    treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
+    recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
 
     def _increment_internal_reference(self):
         utils.increment_internal_reference("folder_number")
@@ -138,8 +138,6 @@ def on_create(obj, event):
     alsoProvides(obj, IClassificationFacetedNavigable)
     if not IDisableSmartFacets.providedBy(obj):
         alsoProvides(obj, IDisableSmartFacets)
-    if not IHidePloneLeftColumn.providedBy(obj):
-        alsoProvides(obj, IHidePloneLeftColumn)
     if not IHidePloneRightColumn.providedBy(obj):
         alsoProvides(obj, IHidePloneRightColumn)
     notify(FacetedEnabledEvent(obj))

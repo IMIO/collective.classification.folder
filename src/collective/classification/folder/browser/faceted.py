@@ -172,7 +172,7 @@ class ClassificationFolderIdColumn(BaseColumn):
 
 class ClassificationTreatingGroupColumn(VocabularyColumn):
     header = _(u"Service in charge")
-    attrName = u"service_in_charge"
+    attrName = u"treating_groups"
 
     @property
     def _cached_vocab_instance(self):
