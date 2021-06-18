@@ -46,8 +46,8 @@ class SubfolderDataProvider(BaseDataProvider):
     def get(self):
         inherit_fields = (
             "classification_categories",
-            "service_in_charge",
-            "services_in_copy",
+            "treating_groups",
+            "recipient_groups",
         )
         if self.field.__name__ in inherit_fields:
             return getattr(self.context, self.field.__name__, None)
