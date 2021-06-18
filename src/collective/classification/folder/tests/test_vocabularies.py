@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from collective.classification.folder.content.vocabularies import (
     ClassificationFolderSource,
 )
@@ -24,8 +25,8 @@ class ClassificationFolderSourceTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
 
         user1 = api.user.create(email="user1@test.com", username="user1")
-        user2 = api.user.create(email="user2@test.com", username="user2")
-        group1 = api.group.create(
+        api.user.create(email="user2@test.com", username="user2")
+        api.group.create(
             groupname="group1",
             title=u"Group 1",
         )
@@ -43,7 +44,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
             type="ClassificationFolder",
             id="folder1",
             title=u"Folder 1",
-            services_in_copy=["group1"],
+            recipient_groups=[u"group1"],
         )
         self.folder1_uid = api.content.get_uuid(self.folder1)
 
@@ -52,7 +53,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
             type="ClassificationFolder",
             id="folder2",
             title=u"Folder 2",
-            services_in_copy=[],
+            recipient_groups=[],
         )
         self.folder2_uid = api.content.get_uuid(self.folder2)
 
@@ -82,7 +83,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
             type="ClassificationSubfolder",
             id="subfolder1",
             title="Subfolder 1",
-            services_in_copy=[],
+            recipient_groups=[],
         )
         self.subfolder_uid = api.content.get_uuid(self.subfolder)
         login(self.portal, "user1")
@@ -92,7 +93,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
         self.assertEqual(
             [
                 (self.folder1_uid, u"Folder 1"),
-                (self.subfolder_uid, u"Folder 1 >> Subfolder 1"),
+                (self.subfolder_uid, u"Folder 1 / Subfolder 1"),
             ],
             terms,
         )
@@ -177,9 +178,9 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
 
         source = ClassificationFolderSource(self.portal)
         titles = [term.title for term in source.search("Folder")]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 >> Folder 1-1", "Folder 2"])
+        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1", "Folder 2"])
         titles = [term.title for term in source.search("Folder 1")]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 >> Folder 1-1"])
+        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1"])
         titles = [term.title for term in source.search("Folder 2")]
         self.assertEqual(titles, ["Folder 2"])
 
@@ -197,7 +198,7 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
         titles = [
             term.title for term in source.search("Folder", categories_filter=[cat])
         ]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 >> Folder 1-1"])
+        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1"])
 
     def test_no_folder_matches_category(self):
         cat_used = self.category_uids["001"]
@@ -216,4 +217,4 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
             term.title
             for term in source.search("Folder", categories_filter=[cat_not_used])
         ]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 >> Folder 1-1", "Folder 2"])
+        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1", "Folder 2"])
