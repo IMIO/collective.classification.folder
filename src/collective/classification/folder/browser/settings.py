@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from collective.dms.mailcontent import _
-from plone.supermodel import model
-from zope import schema
+from collective.classification.folder import _
 from DateTime import DateTime
+from plone.app.registry.browser import controlpanel
+from plone.supermodel import model
 from Products.CMFCore.Expression import Expression
 from Products.PageTemplates.Expressions import getEngine
-from plone.app.registry.browser import controlpanel
+from zope import schema
 
 
 class IClassificationConfig(model.Schema):
