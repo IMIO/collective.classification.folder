@@ -68,7 +68,7 @@ def set_registry():
     if not registry.get(key):
         registry_field = field.TextLine(title=u"subfolder_talexpression")
         registry_record = Record(registry_field)
-        registry_record.value = u"python:'S%04d'%int(number)"
+        registry_record.value = u"python:'%s-xx'%(context.internal_reference_no)"
         registry.records[key] = registry_record
 
 
