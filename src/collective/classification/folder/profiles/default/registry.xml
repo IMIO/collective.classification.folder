@@ -21,7 +21,7 @@
      <value key="operations">
           <element>plone.app.querystring.operation.string.is</element>
      </value>
-     <value key="group" i18n:translate="">Metadata</value>
+     <value key="group" i18n:domain="plone" i18n:translate="">Metadata</value>
   </records>
 
 </registry>
