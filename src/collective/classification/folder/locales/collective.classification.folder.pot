@@ -103,7 +103,7 @@ msgstr ""
 msgid "Identifier"
 msgstr ""
 
-#: ../form/importform.py:30
+#: ../form/importform.py:38
 msgid "Import folders"
 msgstr ""
 

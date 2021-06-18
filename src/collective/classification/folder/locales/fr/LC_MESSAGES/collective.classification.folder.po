@@ -100,7 +100,7 @@ msgstr "Vue farde avec dashboard"
 msgid "Identifier"
 msgstr "Identifiant"
 
-#: ../form/importform.py:30
+#: ../form/importform.py:38
 msgid "Import folders"
 msgstr "Importation des dossiers"
 
