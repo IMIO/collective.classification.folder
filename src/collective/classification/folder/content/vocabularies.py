@@ -194,7 +194,7 @@ def services_in_charge_vocabulary(context=None):
     if adapter:
         return adapter()
     factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
-    return factory
+    return factory(context)
 
 
 def services_in_copy_vocabulary(context=None):
@@ -202,7 +202,7 @@ def services_in_copy_vocabulary(context=None):
     if adapter:
         return adapter()
     factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
-    return factory
+    return factory(context)
 
 
 class ServiceInCopySource(BaseSourceVocabulary):
