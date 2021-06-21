@@ -108,10 +108,11 @@ class IClassificationFolder(model.Schema):
     @invariant
     def unique_identifier_invariant(data):
         data_uuid = None
+        portal_types = ("ClassificationFolder", "ClassificationSubfolder")
         if getattr(data, "__context__", None):
             # Editing existing content
             data_uuid = api.content.get_uuid(data.__context__)
-        elif IClassificationFolder.providedBy(data):
+        elif getattr(data, "portal_type", None) in portal_types:
             data_uuid = api.content.get_uuid(data)
 
         brains = api.content.find(
