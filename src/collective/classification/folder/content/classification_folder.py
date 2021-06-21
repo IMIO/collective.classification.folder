@@ -21,7 +21,6 @@ from eea.facetednavigation.events import FacetedEnabledEvent
 from eea.facetednavigation.events import FacetedWillBeEnabledEvent
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
-from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
 from plone import api
 from plone.autoform import directives as form
@@ -110,10 +109,17 @@ class IClassificationFolder(model.Schema):
         data_uuid = None
         portal_types = ("ClassificationFolder", "ClassificationSubfolder")
         if getattr(data, "__context__", None):
-            # Editing existing content
-            data_uuid = api.content.get_uuid(data.__context__)
+            try:
+                data_uuid = api.content.get_uuid(data.__context__)
+            except TypeError:
+                # This can happen during creation with API
+                pass
         elif getattr(data, "portal_type", None) in portal_types:
-            data_uuid = api.content.get_uuid(data)
+            try:
+                data_uuid = api.content.get_uuid(data)
+            except TypeError:
+                # This can happen during creation with API
+                pass
 
         brains = api.content.find(
             context=api.portal.get(),
