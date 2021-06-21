@@ -141,14 +141,15 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
     return elements
 
 
-def evaluate_internal_reference(context, request, number_name, expr_name):
+def evaluate_internal_reference(context, request, number_name, expr_name, number=None):
     settings_iface = (
         "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
     )
-    number = api.portal.get_registry_record(
-        settings_iface.format(number_name),
-        default=1,
-    )
+    if not number:
+        number = api.portal.get_registry_record(
+            settings_iface.format(number_name),
+            default=1,
+        )
     # we get the settings view
     try:
         portal_state = getMultiAdapter((context, request), name=u"plone_portal_state")

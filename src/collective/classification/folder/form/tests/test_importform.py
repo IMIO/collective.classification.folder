@@ -17,6 +17,7 @@ import unittest
 
 class TestImportForm(unittest.TestCase):
     layer = testing.COLLECTIVE_CLASSIFICATION_FOLDER_FUNCTIONAL_TESTING
+    maxDiff = 3000
 
     def setUp(self):
         self.portal = self.layer["portal"]
@@ -67,6 +68,24 @@ class TestImportForm(unittest.TestCase):
         csv.seek(0)
         return csv
 
+    @property
+    def _complex_csv(self):
+        """Return a fake csv with a more complex structure"""
+        csv = StringIO()
+        lines = [
+            # ["Code Folder", "Code Subfolder", "Folder Title", "Subfolder Title"],
+            ["001", "001.1", "Folder 1", "Subfolder 1.1"],
+            ["001", "001.2", "", "Subfolder 1.2"],
+            ["001", "", "", "Subfolder 1.3"],
+            ["002", "002.1", "Folder 2", "Subfolder 2.1"],
+            ["002", "002.1", "Folder 2", "Subfolder 2.2"],
+            ["002", "", "", "Subfolder 2.3"],
+        ]
+        for line in lines:
+            csv.write(";".join(line) + "\n")
+        csv.seek(0)
+        return csv
+
     def _sort_processed_data(self, data):
         """Ensure that processed data are correctly sorted before comparison"""
         data = sorted(data, key=itemgetter("internal_reference_no"))
@@ -83,6 +102,7 @@ class TestImportForm(unittest.TestCase):
         annotations = IAnnotations(self.folders)
         annotation = annotations[importform.ANNOTATION_KEY] = PersistentDict()
         annotation["separator"] = u";"
+        annotation["has_header"] = False
         annotation["source"] = NamedBlobFile(
             data=self._csv.read(),
             contentType=u"text/csv",
@@ -217,6 +237,82 @@ class TestImportForm(unittest.TestCase):
             None: {u"F1": (u"Folder 1", {"classification_categories": [u"001"]})},
             u"F1": {
                 u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"]}),
+            },
+        }
+        self.assertEqual(expected_result, result)
+
+    def test_process_csv_complex_titles(self):
+        """Test _process_csv for title_folder/title_subfolder"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        reader = csv.reader(self._complex_csv, delimiter=";")
+        data = {
+            "column_2": "title_folder",
+            "column_3": "title_subfolder",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {})
+        expected_result = {
+            None: {
+                "F0001": (u"Folder 1", {}),
+                "F0002": (u"Folder 2", {}),
+            },
+            "F0001": {
+                "F0001-01": (u"Subfolder 1.1", {}),
+                "F0001-02": (u"Subfolder 1.2", {}),
+                "F0001-03": (u"Subfolder 1.3", {}),
+            },
+            "F0002": {
+                "F0002-01": (u"Subfolder 2.1", {}),
+                "F0002-02": (u"Subfolder 2.2", {}),
+                "F0002-03": (u"Subfolder 2.3", {}),
+            },
+        }
+        self.assertEqual(expected_result, result)
+
+    def test_process_csv_complex_categories(self):
+        """Test _process_csv for folder_categories/subfolder_categories"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        reader = csv.reader(self._complex_csv, delimiter=";")
+        data = {
+            "column_0": "folder_categories",
+            "column_1": "subfolder_categories",
+            "column_2": "title_folder",
+            "column_3": "title_subfolder",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {})
+        expected_result = {
+            None: {
+                "F0001": (u"Folder 1", {"classification_categories": [u"001"]}),
+                "F0002": (u"Folder 2", {"classification_categories": [u"002"]}),
+            },
+            "F0001": {
+                "F0001-01": (
+                    u"Subfolder 1.1",
+                    {"classification_categories": [u"001.1"]},
+                ),
+                "F0001-02": (
+                    u"Subfolder 1.2",
+                    {"classification_categories": [u"001.2"]},
+                ),
+                "F0001-03": (
+                    u"Subfolder 1.3",
+                    {"classification_categories": [u"001"]},
+                ),
+            },
+            "F0002": {
+                "F0002-01": (
+                    u"Subfolder 2.1",
+                    {"classification_categories": [u"002.1"]},
+                ),
+                "F0002-02": (
+                    u"Subfolder 2.2",
+                    {"classification_categories": [u"002.1"]},
+                ),
+                "F0002-03": (
+                    u"Subfolder 2.3",
+                    {"classification_categories": [u"002"]},
+                ),
             },
         }
         self.assertEqual(expected_result, result)
