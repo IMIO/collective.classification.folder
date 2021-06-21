@@ -2,16 +2,18 @@
 
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
+from plone.batching import Batch
 from collective.classification.folder import _
-from collective.classification.folder.content.vocabularies import ServiceInChargeSource
-from collective.classification.folder.content.vocabularies import ServiceInCopySource
+from collective.classification.folder.browser.tables import SubFoldersFacetedTableView
 from collective.classification.folder.content.vocabularies import (
     ClassificationFolderSource,
 )
+from collective.classification.folder.content.vocabularies import ServiceInChargeSource
+from collective.classification.folder.content.vocabularies import ServiceInCopySource
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
-from collective.eeafaceted.z3ctable.columns import VocabularyColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
+from collective.eeafaceted.z3ctable.columns import VocabularyColumn
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
@@ -142,6 +144,14 @@ class FolderListingView(BrowserView):
             return self.service_in_copy_vocabulary.getTerm(value).title
         except LookupError:
             return
+
+    def get_subfolder_table(self):
+        view = SubFoldersFacetedTableView(self.context, self.request)
+        data = api.content.find(
+            context=self.context,
+            portal_type="ClassificationSubfolder",
+        )
+        return view.render_table(Batch(data, 9999))
 
 
 class FolderTitleColumn(PrettyLinkColumn):

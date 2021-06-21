@@ -97,6 +97,16 @@
           </tr>
         </table>
 
+        <dl tal:condition="python: context.portal_type == 'ClassificationFolder'"
+            id="container-collapsible"
+            class="collapsible collapsedBlockCollapsible collapsedOnLoad">
+          <dt class="collapsibleHeader" i18n:translate="">Classification Subfolders</dt>
+          <dd class="collapsibleContent" id="classification_subfolders">
+            <dl tal:content="structure self/get_subfolder_table">
+            </dl>
+          </dd>
+        </dl>
+
         <dl tal:define="parent python:context.aq_parent"
             tal:condition="python: parent.portal_type == 'ClassificationFolder'"
             id="container-collapsible"

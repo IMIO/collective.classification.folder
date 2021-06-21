@@ -130,6 +130,15 @@
     name="classification_tree_identifiers"
     />
 
+  <adapter
+    for="collective.classification.folder.content.classification_folder.IClassificationFolder
+         zope.publisher.interfaces.browser.IBrowserRequest
+         .tables.ISubfolderFacetedTable"
+    factory=".tables.SubfolderTitleColumn"
+    provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+    name="pretty_link"
+    />
+
   <!-- faceted autocomplete -->
 
   <browser:view
