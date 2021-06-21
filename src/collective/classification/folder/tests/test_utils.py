@@ -77,6 +77,7 @@ class TestUtils(unittest.TestCase):
                         "classification_informations": None,
                         "title": u"Folder 1",
                         "classification_categories": [self._get_uid(u"001")],
+                        "archived": False,
                     }
                 ]
             },
@@ -134,17 +135,20 @@ class TestUtils(unittest.TestCase):
             None,
             u"F1",
             u"Folder 1",
-            data={"classification_categories": [u"001"]},
+            data={"classification_categories": [u"001"], "archived": False},
             _children=[
                 {
                     "internal_reference_no": u"F1.1",
                     "title": u"Folder 1.1",
-                    "data": {"classification_categories": [u"001.1"]},
+                    "data": {"classification_categories": [u"001.1"], "archived": True},
                 },
                 {
                     "internal_reference_no": u"F1.2",
                     "title": u"Folder 1.2",
-                    "data": {"classification_categories": [u"001.2"]},
+                    "data": {
+                        "classification_categories": [u"001.2"],
+                        "archived": False,
+                    },
                 },
             ],
         )
@@ -158,6 +162,7 @@ class TestUtils(unittest.TestCase):
                         "classification_informations": None,
                         "title": u"Folder 1",
                         "classification_categories": [self._get_uid(u"001")],
+                        "archived": False,
                         "__children__": [
                             {
                                 "@type": "ClassificationSubfolder",
@@ -165,6 +170,7 @@ class TestUtils(unittest.TestCase):
                                 "classification_informations": None,
                                 "title": u"Folder 1.1",
                                 "classification_categories": [self._get_uid(u"001.1")],
+                                "archived": True,
                             },
                             {
                                 "@type": "ClassificationSubfolder",
@@ -172,6 +178,7 @@ class TestUtils(unittest.TestCase):
                                 "classification_informations": None,
                                 "title": u"Folder 1.2",
                                 "classification_categories": [self._get_uid(u"001.2")],
+                                "archived": False,
                             },
                         ],
                     }
@@ -228,6 +235,7 @@ class TestUtils(unittest.TestCase):
                                 "classification_informations": None,
                                 "title": u"Folder 1.2",
                                 "classification_categories": [self._get_uid(u"001.2")],
+                                "archived": False,
                             },
                         ],
                     }

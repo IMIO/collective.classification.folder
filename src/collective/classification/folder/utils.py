@@ -113,6 +113,11 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
             element[key] = values
             has_change = True
 
+    key = "archived"
+    if not existing_element or getattr(existing_element, key) != data.get(key, False):
+        element[key] = data.get(key, False)
+        has_change = True
+
     elements = []
     if exist is True and has_change is True:
         element["internal_reference_no"] = identifier

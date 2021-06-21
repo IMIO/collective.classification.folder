@@ -184,6 +184,57 @@ class TestImportForm(unittest.TestCase):
         processed_data = form._process_data(data)
         self.assertEqual(self._sort_processed_data(processed_data), expected_results)
 
+    def test_process_data_archived(self):
+        """Tests _process_data with archived informations"""
+        form = importform.ImportFormSecondStep(self.folders, {})
+        data = {
+            None: {
+                u"F1": (
+                    u"Folder 1",
+                    {"classification_categories": [u"001"], "archived": False},
+                ),
+            },
+            u"F1": {
+                u"F1.1": (
+                    u"Folder 1.1",
+                    {"classification_categories": [u"001.1"], "archived": True},
+                ),
+                u"F1.2": (
+                    u"Folder 1.2",
+                    {"classification_categories": [u"001.2"], "archived": False},
+                ),
+            },
+        }
+        expected_results = [
+            {
+                "internal_reference_no": u"F1",
+                "title": u"Folder 1",
+                "data": {"classification_categories": [u"001"], "archived": False},
+                "_children": [
+                    {
+                        "internal_reference_no": u"F1.1",
+                        "title": u"Folder 1.1",
+                        "data": {
+                            "classification_categories": [u"001.1"],
+                            "archived": True,
+                        },
+                        "_children": [],
+                    },
+                    {
+                        "internal_reference_no": u"F1.2",
+                        "title": u"Folder 1.2",
+                        "data": {
+                            "classification_categories": [u"001.2"],
+                            "archived": False,
+                        },
+                        "_children": [],
+                    },
+                ],
+            },
+        ]
+        processed_data = form._process_data(data)
+        self.assertEqual(self._sort_processed_data(processed_data), expected_results)
+
     def test_process_csv_basic(self):
         """Test _process_csv with basic csv data"""
         form = importform.ImportFormSecondStep(self.folders, {})
@@ -237,6 +288,92 @@ class TestImportForm(unittest.TestCase):
             None: {u"F1": (u"Folder 1", {"classification_categories": [u"001"]})},
             u"F1": {
                 u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"]}),
+            },
+        }
+        self.assertEqual(expected_result, result)
+
+    def test_process_csv_archived_values(self):
+        """Test _process_csv with csv data with archived informations"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["", "001", "First", "", "F1", "Folder 1", "1"],
+            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1", ""],
+            ["001", "001.2", "first 1", "F1", "F1.2", "Folder 1.2", "archived"],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_1": "classification_categories",
+            "column_3": "parent_identifier",
+            "column_4": "internal_reference_no",
+            "column_5": "title",
+            "column_6": "archived",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {})
+        expected_result = {
+            None: {
+                u"F1": (
+                    u"Folder 1",
+                    {"classification_categories": [u"001"], "archived": True},
+                )
+            },
+            u"F1": {
+                u"F1.1": (
+                    u"Folder 1.1",
+                    {"classification_categories": [u"001.1"], "archived": False},
+                ),
+                u"F1.2": (
+                    u"Folder 1.2",
+                    {"classification_categories": [u"001.2"], "archived": True},
+                ),
+            },
+        }
+        self.assertEqual(expected_result, result)
+
+    def test_process_csv_complex_archived_values(self):
+        """Test _process_csv with csv data with archived informations"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["Folder 1", "Folder 1.1", "1"],
+            ["Folder 1", "Folder 1.2", ""],
+            ["Folder 1", "Folder 1.3", "archived"],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_0": "title_folder",
+            "column_1": "title_subfolder",
+            "column_2": "archived",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {})
+        expected_result = {
+            None: {
+                "F0001": (
+                    u"Folder 1",
+                    {"archived": True},
+                )
+            },
+            "F0001": {
+                "F0001-01": (
+                    u"Folder 1.1",
+                    {"archived": True},
+                ),
+                "F0001-02": (
+                    u"Folder 1.2",
+                    {},
+                ),
+                "F0001-03": (
+                    u"Folder 1.3",
+                    {"archived": True},
+                ),
             },
         }
         self.assertEqual(expected_result, result)

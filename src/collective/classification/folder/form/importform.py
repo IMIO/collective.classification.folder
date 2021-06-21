@@ -132,6 +132,12 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             if key in line_data:
                 line_data[key] = line_data[key].split(",")
 
+    def _process_boolean_values(self, line_data):
+        boolean_values_keys = ("archived",)
+        for key in boolean_values_keys:
+            if key in line_data:
+                line_data[key] = line_data[key] and True or False
+
     def _process_with_ref(self, data, line_data):
         parent_identifier = line_data.pop("parent_identifier", None) or None
         identifier = line_data.pop("internal_reference_no")
@@ -139,6 +145,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if not identifier or not title:
             return
         self._process_multikey_values(line_data)
+        self._process_boolean_values(line_data)
         if parent_identifier not in data:
             # Using dictionary avoid duplicated informations
             data[parent_identifier] = {}
@@ -148,8 +155,14 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         folder_title = line_data.pop("title_folder", None) or None
         subfolder_title = line_data.pop("title_subfolder", None) or None
 
-        folder_mapping = {"folder_categories": "classification_categories"}
-        subfolder_mapping = {"subfolder_categories": "classification_categories"}
+        folder_mapping = {
+            "folder_categories": "classification_categories",
+            "archived": "archived",
+        }
+        subfolder_mapping = {
+            "subfolder_categories": "classification_categories",
+            "archived": "archived",
+        }
 
         folder_data = {
             v: line_data.get(k) for k, v in folder_mapping.items() if line_data.get(k)
@@ -172,6 +185,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             # Initialize first level if necessary
             data[None] = {}
         self._process_multikey_values(folder_data)
+        self._process_boolean_values(folder_data)
         if last_ref not in data[None]:
             # We need to create the folder before creating subfolders
             data[None][last_ref] = (folder_title, folder_data)
@@ -185,6 +199,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             subfolder_data[key] = folder_data[key]
         else:
             self._process_multikey_values(subfolder_data)
+        self._process_boolean_values(subfolder_data)
         if last_ref not in data:
             data[last_ref] = {}
 
