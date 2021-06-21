@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-06-18 11:25+0000\n"
+"POT-Creation-Date: 2021-06-21 19:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,8 @@ msgid "A classification folder's position in its hierarchy"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:91
-#: ../content/classification_folder.py:103
+#: ../content/classification_folder.py:102
+#: ../vocabularies.py:18
 msgid "Archived"
 msgstr ""
 
@@ -30,7 +31,7 @@ msgstr ""
 msgid "Classification Config"
 msgstr ""
 
-#: ../browser/templates/folder-listing.pt:104
+#: ../browser/templates/folder-listing.pt:114
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
 msgstr ""
@@ -43,9 +44,13 @@ msgstr ""
 msgid "Classification Subfolder"
 msgstr ""
 
-#: ../browser/faceted.py:186
+#: ../browser/templates/folder-listing.pt:103
+msgid "Classification Subfolders"
+msgstr ""
+
+#: ../browser/faceted.py:196
 #: ../browser/templates/folder-listing.pt:59
-#: ../content/classification_folder.py:71
+#: ../content/classification_folder.py:70
 msgid "Classification categories"
 msgstr ""
 
@@ -58,18 +63,18 @@ msgid "Classification folder sort"
 msgstr ""
 
 #: ../behaviors/classification_folder.py:32
-#: ../browser/faceted.py:192
+#: ../browser/faceted.py:202
 msgid "Classification folders"
 msgstr ""
 
-#: ../browser/faceted.py:162
+#: ../browser/faceted.py:172
 #: ../browser/templates/folder-listing.pt:53
-#: ../content/classification_folder.py:63
+#: ../content/classification_folder.py:62
 msgid "Classification identifier"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:85
-#: ../content/classification_folder.py:97
+#: ../content/classification_folder.py:96
 msgid "Classification informations"
 msgstr ""
 
@@ -91,6 +96,14 @@ msgstr ""
 msgid "Equivalent to a paper folder"
 msgstr ""
 
+#: ../vocabularies.py:12
+msgid "Folder Name"
+msgstr ""
+
+#: ../vocabularies.py:16
+msgid "Folder classification categories"
+msgstr ""
+
 #: ../browser/settings.py:22
 msgid "Folder internal reference default value expression"
 msgstr ""
@@ -103,11 +116,11 @@ msgstr ""
 msgid "Identifier"
 msgstr ""
 
-#: ../form/importform.py:38
+#: ../form/importform.py:78
 msgid "Import folders"
 msgstr ""
 
-#: ../vocabularies.py:13
+#: ../vocabularies.py:15
 msgid "Informations"
 msgstr ""
 
@@ -119,8 +132,8 @@ msgstr ""
 msgid "List of folders / subfolders in which this content is filed"
 msgstr ""
 
-#: ../browser/templates/folder-listing.pt:110
-#: ../content/classification_folder.py:57
+#: ../browser/templates/folder-listing.pt:120
+#: ../content/classification_folder.py:56
 #: ../vocabularies.py:11
 msgid "Name"
 msgstr ""
@@ -141,15 +154,23 @@ msgstr ""
 msgid "Parent Identifier"
 msgstr ""
 
-#: ../browser/faceted.py:174
+#: ../browser/faceted.py:184
 #: ../browser/templates/folder-listing.pt:69
-#: ../content/classification_folder.py:79
+#: ../content/classification_folder.py:78
 msgid "Service in charge"
 msgstr ""
 
 #: ../browser/templates/folder-listing.pt:75
-#: ../content/classification_folder.py:87
+#: ../content/classification_folder.py:86
 msgid "Services in copy"
+msgstr ""
+
+#: ../vocabularies.py:13
+msgid "Subfolder Name"
+msgstr ""
+
+#: ../vocabularies.py:17
+msgid "Subfolder classification categories"
 msgstr ""
 
 #: ../browser/settings.py:37
@@ -160,7 +181,7 @@ msgstr ""
 msgid "Tal expression where you can use portal, number, context, request, date as variable"
 msgstr ""
 
-#: ../content/classification_folder.py:121
+#: ../content/classification_folder.py:130
 msgid "The classification identifier must be unique to this folder."
 msgstr ""
 
@@ -191,7 +212,7 @@ msgid "Yes"
 msgstr ""
 
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
-#: ../content/classification_folder.py:165
+#: ../content/classification_folder.py:174
 msgid "cannot_delete_referenced_folder"
 msgstr ""
 
