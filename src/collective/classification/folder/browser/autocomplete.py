@@ -36,7 +36,7 @@ class ClassificationCategorySuggest(BaseSuggestView):
         result = [
             {"id": e.value, "text": e.title}
             for e in vocabulary
-            if e.title.startswith(query)
+            if query in e.title
         ]
         return self._return_result(result)
 
