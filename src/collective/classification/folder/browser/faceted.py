@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from Acquisition import aq_parent
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from plone.batching import Batch
@@ -46,10 +47,14 @@ class Criteria(eeaCriteria):
             if crit.index != u"classification_folders" or crit.widget != u"sorting":
                 self.criteria.append(crit)
 
+        default = [
+            original_context_uid,
+            "p:{0}".format(original_context_uid),
+        ]
         select_criterion = Criterion(
             **{
                 "_cid_": u"restrictfolder",
-                "widget": u"select",
+                "widget": u"multiselect",
                 "title": u"Classification folder",
                 "index": u"classification_folders",
                 "vocabulary": u"",
@@ -63,7 +68,9 @@ class Criteria(eeaCriteria):
                 "sortcountable": u"False",
                 "hidezerocount": u"False",
                 "sortreversed": u"False",
-                "default": original_context_uid,
+                "operator": u"or",
+                "multiple": True,
+                "default": default,
             }
         )
         self.criteria.append(select_criterion)
@@ -104,6 +111,7 @@ class FolderFacetedTableView(FacetedTableView):
         """Returns fields we want to show in the table."""
         return [
             u"pretty_link",
+            u"subfolder_classification_folders",
             u"review_state",
             u"ModificationDate",
             u"CreationDate",
@@ -210,10 +218,30 @@ class ClassificationFoldersColumn(VocabularyColumn):
         return self._cached_vocab_instance_value
 
     def _render_link(self, value):
-        return u"<a href='{url}' target='_blank'>{value}</a>".format(
-            url=api.content.get(UID=value).absolute_url(),
-            value=safe_unicode(self._cached_vocab_instance.getTerm(value).title),
+        obj = api.content.get(UID=value)
+        if not obj:
+            return
+        title = self._get_title(obj)
+        if not title:
+            return
+        return u"<a href='{url}' target='_blank'>{obj}</a>".format(
+            url=obj.absolute_url(),
+            obj=safe_unicode(title),
         )
+
+    def _get_title(self, obj):
+        """Extract title from object"""
+        if hasattr(obj, "get_full_title"):
+            title = obj.get_full_title()
+        else:
+            title = obj.title
+        return title
+
+    def _filter_values(self, value):
+        if value.startswith("p:"):
+            # We don't want to display indexed parents
+            return True
+        return False
 
     def renderCell(self, item):
         value = self.getValue(item)
@@ -231,12 +259,34 @@ class ClassificationFoldersColumn(VocabularyColumn):
             value = [value]
         res = []
         for v in value:
+            if self._filter_values(v):
+                continue
             try:
-                res.append(safe_unicode(self._render_link(v)))
-            except LookupError:
-                # in case an element is not in the vocabulary, add the value
+                link = self._render_link(v)
+                if link:
+                    res.append(safe_unicode(link))
+            except Exception:
+                # in case an error occured during link creation
                 res.append(safe_unicode(v))
         res = ", ".join(res)
+        if not res:
+            return u"-"
         if self.use_caching:
             self._store_cached_result(value, res)
         return res
+
+
+class SubfolderClassificationFoldersColumn(ClassificationFoldersColumn):
+    header = _(u"Classification Subfolder")
+
+    def _get_title(self, obj):
+        """Extract title from object"""
+        if obj.portal_type == "ClassificationFolder":
+            return
+        if aq_parent(obj).UID() == self.context.UID():
+            return obj.title
+        if hasattr(obj, "get_full_title"):
+            title = obj.get_full_title()
+        else:
+            title = obj.title
+        return title

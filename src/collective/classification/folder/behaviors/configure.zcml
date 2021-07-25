@@ -5,14 +5,19 @@
   xmlns:zcml="http://namespaces.zope.org/zcml"
   i18n_domain="plone">
 
-    <include package="plone.behavior" file="meta.zcml"/>
+  <include package="plone.behavior" file="meta.zcml"/>
 
-    <plone:behavior
-        title="Classification Folder"
-        description="This behavior provides a classification folder selection field"
-        provides=".classification_folder.IClassificationFolder"
-        factory=".classification_folder.ClassificationFolder"
-        marker=".classification_folder.IClassificationFolderMarker"
-        />
+  <plone:behavior
+    title="Classification Folder"
+    description="This behavior provides a classification folder selection field"
+    provides=".classification_folder.IClassificationFolder"
+    factory=".classification_folder.ClassificationFolder"
+    marker=".classification_folder.IClassificationFolderMarker"
+    />
+
+  <adapter
+    name="classification_folders"
+    factory=".classification_folder.classification_folders_indexer"
+    />
 
 </configure>
