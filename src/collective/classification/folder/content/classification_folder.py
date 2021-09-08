@@ -135,6 +135,7 @@ class IClassificationFolder(model.Schema):
 class ClassificationFolder(Container):
     """ """
 
+    __ac_local_roles_block__ = True
     treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
     recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
 
