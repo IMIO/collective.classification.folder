@@ -6,6 +6,7 @@ from collective.classification.folder.content.vocabularies import (
 from collective.classification.folder.testing import (
     COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
 )  # noqa
+from dexterity.localroles.utils import add_fti_configuration
 from plone import api
 from plone.app.testing import login
 from plone.app.testing import setRoles
@@ -23,6 +24,17 @@ class ClassificationFolderSourceTest(unittest.TestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        # we avoid Anonymous having View permission
+        self.portal.manage_permission('View', ('Contributor', 'Editor', 'Manager', 'Reader', 'Site Administrator'),
+                                      acquire=0)
+        # we configure localroles
+        roles_config = {
+            'treating_groups': {None: {'': {'roles': ['Contributor', 'Editor']}}},
+            'recipient_groups': {None: {'': {'roles': ['Reader']}}}
+        }
+        for keyname in roles_config:
+            add_fti_configuration('ClassificationFolder', roles_config[keyname], keyname=keyname)
+            add_fti_configuration('ClassificationSubfolder', roles_config[keyname], keyname=keyname)
 
         user1 = api.user.create(email="user1@test.com", username="user1")
         api.user.create(email="user2@test.com", username="user2")
@@ -93,7 +105,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
         self.assertEqual(
             [
                 (self.folder1_uid, u"Folder 1"),
-                (self.subfolder_uid, u"Folder 1 / Subfolder 1"),
+                # (self.subfolder_uid, u"Folder 1 / Subfolder 1"),
             ],
             terms,
         )

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
-from operator import itemgetter
 from plone import api
 from z3c.formwidget.query.interfaces import IQuerySource
 from zope.component import getUtility
@@ -77,12 +75,16 @@ class ClassificationFolderSource(BaseSourceVocabulary):
     @property
     def vocabulary(self):
         if self._vocabulary is None:
+            # current_user = api.user.get_current()
+            # # this is the case when calling ++widget++...
+            # if current_user.getId() is None:
+            #     return SimpleVocabulary([])
             with api.env.adopt_user(user=self._verified_user):
                 terms = [
                     SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
                     for pair in self.results
                 ]
-                self._vocabulary = SimpleVocabulary(terms)
+            self._vocabulary = SimpleVocabulary(terms)
         return self._vocabulary
 
     @property
@@ -92,41 +94,24 @@ class ClassificationFolderSource(BaseSourceVocabulary):
         return self._results
 
     def get_results(self):
-        all_reading_folder_groups = ClassificationFolderGroups().reader_groups
-
-        if getSecurityManager().checkPermission("Manage Portal", self.context):
-            accessible_folder_uids = [
-                folder_uid
-                for (folder_uid, folder_groups) in all_reading_folder_groups.items()
-            ]
-        else:
-            user = api.user.get_current()
-            # `if group` is necessary because get_groups can return None values
-            user_groups = set(
-                [group.id for group in api.group.get_groups(user=user) if group]
-            )
-            accessible_folder_uids = [
-                folder_uid
-                for (folder_uid, folder_groups) in all_reading_folder_groups.items()
-                if user_groups.intersection(folder_groups)
-            ]
-
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        folder_brains = portal_catalog.searchResults(
+            object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder",
+            sort_on="ClassificationFolderSort",
+        )
         results = []
-        for folder_uid in accessible_folder_uids:
-            brains = api.content.find(UID=folder_uid)
-            if brains:
-                categories = set([])
-                folder = brains[0].getObject()
-                if folder.portal_type == "ClassificationSubfolder":
-                    parent = aq_parent(folder)
-                    title = u"{0} / {1}".format(parent.title, folder.title)
-                    categories.update(parent.classification_categories or [])
-                else:
-                    title = folder.title
-                categories.update(folder.classification_categories or [])
-                results.append((folder_uid, title, categories))
-
-        return sorted(results, key=itemgetter(1))
+        for brain in folder_brains:
+            folder = brain.getObject()
+            categories = set([])
+            if folder.portal_type == "ClassificationSubfolder":
+                parent = aq_parent(folder)
+                title = u"{0} / {1}".format(parent.title, folder.title)
+                categories.update(parent.classification_categories or [])
+            else:
+                title = folder.title
+            categories.update(folder.classification_categories or [])
+            results.append((brain.UID, title, categories))
+        return results
 
     def search(self, query_string, categories_filter=None):
         if categories_filter is None:
@@ -154,39 +139,6 @@ class ClassificationFolderSourceBinder(object):
 
 class IClassificationFolderGroups(Interface):
     pass
-
-
-@implementer(IClassificationFolderGroups)
-class ClassificationFolderGroups(object):
-    def __init__(self):
-        self.reader_groups = {}
-        self.editor_groups = {}
-        self.enumerate_groups()
-
-    def enumerate_groups(self):
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        folder_brains = portal_catalog.searchResults(
-            object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder",
-            sort_on="getObjPositionInParent",
-        )
-        for folder_brain in folder_brains:
-            folder_obj = folder_brain.getObject()
-            reader_groups = folder_obj.recipient_groups or []
-            editor_groups = (
-                [folder_obj.treating_groups] if folder_obj.treating_groups else []
-            )
-            if folder_obj.portal_type == "ClassificationSubfolder":
-                parent_obj = aq_parent(folder_obj)
-                parent_reader_groups = parent_obj.recipient_groups or []
-                reader_groups = list(set(reader_groups).union(parent_reader_groups))
-                parent_editor_groups = (
-                    [parent_obj.treating_groups]
-                    if parent_obj.treating_groups
-                    else []
-                )
-                editor_groups = list(set(editor_groups).union(parent_editor_groups))
-            self.reader_groups[folder_brain.UID] = reader_groups
-            self.editor_groups[folder_brain.UID] = editor_groups
 
 
 def services_in_charge_vocabulary(context=None):
