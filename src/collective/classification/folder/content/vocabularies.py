@@ -75,16 +75,16 @@ class ClassificationFolderSource(BaseSourceVocabulary):
     @property
     def vocabulary(self):
         if self._vocabulary is None:
-            # current_user = api.user.get_current()
-            # # this is the case when calling ++widget++...
-            # if current_user.getId() is None:
-            #     return SimpleVocabulary([])
-            with api.env.adopt_user(user=self._verified_user):
-                terms = [
-                    SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
-                    for pair in self.results
-                ]
-            self._vocabulary = SimpleVocabulary(terms)
+            current_user = self._verified_user
+            if current_user:
+                with api.env.adopt_user(user=self._verified_user):
+                    terms = [
+                        SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
+                        for pair in self.results
+                    ]
+                self._vocabulary = SimpleVocabulary(terms)
+            else:
+                self._vocabulary = SimpleVocabulary([])
         return self._vocabulary
 
     @property
