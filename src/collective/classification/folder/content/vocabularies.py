@@ -3,7 +3,10 @@
 from Acquisition import aq_parent
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
+from imio.helpers.content import uuidToCatalogBrain
 from plone import api
+from z3c.form import util
+from z3c.form.i18n import MessageFactory as _zf
 from z3c.formwidget.query.interfaces import IQuerySource
 from zope.component import getUtility
 from zope.component import queryAdapter
@@ -129,6 +132,34 @@ class ClassificationFolderSource(BaseSourceVocabulary):
                     terms_matching_query.append(term)
 
         return terms_matching_query_and_category or terms_matching_query
+
+    def getTerm(self, value):
+        try:
+            return self.vocabulary.getTerm(value)
+        except LookupError:
+            # all form widgets are called when using plone.formwidget.masterselect on a form field
+            # this is done as anonymous and the vocabulary is then empty
+            # it's not necessary here to render the correct term
+            # see z3c.form.term
+            if '++widget++' in self.context.REQUEST.get('URL', ''):
+                return SimpleTerm(value, util.createCSSId(util.toUnicode(value)),
+                                  title=_zf(u'Missing: ${value}', mapping=dict(value=util.toUnicode(value))))
+            else:
+                # the value is private for the current user...
+                # we found it unrestrictedly (configuration choice ??)
+                brain = uuidToCatalogBrain(value, unrestricted=True)
+                if brain:
+                    folder = brain._unrestrictedGetObject()
+                    if folder.portal_type == "ClassificationSubfolder":
+                        parent = aq_parent(folder)
+                        title = u"{0} / {1}".format(parent.title, folder.title)
+                    else:
+                        title = folder.title
+                    return SimpleTerm(value=value, token=value, title=title)
+                    # needed if an editor modify the field and must save with a value not in the original voc
+                    # not working
+                    # self._vocabulary = SimpleVocabulary(self._vocabulary._terms + [term])
+            raise
 
 
 @implementer(IContextSourceBinder)
