@@ -102,9 +102,8 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder",
             sort_on="ClassificationFolderSort",
         )
-        results = []
-        for brain in folder_brains:
-            folder = brain.getObject()
+
+        def make_tuple(br, folder):
             categories = set([])
             if folder.portal_type == "ClassificationSubfolder":
                 parent = aq_parent(folder)
@@ -113,7 +112,22 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             else:
                 title = folder.title
             categories.update(folder.classification_categories or [])
-            results.append((brain.UID, title, categories))
+            return br.UID, title, categories
+
+        results = []
+        uids = []
+        for brain in folder_brains:
+            results.append(make_tuple(brain, brain.getObject()))
+            uids.append(brain.UID)
+        # check if a stored value is not in the results
+        # we assume the concerned field is 'classification_folders'
+        for uid in self.context.classification_folders or []:
+            if uid in uids:
+                continue
+            # we found it unrestrictedly (configuration choice ??)
+            brain = uuidToCatalogBrain(uid, unrestricted=True)
+            if brain:
+                results.append(make_tuple(brain, brain._unrestrictedGetObject()))
         return results
 
     def search(self, query_string, categories_filter=None):
@@ -144,21 +158,6 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             if '++widget++' in self.context.REQUEST.get('URL', ''):
                 return SimpleTerm(value, util.createCSSId(util.toUnicode(value)),
                                   title=_zf(u'Missing: ${value}', mapping=dict(value=util.toUnicode(value))))
-            else:
-                # the value is private for the current user...
-                # we found it unrestrictedly (configuration choice ??)
-                brain = uuidToCatalogBrain(value, unrestricted=True)
-                if brain:
-                    folder = brain._unrestrictedGetObject()
-                    if folder.portal_type == "ClassificationSubfolder":
-                        parent = aq_parent(folder)
-                        title = u"{0} / {1}".format(parent.title, folder.title)
-                    else:
-                        title = folder.title
-                    return SimpleTerm(value=value, token=value, title=title)
-                    # needed if an editor modify the field and must save with a value not in the original voc
-                    # not working
-                    # self._vocabulary = SimpleVocabulary(self._vocabulary._terms + [term])
             raise
 
 
