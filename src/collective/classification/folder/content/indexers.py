@@ -17,13 +17,8 @@ from zope.interface import implementer
 def classification_folder_sort(folder):
     elements = []
     if folder.portal_type == "ClassificationSubfolder":
-        elements.append(folder.title)
-        folder = aq_parent(folder)
+        elements.append(aq_parent(folder).title)
     elements.append(folder.title)
-    folders = aq_parent(folder)
-    elements.append(folders.title)
-
-    elements.reverse()
     return u"|".join(elements)
 
 
