@@ -119,12 +119,12 @@ class ClassificationFolderSource(BaseSourceVocabulary):
         for brain in folder_brains:
             results.append(make_tuple(brain, brain.getObject()))
             uids.append(brain.UID)
-        # check if a stored value is not in the results
+        # check if all stored values are in the results, so view and edit are possible
         # we assume the concerned field is 'classification_folders'
         for uid in self.context.classification_folders or []:
             if uid in uids:
                 continue
-            # we found it unrestrictedly (configuration choice ??)
+            # we found it unrestrictedly
             brain = uuidToCatalogBrain(uid, unrestricted=True)
             if brain:
                 results.append(make_tuple(brain, brain._unrestrictedGetObject()))
