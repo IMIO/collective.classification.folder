@@ -29,7 +29,7 @@ class ClassificationCategorySuggest(BaseSuggestView):
 
     def __call__(self):
         result = []
-        query = self.request.get("term")
+        query = self.request.get("term").decode("utf8")
         if not query:
             return self._return_result(result)
         vocabulary = ClassificationTreeSource(self.context).vocabulary
