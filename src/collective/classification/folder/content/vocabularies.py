@@ -107,10 +107,10 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             categories = set([])
             if folder.portal_type == "ClassificationSubfolder":
                 parent = aq_parent(folder)
-                title = u"{0} / {1}".format(parent.title, folder.title)
+                title = u"⏺ {0} ⏩ {1}".format(parent.title, folder.title)
                 categories.update(parent.classification_categories or [])
             else:
-                title = folder.title
+                title = u"⏺ {0}".format(folder.title)
             categories.update(folder.classification_categories or [])
             return br.UID, title, categories
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.formwidget.autocomplete.interfaces import IAutocompleteWidget
 from plone.formwidget.autocomplete.widget import AutocompleteMultiSelectionWidget
 from plone.formwidget.autocomplete.widget import AutocompleteSearch
@@ -79,6 +80,8 @@ class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
         });
     })(jQuery);
     """
+
+    display_template = ViewPageTemplateFile('templates/display.pt')
 
 
 @implementer(IFieldWidget)
