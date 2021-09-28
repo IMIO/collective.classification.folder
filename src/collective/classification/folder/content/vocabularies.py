@@ -121,7 +121,7 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             uids.append(brain.UID)
         # check if all stored values are in the results, so view and edit are possible
         # we assume the concerned field is 'classification_folders'
-        for uid in self.context.classification_folders or []:
+        for uid in getattr(self.context, 'classification_folders', None) or []:
             if uid in uids:
                 continue
             # we found it unrestrictedly
