@@ -32,3 +32,7 @@ class ClassificationSubfolder(Item):
 
     def _increment_internal_reference(self):
         utils.increment_internal_reference("subfolder_number")
+
+
+def on_move(obj, event):
+    obj.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])

@@ -13,6 +13,10 @@ from plone.dexterity.interfaces import IDexterityFTI
 from zExceptions import Redirect
 from zope.component import createObject
 from zope.component import queryUtility
+from zope.event import notify
+from zope.lifecycleevent import ObjectCopiedEvent
+from zope.lifecycleevent import ObjectModifiedEvent
+from zope.lifecycleevent import ObjectMovedEvent
 from zope.schema import getValidationErrors
 
 import unittest
@@ -278,3 +282,111 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             IClassificationFolder, second_classification_folder
         )
         self.assertEquals(len(errors), 1)
+
+
+class ClassificationFolderMovementTest(unittest.TestCase):
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def setUp(self):
+        """Custom shared utility setup for tests."""
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        portal_types = self.portal.portal_types
+        parent_id = portal_types.constructContent(
+            "ClassificationFolders",
+            self.portal,
+            "classification_folder",
+            title="Parent container",
+        )
+        self.parent = self.portal[parent_id]
+
+        self.category_container = api.content.create(
+            id="container", type="ClassificationContainer", container=self.portal
+        )
+        self.category = createObject("ClassificationCategory")
+        self.category.identifier = u"123456789"
+        self.category.title = u"Category title"
+        self.category_container._add_element(self.category)
+
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
+        self.first_classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder_1",
+            title=u"Folder1",
+            classification_categories=[self.category.UID()],
+        )
+        self.first_classification_folder.reindexObject()
+
+        self.first_classification_subfolder = api.content.create(
+            container=self.first_classification_folder,
+            type="ClassificationSubfolder",
+            id="classification_subfolder_1",
+            title=u"Subfolder1",
+            classification_categories=[self.category.UID()],
+        )
+        self.first_classification_subfolder.reindexObject()
+
+        self.second_classification_folder = api.content.create(
+            container=self.parent,
+            type="ClassificationFolder",
+            id="classification_folder_2",
+            title=u"Folder2",
+            classification_categories=[self.category.UID()],
+        )
+        self.second_classification_folder.reindexObject()
+
+    def tearDown(self):
+        api.content.delete(self.parent)
+        api.content.delete(self.category_container)
+
+    def get_index_data(self, obj):
+        uid = api.content.get_uuid(obj)
+        brain = api.content.find(UID=uid)[0]
+        return self.portal.portal_catalog.getIndexDataForRID(brain.getRID())
+
+    def test_basic_indexes(self):
+        subfolder_indexes = self.get_index_data(self.first_classification_subfolder)
+        self.assertEqual(subfolder_indexes["ClassificationFolderSort"], "Folder1|Subfolder1")
+        self.assertIn("folder1", subfolder_indexes["SearchableText"])
+
+    def test_rename_parent_folder(self):
+        self.first_classification_folder.title = "Folder1b"
+        notify(ObjectModifiedEvent(self.first_classification_folder))
+
+        subfolder_indexes = self.get_index_data(self.first_classification_subfolder)
+        self.assertEqual(subfolder_indexes["ClassificationFolderSort"], "Folder1b|Subfolder1")
+        self.assertIn("folder1b", subfolder_indexes["SearchableText"])
+
+    def test_move_subfolder(self):
+        cookie = self.first_classification_folder.manage_cutObjects(ids=("classification_subfolder_1",))
+        self.second_classification_folder.manage_pasteObjects(cookie)
+
+        notify(
+            ObjectMovedEvent(
+                self.first_classification_subfolder,
+                self.first_classification_folder,
+                "classification_subfolder_1",
+                self.second_classification_folder,
+                "classification_subfolder_1",
+            )
+        )
+
+        subfolder_indexes = self.get_index_data(self.first_classification_subfolder)
+        self.assertEqual(subfolder_indexes["ClassificationFolderSort"], "Folder2|Subfolder1")
+        self.assertIn("folder2", subfolder_indexes["SearchableText"])
+
+    def test_copy_subfolder(self):
+        copied_subfolder = api.content.copy(self.first_classification_subfolder, self.second_classification_folder)
+
+        notify(
+            ObjectCopiedEvent(
+                self.first_classification_subfolder,
+                copied_subfolder,
+            )
+        )
+
+        copied_subfolder_indexes = self.get_index_data(copied_subfolder)
+        self.assertEqual(copied_subfolder_indexes["ClassificationFolderSort"], "Folder2|Subfolder1")
+        self.assertIn("folder2", copied_subfolder_indexes["SearchableText"])

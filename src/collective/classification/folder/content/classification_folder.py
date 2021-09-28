@@ -163,6 +163,16 @@ def on_create(obj, event):
     obj._increment_internal_reference()
 
 
+def on_modify(obj, event):
+    obj.reindexObject(idxs=["SearchableText"])
+
+    if obj.portal_type == "ClassificationFolder":
+        for subfolder in obj.listFolderContents(
+            contentFilter={"portal_type": "ClassificationSubfolder"}
+        ):
+            subfolder.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])
+
+
 def on_delete(obj, event):
     obj_uid = api.content.get_uuid(obj)
     try:

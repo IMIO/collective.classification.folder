@@ -22,8 +22,20 @@
 
     <subscriber
         for=".classification_folder.IClassificationFolder
+             zope.lifecycleevent.IObjectModifiedEvent"
+        handler=".classification_folder.on_modify"
+        />
+
+    <subscriber
+        for=".classification_folder.IClassificationFolder
              zope.lifecycleevent.interfaces.IObjectRemovedEvent"
         handler=".classification_folder.on_delete"
+        />
+
+    <subscriber
+        for=".classification_subfolder.IClassificationSubfolder
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
+        handler=".classification_subfolder.on_move"
         />
 
     <utility
