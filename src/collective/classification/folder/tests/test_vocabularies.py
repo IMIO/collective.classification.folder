@@ -190,9 +190,9 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
 
         source = ClassificationFolderSource(self.portal)
         titles = [term.title for term in source.search("Folder")]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1", "Folder 2"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1", u"Folder 2"])
         titles = [term.title for term in source.search("Folder 1")]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1"])
         titles = [term.title for term in source.search("Folder 2")]
         self.assertEqual(titles, ["Folder 2"])
 
@@ -210,7 +210,7 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
         titles = [
             term.title for term in source.search("Folder", categories_filter=[cat])
         ]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1"])
 
     def test_no_folder_matches_category(self):
         cat_used = self.category_uids["001"]
@@ -229,4 +229,4 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
             term.title
             for term in source.search("Folder", categories_filter=[cat_not_used])
         ]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 / Folder 1-1", "Folder 2"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1", u"Folder 2"])

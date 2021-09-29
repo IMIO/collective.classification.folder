@@ -107,8 +107,8 @@
           </dd>
         </dl>
 
-        <dl tal:define="parent python:context.aq_parent"
-            tal:condition="python: parent.portal_type == 'ClassificationFolder'"
+        <dl tal:define="parent python:context.cf_parent()"
+            tal:condition="python: parent"
             id="container-collapsible"
             class="collapsible collapsedBlockCollapsible collapsedOnLoad">
           <dt class="collapsibleHeader" i18n:translate="">Classification Folder</dt>

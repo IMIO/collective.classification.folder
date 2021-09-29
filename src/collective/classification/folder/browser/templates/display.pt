@@ -16,7 +16,7 @@
                       onkeyup view/onkeyup">
   <tal:block tal:repeat="value view/displayValue">
   <span class="selected-option  "
-        tal:define="parts python:value.split(u'⏩');">
+        tal:define="parts python:value.split(u' ⏩ ');">
     <div tal:content="python:parts[0]" />
     <div style="margin-left: 20px" tal:condition="python:len(parts) > 1">
       ⏩ <span tal:replace="python:parts[1]"/>

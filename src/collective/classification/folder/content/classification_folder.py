@@ -139,6 +139,10 @@ class ClassificationFolder(Container):
     treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
     recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
 
+    def cf_parent(self):
+        """In ClassificationSubfolder, the same method returns the ClassificationFolder. Here None"""
+        return None
+
     def _increment_internal_reference(self):
         utils.increment_internal_reference("folder_number")
 

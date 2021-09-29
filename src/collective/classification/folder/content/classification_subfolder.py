@@ -22,13 +22,12 @@ class ClassificationSubfolder(Item):
     treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
     recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
 
+    def cf_parent(self):
+        """Returns ClassificationFolder"""
+        return aq_parent(self)
+
     def get_full_title(self):
-        parent = aq_parent(self)
-        if parent:
-            return u"{0} / {1}".format(
-                parent.Title().decode("utf8"), self.Title().decode("utf8")
-            )
-        return self.Title()
+        return u"{0} ⏩ {1}".format(self.cf_parent().Title().decode("utf8"), self.Title().decode("utf8"))
 
     def _increment_internal_reference(self):
         utils.increment_internal_reference("subfolder_number")

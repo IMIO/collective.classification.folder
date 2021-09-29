@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from Acquisition import aq_parent
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
 from imio.helpers.content import uuidToCatalogBrain
@@ -105,12 +104,12 @@ class ClassificationFolderSource(BaseSourceVocabulary):
 
         def make_tuple(br, folder):
             categories = set([])
-            if folder.portal_type == "ClassificationSubfolder":
-                parent = aq_parent(folder)
-                title = u"⏺ {0} ⏩ {1}".format(parent.title, folder.title)
-                categories.update(parent.classification_categories or [])
+            cf_parent = folder.cf_parent()
+            if cf_parent:
+                title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
+                categories.update(cf_parent.classification_categories or [])
             else:
-                title = u"⏺ {0}".format(folder.title)
+                title = u"{0}".format(folder.title)
             categories.update(folder.classification_categories or [])
             return br.UID, title, categories
 
