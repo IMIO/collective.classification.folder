@@ -14,13 +14,9 @@
                       onkeypress view/onkeypress;
                       onkeydown view/onkeydown;
                       onkeyup view/onkeyup">
-  <tal:block tal:repeat="value view/displayValue">
-  <span class="selected-option  "
-        tal:define="parts python:value.split(u' ⏩ ');">
-    <div tal:content="python:parts[0]" />
-    <div style="margin-left: 20px" tal:condition="python:len(parts) > 1">
-      ⏩ <span tal:replace="python:parts[1]"/>
-    </div>
-  </span>
+  <tal:block tal:define="values view/pl_items">
+    <ul tal:condition="values">
+      <li tal:repeat="value values" tal:content="structure value">folder pretty link</li>
+    </ul>
   </tal:block>
 </span>

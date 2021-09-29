@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from imio.helpers.content import uuidToObject
+from imio.prettylink.adapters import PrettyLinkAdapter
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.formwidget.autocomplete.interfaces import IAutocompleteWidget
 from plone.formwidget.autocomplete.widget import AutocompleteMultiSelectionWidget
@@ -82,6 +83,26 @@ class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
     """
 
     display_template = ViewPageTemplateFile('templates/display.pt')
+
+    def pl_items(self):
+        items = []
+        for token in self.value:
+            # Ignore no value entries. They are in the request only.
+            if token == self.noValueToken:
+                continue
+            folder = uuidToObject(token, unrestricted=True)
+            if not folder:
+                items.append(token)
+                continue
+            adapted = PrettyLinkAdapter(folder, showLockedIcon=False, target='_blank', showIcons=True,
+                                        showContentIcon=True)
+            if folder.portal_type == 'ClassificationSubfolder':
+                cf_adapted = PrettyLinkAdapter(folder.cf_parent(), showLockedIcon=False, target='_blank',
+                                               showIcons=True, showContentIcon=True)
+                items.append(cf_adapted.getLink() + u'&nbsp;' + adapted.getLink())
+            else:
+                items.append(adapted.getLink())
+        return items
 
 
 @implementer(IFieldWidget)
