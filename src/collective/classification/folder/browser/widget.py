@@ -100,7 +100,7 @@ class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
             if folder.portal_type == 'ClassificationSubfolder':
                 cf_adapted = PrettyLinkAdapter(folder.cf_parent(), showLockedIcon=False, target='_blank',
                                                showIcons=True, showContentIcon=True)
-                items.append(cf_adapted.getLink() + u'&nbsp;' + adapted.getLink())
+                items.append(cf_adapted.getLink() + adapted.getLink())
             else:
                 items.append(adapted.getLink())
         return items
