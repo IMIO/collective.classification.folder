@@ -85,6 +85,7 @@ class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
     display_template = ViewPageTemplateFile('templates/display.pt')
 
     def pl_items(self):
+        """Inspired from z3c.form.widget displayValue method"""
         items = []
         for token in self.value:
             # Ignore no value entries. They are in the request only.
