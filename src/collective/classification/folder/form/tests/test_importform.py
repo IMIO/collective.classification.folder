@@ -339,9 +339,9 @@ class TestImportForm(unittest.TestCase):
         form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
         _csv = StringIO()
         lines = [
-            ["Folder 1", "Folder 1.1", "1"],
-            ["Folder 1", "Folder 1.2", ""],
-            ["Folder 1", "Folder 1.3", "archived"],
+            ["Folder 1", "", "Folder 1.1", "1"],
+            ["Folder 1", "", "Folder 1.2", ""],
+            ["Folder 1", "", "Folder 1.3", "archived"],
         ]
         for line in lines:
             _csv.write(";".join(line) + "\n")
@@ -349,8 +349,9 @@ class TestImportForm(unittest.TestCase):
         reader = csv.reader(_csv, delimiter=";")
         data = {
             "column_0": "title_folder",
-            "column_1": "title_subfolder",
-            "column_2": "archived",
+            "column_1": "archived_folder",
+            "column_2": "title_subfolder",
+            "column_3": "archived_subfolder",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {})
@@ -358,7 +359,7 @@ class TestImportForm(unittest.TestCase):
             None: {
                 "F0001": (
                     u"Folder 1",
-                    {"archived": True},
+                    {},
                 )
             },
             "F0001": {

@@ -16,5 +16,7 @@ def import_keys_vocabulary_factory(context):
         (u"folder_categories", _(u"Folder classification categories")),
         (u"subfolder_categories", _(u"Subfolder classification categories")),
         (u"archived", _(u"Archived")),
+        (u"archived_folder", _(u"Archived folder")),
+        (u"archived_subfolder", _(u"Archived subfolder")),
     )
     return iterable_to_vocabulary(values)
