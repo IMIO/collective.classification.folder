@@ -130,7 +130,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         multi_values_keys = ("classification_categories",)
         for key in multi_values_keys:
             if key in line_data:
-                line_data[key] = line_data[key].split(",")
+                line_data[key] = [val.strip() for val in line_data[key].split(",")]
 
     def _process_boolean_values(self, line_data):
         boolean_values_keys = ("archived",)

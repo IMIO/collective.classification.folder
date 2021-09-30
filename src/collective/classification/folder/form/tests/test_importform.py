@@ -74,7 +74,7 @@ class TestImportForm(unittest.TestCase):
         csv = StringIO()
         lines = [
             # ["Code Folder", "Code Subfolder", "Folder Title", "Subfolder Title"],
-            ["001", "001.1", "Folder 1", "Subfolder 1.1"],
+            ["001", "001, 001.1", "Folder 1", "Subfolder 1.1"],
             ["001", "001.2", "", "Subfolder 1.2"],
             ["001", "", "", "Subfolder 1.3"],
             ["002", "002.1", "Folder 2", "Subfolder 2.1"],
@@ -298,7 +298,7 @@ class TestImportForm(unittest.TestCase):
         _csv = StringIO()
         lines = [
             ["", "001", "First", "", "F1", "Folder 1", "1"],
-            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1", " "],
+            ["001", "001.1, 001.2", "first 1", "F1", "F1.1", "Folder 1.1", " "],
             ["001", "001.2", "first 1", "F1", "F1.2", "Folder 1.2", "archived"],
         ]
         for line in lines:
@@ -324,7 +324,7 @@ class TestImportForm(unittest.TestCase):
             u"F1": {
                 u"F1.1": (
                     u"Folder 1.1",
-                    {"classification_categories": [u"001.1"], "archived": False},
+                    {"classification_categories": [u"001.1", u"001.2"], "archived": False},
                 ),
                 u"F1.2": (
                     u"Folder 1.2",
@@ -427,7 +427,7 @@ class TestImportForm(unittest.TestCase):
             "F0001": {
                 "F0001-01": (
                     u"Subfolder 1.1",
-                    {"classification_categories": [u"001.1"]},
+                    {"classification_categories": [u"001", u"001.1"]},
                 ),
                 "F0001-02": (
                     u"Subfolder 1.2",
