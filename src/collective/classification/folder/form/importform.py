@@ -136,7 +136,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         boolean_values_keys = ("archived",)
         for key in boolean_values_keys:
             if key in line_data:
-                line_data[key] = line_data[key] and True or False
+                line_data[key] = line_data[key].strip() and True or False
 
     def _process_with_ref(self, data, line_data):
         parent_identifier = line_data.pop("parent_identifier", None) or None

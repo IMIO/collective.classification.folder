@@ -298,7 +298,7 @@ class TestImportForm(unittest.TestCase):
         _csv = StringIO()
         lines = [
             ["", "001", "First", "", "F1", "Folder 1", "1"],
-            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1", ""],
+            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1", " "],
             ["001", "001.2", "first 1", "F1", "F1.2", "Folder 1.2", "archived"],
         ]
         for line in lines:
@@ -340,7 +340,7 @@ class TestImportForm(unittest.TestCase):
         _csv = StringIO()
         lines = [
             ["Folder 1", "", "Folder 1.1", "1"],
-            ["Folder 1", "", "Folder 1.2", ""],
+            ["Folder 1", "", "Folder 1.2", " "],
             ["Folder 1", "", "Folder 1.3", "archived"],
         ]
         for line in lines:
@@ -369,7 +369,7 @@ class TestImportForm(unittest.TestCase):
                 ),
                 "F0001-02": (
                     u"Folder 1.2",
-                    {},
+                    {"archived": False},
                 ),
                 "F0001-03": (
                     u"Folder 1.3",
