@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-06-21 19:43+0000\n"
+"POT-Creation-Date: 2021-09-30 07:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,6 +24,14 @@ msgstr "Position d'une farde dans sa hiérarchie"
 msgid "Archived"
 msgstr "Archivé"
 
+#: ../vocabularies.py:19
+msgid "Archived folder"
+msgstr "Archivé pour la farde"
+
+#: ../vocabularies.py:20
+msgid "Archived subfolder"
+msgstr "Archivé pour la chemise"
+
 #: ../browser/settings.py:51
 msgid "Classification Config"
 msgstr "Gestion de dossiers"
@@ -37,6 +45,7 @@ msgstr "Farde"
 msgid "Classification Folders"
 msgstr "Dossiers"
 
+#: ../browser/faceted.py:280
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "Classification Subfolder"
 msgstr "Chemise"
@@ -45,7 +54,7 @@ msgstr "Chemise"
 msgid "Classification Subfolders"
 msgstr "Chemises de la farde"
 
-#: ../browser/faceted.py:196
+#: ../browser/faceted.py:204
 #: ../browser/templates/folder-listing.pt:59
 #: ../content/classification_folder.py:70
 msgid "Classification categories"
@@ -59,12 +68,12 @@ msgstr "Config dashboard farde"
 msgid "Classification folder sort"
 msgstr "Tri des fardes"
 
-#: ../behaviors/classification_folder.py:32
-#: ../browser/faceted.py:202
+#: ../behaviors/classification_folder.py:36
+#: ../browser/faceted.py:210
 msgid "Classification folders"
 msgstr "Dossiers"
 
-#: ../browser/faceted.py:172
+#: ../browser/faceted.py:180
 #: ../browser/templates/folder-listing.pt:53
 #: ../content/classification_folder.py:62
 msgid "Classification identifier"
@@ -125,7 +134,7 @@ msgstr "Informations"
 msgid "Installs the collective.classification.folder add-on."
 msgstr "Installs the collective.classification.folder add-on."
 
-#: ../behaviors/classification_folder.py:33
+#: ../behaviors/classification_folder.py:37
 msgid "List of folders / subfolders in which this content is filed"
 msgstr "Liste des codes de classement associés"
 
@@ -151,7 +160,7 @@ msgstr "Chemise: numéro du prochain élément"
 msgid "Parent Identifier"
 msgstr "Identifiant du parent"
 
-#: ../browser/faceted.py:184
+#: ../browser/faceted.py:192
 #: ../browser/templates/folder-listing.pt:69
 #: ../content/classification_folder.py:78
 msgid "Service in charge"
@@ -209,7 +218,7 @@ msgid "Yes"
 msgstr "Oui"
 
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
-#: ../content/classification_folder.py:174
+#: ../content/classification_folder.py:189
 msgid "cannot_delete_referenced_folder"
 msgstr "Ce dossier ne peut être supprimé car il est référencé autre part"
 
