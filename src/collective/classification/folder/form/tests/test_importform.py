@@ -74,7 +74,7 @@ class TestImportForm(unittest.TestCase):
         csv = StringIO()
         lines = [
             # ["Code Folder", "Code Subfolder", "Folder Title", "Subfolder Title"],
-            ["001", "001, 001.1", "Folder 1", "Subfolder 1.1"],
+            ["001", "001, 001.1", '"Folder 1\n"', '"Subfolder 1.1"'],
             ["001", "001.2", "", "Subfolder 1.2"],
             ["001", "", "", "Subfolder 1.3"],
             ["002", "002.1", "Folder 2", "Subfolder 2.1"],
@@ -369,7 +369,7 @@ class TestImportForm(unittest.TestCase):
                 ),
                 "F0001-02": (
                     u"Folder 1.2",
-                    {"archived": False},
+                    {},
                 ),
                 "F0001-03": (
                     u"Folder 1.3",

@@ -130,13 +130,13 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         multi_values_keys = ("classification_categories",)
         for key in multi_values_keys:
             if key in line_data:
-                line_data[key] = [val.strip() for val in line_data[key].split(",")]
+                line_data[key] = [val.strip(' \n') for val in line_data[key].split(",")]
 
     def _process_boolean_values(self, line_data):
         boolean_values_keys = ("archived",)
         for key in boolean_values_keys:
             if key in line_data:
-                line_data[key] = line_data[key].strip() and True or False
+                line_data[key] = line_data[key] and True or False
 
     def _process_with_ref(self, data, line_data):
         parent_identifier = line_data.pop("parent_identifier", None) or None
@@ -214,7 +214,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         last_ref = None
         last_title = None
         for line in csv_reader:
-            line_data = {v: line[k].decode(encoding) for k, v in mapping.items()}
+            line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
             if "parent_identifier" in line_data or "internal_reference_no" in line_data:
                 self._process_with_ref(data, line_data)
             else:
