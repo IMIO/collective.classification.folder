@@ -179,6 +179,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
             "archived_subfolder": "archived",
+            "classification_informations": "classification_informations"
         }
 
         folder_data = {
