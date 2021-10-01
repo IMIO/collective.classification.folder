@@ -56,8 +56,8 @@ class TestImportForm(unittest.TestCase):
         """Return a fake csv with data"""
         csv = StringIO()
         lines = [
-            ["", "001", "First", "", "F1", "Folder 1"],
-            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1"],
+            ["", "001", "First", "", "F1", '"Folder \n1\n"'],
+            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1 "],
             ["001", "001.2", "second 1", "F1", "F1.2", "Folder 1.2"],
             ["", "002", "Second", "", "F2", "Folder 2"],
             ["002", "002.1", "first 2", "F2", "F2.1A", "Folder 2.1 A"],
@@ -74,7 +74,7 @@ class TestImportForm(unittest.TestCase):
         csv = StringIO()
         lines = [
             # ["Code Folder", "Code Subfolder", "Folder Title", "Subfolder Title"],
-            ["001", "001, 001.1", '"Folder 1\n"', '"Subfolder 1.1"'],
+            ["001", "001, 001.1", '"Folder 1\n"', '"Subfolder \n1.1"'],
             ["001", "001.2", "", "Subfolder 1.2"],
             ["001", "", "", "Subfolder 1.3"],
             ["002", "002.1", "Folder 2", "Subfolder 2.1"],
@@ -454,3 +454,13 @@ class TestImportForm(unittest.TestCase):
             },
         }
         self.assertEqual(expected_result, result)
+
+    def test_replace_newline(self):
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        self.assertEquals(form._replace_newline(u' \n '), u' ')
+        self.assertEquals(form._replace_newline(u' \n\n '), u' ')
+        self.assertEquals(form._replace_newline(u'.\n '), u'. ')
+        self.assertEquals(form._replace_newline(u' \nL'), u' L')
+        self.assertEquals(form._replace_newline(u'x\nL'), u'x L')
+        self.assertEquals(form._replace_newline(u'x\nLe\nf'), u'x Le f')
+        self.assertEquals(form._replace_newline(u' \n.\n '), u' . ')

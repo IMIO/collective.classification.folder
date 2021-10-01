@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.classification.folder import _
@@ -126,6 +127,22 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             ref = formatter.format(reference, base)
         return ref
 
+    def _replace_newline(self, string):
+        def repl(mo):
+            if mo.group(1) == u' ' and mo.group(2) == u' ':
+                return u' '
+            elif mo.group(1) == u' ':
+                return u' {}'.format(mo.group(2))
+            elif mo.group(2) == u' ':
+                return u'{} '.format(mo.group(1))
+            else:
+                return u'{} {}'.format(mo.group(1), mo.group(2))
+
+        str1 = re.sub('(.)\n+(.)', repl, string, re.UNICODE)
+        # Need to call it a second time to resolve overlapping matches
+        return re.sub('(.)\n+(.)', repl, str1, re.UNICODE)
+
+
     def _process_multikey_values(self, line_data):
         multi_values_keys = ("classification_categories",)
         for key in multi_values_keys:
@@ -141,7 +158,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
     def _process_with_ref(self, data, line_data):
         parent_identifier = line_data.pop("parent_identifier", None) or None
         identifier = line_data.pop("internal_reference_no")
-        title = line_data.pop("title")
+        title = self._replace_newline(line_data.pop("title"))
         if not identifier or not title:
             return
         self._process_multikey_values(line_data)
@@ -173,9 +190,11 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             if line_data.get(k)
         }
 
-        if folder_title is not None and folder_title != last_title:
-            last_ref = self._reference_generator()
-            last_title = folder_title
+        if folder_title is not None:
+            folder_title = self._replace_newline(folder_title)
+            if folder_title != last_title:
+                last_ref = self._reference_generator()
+                last_title = folder_title
 
         if last_ref is None:
             # This should never happen
@@ -192,6 +211,8 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 
         if subfolder_title is None:
             return last_ref, last_title
+        else:
+            subfolder_title = self._replace_newline(subfolder_title)
 
         # Inherit categories from folder if relevant
         key = "classification_categories"
