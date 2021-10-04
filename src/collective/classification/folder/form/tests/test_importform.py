@@ -467,3 +467,99 @@ class TestImportForm(unittest.TestCase):
         self.assertEquals(form._replace_newline(u'x\nL'), u'x L')
         self.assertEquals(form._replace_newline(u'x\nLe\nf'), u'x Le f')
         self.assertEquals(form._replace_newline(u' \n.\n '), u' . ')
+
+    def test_replace_newline_by_crlf(self):
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        self.assertEquals(form._replace_newline_by_crlf(u'\n A'), u'\r\nA')
+        self.assertEquals(form._replace_newline_by_crlf(u'B\n'), u'B\r\n')
+        self.assertEquals(form._replace_newline_by_crlf(u'B\r\nA'), u'B\r\nA')
+
+    def test_process_csv_informations_values(self):
+        """Test _process_csv with csv data with classification_informations"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["", "001", "First", "", "F1", "Folder 1", "This is more informations."],
+            ["001", "001.1, 001.2", "first 1", "F1", "F1.1", "Folder 1.1", '"Also\nbut with another line"'],
+            ["001", "001.2", "first 1", "F1", "F1.2", "Folder 1.2", ""],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_1": "classification_categories",
+            "column_3": "parent_identifier",
+            "column_4": "internal_reference_no",
+            "column_5": "title",
+            "column_6": "classification_informations",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {})
+        expected_result = {
+            None: {
+                u"F1": (
+                    u"Folder 1",
+                    {"classification_categories": [u"001"],
+                     "classification_informations": u'This is more informations.'},
+                )
+            },
+            u"F1": {
+                u"F1.1": (
+                    u"Folder 1.1",
+                    {"classification_categories": [u"001.1", u"001.2"],
+                     "classification_informations": u'Also\r\nbut with another line'},
+                ),
+                u"F1.2": (
+                    u"Folder 1.2",
+                    {"classification_categories": [u"001.2"],
+                     "classification_informations": u''},
+                ),
+            },
+        }
+        self.assertEqual(expected_result, result)
+
+    def test_process_csv_complex_informations_values(self):
+        """Test _process_csv with csv data with classification_informations"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["Folder 1", "", "Folder 1.1", '"This is more informations.\n"'],
+            ["Folder 1", "", "Folder 1.2", '"Yet\nAnother line\nAnd a third"'],
+            ["Folder 1", "", "Folder 1.3", ""],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_0": "title_folder",
+            "column_1": "archived_folder",
+            "column_2": "title_subfolder",
+            "column_3": "classification_informations",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {})
+        expected_result = {
+            None: {
+                "F0001": (
+                    u"Folder 1",
+                    {},
+                )
+            },
+            "F0001": {
+                "F0001-01": (
+                    u"Folder 1.1",
+                    {'classification_informations': u'This is more informations.'},
+                ),
+                "F0001-02": (
+                    u"Folder 1.2",
+                    {'classification_informations': u'Yet\r\nAnother line\r\nAnd a third'},
+                ),
+                "F0001-03": (
+                    u"Folder 1.3",
+                    {},
+                ),
+            },
+        }
+        self.assertEqual(expected_result, result)

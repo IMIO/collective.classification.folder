@@ -92,7 +92,7 @@ class IClassificationFolder(model.Schema):
     )
 
     dexteritytextindexer.searchable("classification_informations")
-    classification_informations = schema.TextLine(
+    classification_informations = schema.Text(
         title=_(u"Classification informations"),
         # description=_(u"Informations"),
         required=False,

@@ -145,6 +145,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         # Need to call it a second time to resolve overlapping matches
         return re.sub('(^|.)\n+(.|$)', repl, str1, re.UNICODE)
 
+    def _replace_newline_by_crlf(self, string):
+        """Replaced newline by a cr lf for schema.Text field"""
+        return re.sub('(^|[^\r])\n( *)', '\\1\r\n', string, re.UNICODE)
 
     def _process_multikey_values(self, line_data):
         multi_values_keys = ("classification_categories",)
@@ -169,6 +172,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if parent_identifier not in data:
             # Using dictionary avoid duplicated informations
             data[parent_identifier] = {}
+        if line_data.get('classification_informations'):
+            line_data['classification_informations'] = self._replace_newline_by_crlf(
+                line_data['classification_informations'])
         data[parent_identifier][identifier] = (title, line_data)
 
     def _process_without_ref(self, data, line_data, last_ref, last_title):
@@ -193,7 +199,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             for k, v in subfolder_mapping.items()
             if line_data.get(k)
         }
-
+        if subfolder_data.get('classification_informations'):
+            subfolder_data['classification_informations'] = self._replace_newline_by_crlf(
+                subfolder_data['classification_informations'])
         if folder_title is not None:
             folder_title = self._replace_newline(folder_title)
             if folder_title != last_title:
@@ -249,6 +257,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
                     last_ref,
                     last_title,
                 )
+
         return data
 
     def _import_node(self, node):
