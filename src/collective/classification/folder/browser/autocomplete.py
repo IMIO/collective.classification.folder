@@ -29,14 +29,14 @@ class ClassificationCategorySuggest(BaseSuggestView):
 
     def __call__(self):
         result = []
-        query = self.request.get("term").decode("utf8")
+        query = self.request.get("term").decode("utf8").lower()
         if not query:
             return self._return_result(result)
         vocabulary = ClassificationTreeSource(self.context).vocabulary
         result = [
             {"id": e.value, "text": e.title}
             for e in vocabulary
-            if query in e.title
+            if query in e.title.lower()
         ]
         return self._return_result(result)
 
