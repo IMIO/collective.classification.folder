@@ -132,12 +132,12 @@ class ClassificationFolderSource(BaseSourceVocabulary):
     def search(self, query_string, categories_filter=None):
         if categories_filter is None:
             categories_filter = []
-        q = query_string.lower()
+        query_parts = query_string.lower().split()
 
         terms_matching_query = []
         terms_matching_query_and_category = []
         for (value, title, categories) in self.results:
-            if q in title.lower():
+            if all([part in title.lower() for part in query_parts]):
                 term = self.getTerm(value)
                 if categories_filter and categories.intersection(categories_filter):
                     terms_matching_query_and_category.append(term)

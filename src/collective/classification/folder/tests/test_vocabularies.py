@@ -184,17 +184,19 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
     def test_folder_without_categories(self):
         self.folder1 = self._create_folder("folder1", u"Folder 1", self.folders)
         self.folder1_1 = self._create_subfolder(
-            "folder1-1", u"Folder 1-1", self.folder1
+            "folder1-1", u"Folder 1-1 child", self.folder1
         )
         self.folder2 = self._create_folder("folder2", u"Folder 2", self.folders)
 
         source = ClassificationFolderSource(self.portal)
         titles = [term.title for term in source.search("Folder")]
-        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1", u"Folder 2"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1 child", u"Folder 2"])
         titles = [term.title for term in source.search("Folder 1")]
-        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1 child"])
         titles = [term.title for term in source.search("Folder 2")]
         self.assertEqual(titles, ["Folder 2"])
+        titles = [term.title for term in source.search("Folder child")]
+        self.assertEqual(titles, [u"Folder 1 ⏩ Folder 1-1 child"])
 
     def test_subfolder_inherits_parent_categories(self):
         cat = self.category_uids["001"]
