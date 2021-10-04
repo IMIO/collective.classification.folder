@@ -458,6 +458,9 @@ class TestImportForm(unittest.TestCase):
     def test_replace_newline(self):
         form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
         self.assertEquals(form._replace_newline(u' \n '), u' ')
+        self.assertEquals(form._replace_newline(u'\n'), u'')
+        self.assertEquals(form._replace_newline(u'\n A'), u'A')
+        self.assertEquals(form._replace_newline(u'B \n'), u'B')
         self.assertEquals(form._replace_newline(u' \n\n '), u' ')
         self.assertEquals(form._replace_newline(u'.\n '), u'. ')
         self.assertEquals(form._replace_newline(u' \nL'), u' L')

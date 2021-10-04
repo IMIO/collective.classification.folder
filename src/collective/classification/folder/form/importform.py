@@ -128,8 +128,11 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         return ref
 
     def _replace_newline(self, string):
+        """Replaced newline by a space or deleted it, following character before and after"""
         def repl(mo):
-            if mo.group(1) == u' ' and mo.group(2) == u' ':
+            if mo.group(0) in (u'\n', u' \n', u'\n '):
+                return u''
+            elif mo.group(1) == u' ' and mo.group(2) == u' ':
                 return u' '
             elif mo.group(1) == u' ':
                 return u' {}'.format(mo.group(2))
@@ -138,9 +141,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             else:
                 return u'{} {}'.format(mo.group(1), mo.group(2))
 
-        str1 = re.sub('(.)\n+(.)', repl, string, re.UNICODE)
+        str1 = re.sub('(^|.)\n+(.|$)', repl, string, re.UNICODE)
         # Need to call it a second time to resolve overlapping matches
-        return re.sub('(.)\n+(.)', repl, str1, re.UNICODE)
+        return re.sub('(^|.)\n+(.|$)', repl, str1, re.UNICODE)
 
 
     def _process_multikey_values(self, line_data):
