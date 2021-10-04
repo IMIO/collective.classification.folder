@@ -4,6 +4,7 @@ from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
 from imio.helpers.content import uuidToCatalogBrain
 from plone import api
+from unidecode import unidecode
 from z3c.form import util
 from z3c.form.i18n import MessageFactory as _zf
 from z3c.formwidget.query.interfaces import IQuerySource
@@ -132,12 +133,13 @@ class ClassificationFolderSource(BaseSourceVocabulary):
     def search(self, query_string, categories_filter=None):
         if categories_filter is None:
             categories_filter = []
-        query_parts = query_string.lower().split()
+        query_parts = unidecode(query_string).lower().split()
 
         terms_matching_query = []
         terms_matching_query_and_category = []
         for (value, title, categories) in self.results:
-            if all([part in title.lower() for part in query_parts]):
+            decoded_title = unidecode(title).lower()
+            if all([part in decoded_title for part in query_parts]):
                 term = self.getTerm(value)
                 if categories_filter and categories.intersection(categories_filter):
                     terms_matching_query_and_category.append(term)

@@ -68,6 +68,7 @@ setup(
         "collective.dexteritytextindexer",
         "dexterity.localrolesfield",
         "collective.z3cform.chosen",
+        "Unidecode",
     ],
     extras_require={
         "test": [

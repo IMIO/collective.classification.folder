@@ -232,3 +232,14 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
             for term in source.search("Folder", categories_filter=[cat_not_used])
         ]
         self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1", u"Folder 2"])
+
+    def test_folder_mixed_case_accented_searches(self):
+        self._create_folder("folder1", u"Tâche", self.folders)
+        self._create_folder("folder2", u"Tache", self.folders)
+        self._create_folder("folder3", u"tâche", self.folders)
+        self._create_folder("folder4", u"tache", self.folders)
+
+        source = ClassificationFolderSource(self.portal)
+        for terms in (u"Tâche", u"Tache", u"tâche", u"tache"):
+            titles = [term.title for term in source.search(terms)]
+            self.assertEqual(len(titles), 4)
