@@ -109,6 +109,7 @@ class TestImportForm(unittest.TestCase):
             filename=u"test.csv",
         )
         data = {
+            "treating_groups": None,
             "column_1": "classification_categories",
             "column_3": "parent_identifier",
             "column_4": "internal_reference_no",
@@ -246,7 +247,7 @@ class TestImportForm(unittest.TestCase):
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 u"F1": (u"Folder 1", {"classification_categories": [u"001"]}),
@@ -283,7 +284,7 @@ class TestImportForm(unittest.TestCase):
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {u"F1": (u"Folder 1", {"classification_categories": [u"001"]})},
             u"F1": {
@@ -313,7 +314,7 @@ class TestImportForm(unittest.TestCase):
             "column_6": "archived",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 u"F1": (
@@ -354,7 +355,7 @@ class TestImportForm(unittest.TestCase):
             "column_3": "archived_subfolder",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 "F0001": (
@@ -388,7 +389,7 @@ class TestImportForm(unittest.TestCase):
             "column_3": "title_subfolder",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 "F0001": (u"Folder 1", {}),
@@ -418,7 +419,7 @@ class TestImportForm(unittest.TestCase):
             "column_3": "title_subfolder",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 "F0001": (u"Folder 1", {"classification_categories": [u"001"]}),
@@ -495,7 +496,7 @@ class TestImportForm(unittest.TestCase):
             "column_6": "classification_informations",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 u"F1": (
@@ -539,7 +540,7 @@ class TestImportForm(unittest.TestCase):
             "column_3": "classification_informations",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {})
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
                 "F0001": (

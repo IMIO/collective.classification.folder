@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import re
-
+from collective.classification.tree.form.importform import GeneratedChoice
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.classification.folder import _
 from collective.classification.folder import utils
+from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
 from collective.classification.tree import utils as tree_utils
 from collective.classification.tree.form import importform as baseform
 from plone import api
@@ -16,6 +16,7 @@ from zope.interface import invariant
 from zope.schema.interfaces import IVocabularyFactory
 
 import json
+import re
 
 
 ANNOTATION_KEY = baseform.ANNOTATION_KEY
@@ -44,6 +45,14 @@ def extract_required_columns(obj):
 
 
 class IImportSecondStepBase(Interface):
+
+    treating_groups = GeneratedChoice(  # this overrided Choice field is adapted to folders (see tree importform)
+        title=_(u"Service in charge"),
+        description=_(u"Service that will be set on all imported folders"),
+        source=ServiceInChargeSourceBinder(),
+        required=False,
+    )
+
     @invariant
     def validate_columns(obj):
         required = extract_required_columns(obj)
@@ -184,11 +193,13 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         folder_mapping = {
             "folder_categories": "classification_categories",
             "archived_folder": "archived",
+            "treating_groups": "treating_groups"
         }
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
             "archived_subfolder": "archived",
-            "classification_informations": "classification_informations"
+            "classification_informations": "classification_informations",
+            "treating_groups": "treating_groups"
         }
 
         folder_data = {
@@ -241,13 +252,15 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 
         return last_ref, last_title
 
-    def _process_csv(self, csv_reader, mapping, encoding, import_data):
+    def _process_csv(self, csv_reader, mapping, encoding, import_data, **kwargs):
         """Return a dict with every elements"""
         data = {}
         last_ref = None
         last_title = None
         for line in csv_reader:
             line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
+            if kwargs['treating_groups']:
+                line_data['treating_groups'] = kwargs['treating_groups']
             if "parent_identifier" in line_data or "internal_reference_no" in line_data:
                 self._process_with_ref(data, line_data)
             else:

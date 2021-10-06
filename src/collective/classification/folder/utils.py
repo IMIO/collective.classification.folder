@@ -97,6 +97,12 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
         element["title"] = title
         has_change = True
 
+    key = "treating_groups"
+    # we include treating_groups only if defined
+    if data.get(key) and (not existing_element or getattr(existing_element, key) != data.get(key)):
+        element[key] = data.get(key)
+        has_change = True
+
     key = "classification_informations"
     if not existing_element or getattr(existing_element, key) != data.get(key):
         element[key] = data.get(key)
