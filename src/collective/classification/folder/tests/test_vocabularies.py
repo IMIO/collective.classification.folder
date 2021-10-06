@@ -110,6 +110,17 @@ class ClassificationFolderSourceTest(unittest.TestCase):
             terms,
         )
 
+    def test_voc_with_reference(self):
+        source = ClassificationFolderSource(self.portal)
+        self.folder1.internal_reference_no = 'Pastaga'
+        terms = [(term.value, term.title) for term in source]
+        self.assertEqual(
+            [(self.folder1_uid, u"Folder 1 (Pastaga)"), (self.folder2_uid, u"Folder 2")], terms
+        )
+        source = ClassificationFolderSource(self.portal)
+        titles = [term.title for term in source.search("Fold pasta")]
+        self.assertEqual(titles, [u"Folder 1 (Pastaga)"])
+
 
 class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
 
