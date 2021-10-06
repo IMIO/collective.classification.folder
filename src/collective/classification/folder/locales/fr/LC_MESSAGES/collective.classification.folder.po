@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-09-30 07:58+0000\n"
+"POT-Creation-Date: 2021-10-06 08:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr "Position d'une farde dans sa hiérarchie"
 
 #: ../browser/templates/folder-listing.pt:91
 #: ../content/classification_folder.py:102
-#: ../vocabularies.py:18
+#: ../vocabularies.py:14
 msgid "Archived"
 msgstr "Archivé"
 
@@ -102,11 +102,11 @@ msgstr "Représente une farde"
 msgid "Equivalent to a paper folder"
 msgstr "Représente une chemise"
 
-#: ../vocabularies.py:12
+#: ../vocabularies.py:17
 msgid "Folder Name"
 msgstr "Titre de la farde"
 
-#: ../vocabularies.py:16
+#: ../vocabularies.py:15
 msgid "Folder classification categories"
 msgstr "Codes de classement de la farde"
 
@@ -122,11 +122,11 @@ msgstr "Vue farde avec dashboard"
 msgid "Identifier"
 msgstr "Identifiant"
 
-#: ../form/importform.py:78
+#: ../form/importform.py:88
 msgid "Import folders"
 msgstr "Importation des dossiers"
 
-#: ../vocabularies.py:15
+#: ../vocabularies.py:13
 msgid "Informations"
 msgstr "Informations"
 
@@ -140,7 +140,7 @@ msgstr "Liste des codes de classement associés"
 
 #: ../browser/templates/folder-listing.pt:120
 #: ../content/classification_folder.py:56
-#: ../vocabularies.py:11
+#: ../vocabularies.py:12
 msgid "Name"
 msgstr "Titre"
 
@@ -166,16 +166,20 @@ msgstr "Identifiant du parent"
 msgid "Service in charge"
 msgstr "Service traitant"
 
+#: ../form/importform.py:51
+msgid "Service that will be set on all imported folders"
+msgstr "Ce service sera défini pour tous les dossiers importés."
+
 #: ../browser/templates/folder-listing.pt:75
 #: ../content/classification_folder.py:86
 msgid "Services in copy"
 msgstr "Services en copie"
 
-#: ../vocabularies.py:13
+#: ../vocabularies.py:18
 msgid "Subfolder Name"
 msgstr "Titre de la chemise"
 
-#: ../vocabularies.py:17
+#: ../vocabularies.py:16
 msgid "Subfolder classification categories"
 msgstr "Codes de classement de la chemise"
 
