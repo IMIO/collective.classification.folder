@@ -111,6 +111,8 @@ class ClassificationFolderSource(BaseSourceVocabulary):
                 categories.update(cf_parent.classification_categories or [])
             else:
                 title = u"{0}".format(folder.title)
+            if folder.internal_reference_no:
+                title = u'{} ({})'.format(title, folder.internal_reference_no)
             categories.update(folder.classification_categories or [])
             return br.UID, title, categories
 
