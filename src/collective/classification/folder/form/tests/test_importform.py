@@ -2,6 +2,7 @@
 
 from StringIO import StringIO
 from collective.classification.folder import testing
+from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
 from collective.classification.folder.form import importform
 from operator import itemgetter
 from persistent.dict import PersistentDict
@@ -247,19 +248,23 @@ class TestImportForm(unittest.TestCase):
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups='Administrators')
         expected_result = {
             None: {
-                u"F1": (u"Folder 1", {"classification_categories": [u"001"]}),
-                u"F2": (u"Folder 2", {"classification_categories": [u"002"]}),
+                u"F1": (u"Folder 1", {"classification_categories": [u"001"], 'treating_groups': 'Administrators'}),
+                u"F2": (u"Folder 2", {"classification_categories": [u"002"], 'treating_groups': 'Administrators'}),
             },
             u"F1": {
-                u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"]}),
-                u"F1.2": (u"Folder 1.2", {"classification_categories": [u"001.2"]}),
+                u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"],
+                                          'treating_groups': 'Administrators'}),
+                u"F1.2": (u"Folder 1.2", {"classification_categories": [u"001.2"],
+                                          'treating_groups': 'Administrators'}),
             },
             u"F2": {
-                u"F2.1A": (u"Folder 2.1 A", {"classification_categories": [u"002.1"]}),
-                u"F2.1B": (u"Folder 2.1 B", {"classification_categories": [u"002.1"]}),
+                u"F2.1A": (u"Folder 2.1 A", {"classification_categories": [u"002.1"],
+                                             'treating_groups': 'Administrators'}),
+                u"F2.1B": (u"Folder 2.1 B", {"classification_categories": [u"002.1"],
+                                             'treating_groups': 'Administrators'}),
             },
         }
         self.assertEqual(expected_result, result)
@@ -355,26 +360,26 @@ class TestImportForm(unittest.TestCase):
             "column_3": "archived_subfolder",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups='Administrators')
         expected_result = {
             None: {
                 "F0001": (
                     u"Folder 1",
-                    {},
+                    {'treating_groups': 'Administrators'},
                 )
             },
             "F0001": {
                 "F0001-01": (
                     u"Folder 1.1",
-                    {"archived": True},
+                    {"archived": True, 'treating_groups': 'Administrators'},
                 ),
                 "F0001-02": (
                     u"Folder 1.2",
-                    {},
+                    {'treating_groups': 'Administrators'},
                 ),
                 "F0001-03": (
                     u"Folder 1.3",
-                    {"archived": True},
+                    {"archived": True, 'treating_groups': 'Administrators'},
                 ),
             },
         }
