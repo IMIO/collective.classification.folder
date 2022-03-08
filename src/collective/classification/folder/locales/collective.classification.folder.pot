@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-10-06 08:34+0000\n"
+"POT-Creation-Date: 2022-03-08 08:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,15 +23,15 @@ msgstr ""
 
 #: ../browser/templates/folder-listing.pt:91
 #: ../content/classification_folder.py:102
-#: ../vocabularies.py:14
+#: ../vocabularies.py:15
 msgid "Archived"
 msgstr ""
 
-#: ../vocabularies.py:19
+#: ../vocabularies.py:23
 msgid "Archived folder"
 msgstr ""
 
-#: ../vocabularies.py:20
+#: ../vocabularies.py:24
 msgid "Archived subfolder"
 msgstr ""
 
@@ -105,11 +105,15 @@ msgstr ""
 msgid "Equivalent to a paper folder"
 msgstr ""
 
-#: ../vocabularies.py:17
+#: ../vocabularies.py:21
+msgid "Folder Informations"
+msgstr ""
+
+#: ../vocabularies.py:19
 msgid "Folder Name"
 msgstr ""
 
-#: ../vocabularies.py:15
+#: ../vocabularies.py:17
 msgid "Folder classification categories"
 msgstr ""
 
@@ -121,7 +125,7 @@ msgstr ""
 msgid "Folder listing view"
 msgstr ""
 
-#: ../vocabularies.py:10
+#: ../vocabularies.py:11
 msgid "Identifier"
 msgstr ""
 
@@ -129,7 +133,7 @@ msgstr ""
 msgid "Import folders"
 msgstr ""
 
-#: ../vocabularies.py:13
+#: ../vocabularies.py:14
 msgid "Informations"
 msgstr ""
 
@@ -143,7 +147,7 @@ msgstr ""
 
 #: ../browser/templates/folder-listing.pt:120
 #: ../content/classification_folder.py:56
-#: ../vocabularies.py:12
+#: ../vocabularies.py:13
 msgid "Name"
 msgstr ""
 
@@ -159,7 +163,7 @@ msgstr ""
 msgid "Number of next subfolder"
 msgstr ""
 
-#: ../vocabularies.py:9
+#: ../vocabularies.py:10
 msgid "Parent Identifier"
 msgstr ""
 
@@ -178,11 +182,15 @@ msgstr ""
 msgid "Services in copy"
 msgstr ""
 
-#: ../vocabularies.py:18
+#: ../vocabularies.py:22
+msgid "Subfolder Informations"
+msgstr ""
+
+#: ../vocabularies.py:20
 msgid "Subfolder Name"
 msgstr ""
 
-#: ../vocabularies.py:16
+#: ../vocabularies.py:18
 msgid "Subfolder classification categories"
 msgstr ""
 
