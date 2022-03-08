@@ -24,5 +24,7 @@ def import_keys_vocabulary_factory(context):
         (u"informations_subfolder", _(u"Subfolder Informations")),
         (u"archived_folder", _(u"Archived folder")),
         (u"archived_subfolder", _(u"Archived subfolder")),
+        # common
+        (u"treating_groups_title", _(u"Treating groups title")),
     )
     return iterable_to_vocabulary(values)

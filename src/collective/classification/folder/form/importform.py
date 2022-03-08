@@ -10,6 +10,7 @@ from plone import api
 from plone.z3cform.layout import FormWrapper
 from zope.annotation import IAnnotations
 from zope.component import getUtility
+from zope.interface.exceptions import Invalid
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import invariant
@@ -55,6 +56,9 @@ class IImportSecondStepBase(Interface):
 
     @invariant
     def validate_columns(obj):
+        columns = [v for k, v in obj._Data_data___.items() if k.startswith("column_")]
+        if obj._Data_data___.get('treating_groups') is not None and u'treating_groups_title' in columns:
+            raise Invalid(_("You can't select both a treating_groups and a column associated to treating groups title"))
         required = extract_required_columns(obj)
         return tree_utils.validate_csv_columns(obj, required)
 
@@ -195,14 +199,16 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             "archived_folder": "archived",
             "treating_groups": "treating_groups",
             "informations_folder": "classification_informations",
-            "internal_reference_no_folder": "internal_reference_no"
+            "internal_reference_no_folder": "internal_reference_no",
+            "treating_groups_title": "treating_groups_title",
         }
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
             "archived_subfolder": "archived",
             "informations_subfolder": "classification_informations",
             "treating_groups": "treating_groups",
-            "internal_reference_no_subfolder": "internal_reference_no"
+            "internal_reference_no_subfolder": "internal_reference_no",
+            "treating_groups_title": "treating_groups_title",
         }
 
         folder_data = {

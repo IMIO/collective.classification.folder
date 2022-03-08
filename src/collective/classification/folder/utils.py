@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from plone import api
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -35,7 +35,7 @@ def importer(
 ):
     """
     Expected structure for _children (iterable) with dict element that contains :
-    * identifier (String)
+        * identifier (String)
         * title (String)
         * data (Dict) with extra arguments
         * _children (Iterable of dicts)
@@ -50,7 +50,10 @@ def importer(
             IVocabularyFactory,
             "collective.classification.vocabularies:tree_id_mapping",
         )(context)
-    elements = element_importer(parent, identifier, title, data, _children, vocabulary)
+    voc = services_in_charge_vocabulary(context)
+    treating_groups_titles = {t.title: t.value for t in voc}
+
+    elements = element_importer(parent, identifier, title, data, _children, vocabulary, treating_groups_titles)
     children = []
     if len(elements) > 1:
         root, children = elements[0], elements[1:]
@@ -72,7 +75,7 @@ def check_value(existing_element, key, data):
     return False
 
 
-def element_importer(parent, identifier, title, data, children, vocabulary):
+def element_importer(parent, identifier, title, data, children, vocabulary, treating_groups_titles):
     """Format an element for import"""
     if parent:
         existing_elements = api.content.find(
@@ -102,6 +105,11 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
     if data.get(key) and (not existing_element or getattr(existing_element, key) != data.get(key)):
         element[key] = data.get(key)
         has_change = True
+    if data.get('treating_groups_title'):
+        value = treating_groups_titles.get(data.get('treating_groups_title'))
+        if value and (not existing_element or getattr(existing_element, key) != value):
+            element[key] = value
+            has_change = True
 
     key = "classification_informations"
     if not existing_element or getattr(existing_element, key) != data.get(key):
@@ -147,6 +155,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary):
                 child["data"],
                 child.get("_children"),
                 vocabulary,
+                treating_groups_titles,
             )
             elements.extend(element_importer(*args))
     return elements
