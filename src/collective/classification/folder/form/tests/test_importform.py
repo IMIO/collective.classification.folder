@@ -570,3 +570,43 @@ class TestImportForm(unittest.TestCase):
             },
         }
         self.assertEqual(expected_result, result)
+
+    def test_process_csv_complex_irn(self):
+        """Test _process_csv for internal_reference_no"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["Folder 1", "1", "", ""],
+            ["Folder 1", "1", "Subfolder 1.1", "11"],
+            ["Folder 1", "1", "Subfolder 1.2", "12"],
+            ["Folder 2", "2", "", ""],
+            ["Folder 2", "2", "Subfolder 2.1", "21"],
+            ["Folder 2", "2", "Subfolder 2.2", "22"],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_0": "title_folder",
+            "column_1": "internal_reference_no_folder",
+            "column_2": "title_subfolder",
+            "column_3": "internal_reference_no_subfolder",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
+        expected_result = {
+            None: {
+                "1": (u"Folder 1", {u'internal_reference_no': u'1'}),
+                "2": (u"Folder 2", {u'internal_reference_no': u'2'}),
+            },
+            "1": {
+                "11": (u"Subfolder 1.1", {u'internal_reference_no': u'11'}),
+                "12": (u"Subfolder 1.2", {u'internal_reference_no': u'12'}),
+            },
+            "2": {
+                "21": (u"Subfolder 2.1", {u'internal_reference_no': u'21'}),
+                "22": (u"Subfolder 2.2", {u'internal_reference_no': u'22'}),
+            },
+        }
+        self.assertEqual(expected_result, result)

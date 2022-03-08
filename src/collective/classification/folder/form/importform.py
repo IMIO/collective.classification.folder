@@ -38,7 +38,7 @@ def extract_required_columns(obj):
     if "parent_identifier" in filled_columns:
         required.extend(["parent_identifier", "identifier"])
     if "title_subfolder" in filled_columns:
-        required.extend(["title_folder", "title_subfolder"])
+        required.extend(["title_folder"])  # title_subfolder can be empty but title_folder must be there to get parent
     if not required:
         required.append("title")
     return required
@@ -62,7 +62,7 @@ class IImportSecondStepBase(Interface):
     def validate_data(obj):
         annotations = IAnnotations(obj.__context__)
         required = extract_required_columns(obj)
-        required.remove("title_folder")  # folder title may be empty #TODO which case ??
+        # required.remove("title_folder")  # folder title may be empty #TODO which case ??
         return tree_utils.validate_csv_content(
             obj,
             annotations[ANNOTATION_KEY],
@@ -195,12 +195,14 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             "archived_folder": "archived",
             "treating_groups": "treating_groups",
             "informations_folder": "classification_informations",
+            "internal_reference_no_folder": "internal_reference_no"
         }
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
             "archived_subfolder": "archived",
             "informations_subfolder": "classification_informations",
-            "treating_groups": "treating_groups"
+            "treating_groups": "treating_groups",
+            "internal_reference_no_subfolder": "internal_reference_no"
         }
 
         folder_data = {
@@ -217,11 +219,16 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if subfolder_data.get('classification_informations'):
             subfolder_data['classification_informations'] = self._replace_newline_by_crlf(
                 subfolder_data['classification_informations'])
+
         if folder_title is not None:
             folder_title = self._replace_newline(folder_title)
-            if folder_title != last_title:
-                last_ref = self._reference_generator()
-                last_title = folder_title
+        # if there is a irn related to parent, we get it. Otherwise we generate it
+        if folder_data.get('internal_reference_no'):
+            last_ref = folder_data['internal_reference_no']
+            last_title = folder_title
+        elif folder_title is not None and folder_title != last_title:
+            last_ref = self._reference_generator()
+            last_title = folder_title
 
         if last_ref is None:
             # This should never happen
@@ -236,6 +243,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             # We need to create the folder before creating subfolders
             data[None][last_ref] = (folder_title, folder_data)
 
+        # Handled the case when a line is defined for a folder and another for a folder and a subfolder
         if subfolder_title is None:
             return last_ref, last_title
         else:
@@ -248,10 +256,14 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         else:
             self._process_multikey_values(subfolder_data)
         self._process_boolean_values(subfolder_data)
+
         if last_ref not in data:
             data[last_ref] = {}
 
-        subfolder_ref = self._find_next_available_subreference(data, last_ref)
+        if subfolder_data.get('internal_reference_no'):
+            subfolder_ref = subfolder_data['internal_reference_no']
+        else:
+            subfolder_ref = self._find_next_available_subreference(data, last_ref)
         data[last_ref][subfolder_ref] = (subfolder_title, subfolder_data)
 
         return last_ref, last_title

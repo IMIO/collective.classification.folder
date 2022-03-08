@@ -14,6 +14,8 @@ def import_keys_vocabulary_factory(context):
         (u"classification_informations", _(u"Informations")),
         (u"archived", _(u"Archived")),
         # _process_without_ref
+        (u"internal_reference_no_folder", _(u"Folder identifier")),
+        (u"internal_reference_no_subfolder", _(u"Subfolder identifier")),
         (u"folder_categories", _(u"Folder classification categories")),
         (u"subfolder_categories", _(u"Subfolder classification categories")),
         (u"title_folder", _(u"Folder Name")),
