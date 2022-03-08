@@ -62,7 +62,7 @@ class IImportSecondStepBase(Interface):
     def validate_data(obj):
         annotations = IAnnotations(obj.__context__)
         required = extract_required_columns(obj)
-        required.remove("title_folder")  # folder title may be empty
+        required.remove("title_folder")  # folder title may be empty #TODO which case ??
         return tree_utils.validate_csv_content(
             obj,
             annotations[ANNOTATION_KEY],
@@ -193,12 +193,13 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         folder_mapping = {
             "folder_categories": "classification_categories",
             "archived_folder": "archived",
-            "treating_groups": "treating_groups"
+            "treating_groups": "treating_groups",
+            "informations_folder": "classification_informations",
         }
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
             "archived_subfolder": "archived",
-            "classification_informations": "classification_informations",
+            "informations_subfolder": "classification_informations",
             "treating_groups": "treating_groups"
         }
 
@@ -210,6 +211,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             for k, v in subfolder_mapping.items()
             if line_data.get(k)
         }
+        if folder_data.get('classification_informations'):
+            folder_data['classification_informations'] = self._replace_newline_by_crlf(
+                folder_data['classification_informations'])
         if subfolder_data.get('classification_informations'):
             subfolder_data['classification_informations'] = self._replace_newline_by_crlf(
                 subfolder_data['classification_informations'])
