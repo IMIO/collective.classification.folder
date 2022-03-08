@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-03-08 08:54+0000\n"
+"POT-Creation-Date: 2022-03-08 12:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,11 @@ msgstr "Position d'une farde dans sa hiérarchie"
 msgid "Archived"
 msgstr "Archivé"
 
-#: ../vocabularies.py:23
+#: ../vocabularies.py:25
 msgid "Archived folder"
 msgstr "Archivé pour la farde"
 
-#: ../vocabularies.py:24
+#: ../vocabularies.py:26
 msgid "Archived subfolder"
 msgstr "Archivé pour la chemise"
 
@@ -102,17 +102,21 @@ msgstr "Représente une farde"
 msgid "Equivalent to a paper folder"
 msgstr "Représente une chemise"
 
-#: ../vocabularies.py:21
+#: ../vocabularies.py:23
 msgid "Folder Informations"
 msgstr "Informations de la farde"
 
-#: ../vocabularies.py:19
+#: ../vocabularies.py:21
 msgid "Folder Name"
 msgstr "Titre de la farde"
 
-#: ../vocabularies.py:17
+#: ../vocabularies.py:19
 msgid "Folder classification categories"
 msgstr "Codes de classement de la farde"
+
+#: ../vocabularies.py:17
+msgid "Folder identifier"
+msgstr "Identifiant de la farde"
 
 #: ../browser/settings.py:22
 msgid "Folder internal reference default value expression"
@@ -179,17 +183,21 @@ msgstr "Ce service sera défini pour tous les dossiers importés."
 msgid "Services in copy"
 msgstr "Services en copie"
 
-#: ../vocabularies.py:22
+#: ../vocabularies.py:24
 msgid "Subfolder Informations"
 msgstr "Informations de la chemise"
 
-#: ../vocabularies.py:20
+#: ../vocabularies.py:22
 msgid "Subfolder Name"
 msgstr "Titre de la chemise"
 
-#: ../vocabularies.py:18
+#: ../vocabularies.py:20
 msgid "Subfolder classification categories"
 msgstr "Codes de classement de la chemise"
+
+#: ../vocabularies.py:18
+msgid "Subfolder identifier"
+msgstr "Identifiant de la chemise"
 
 #: ../browser/settings.py:37
 msgid "Subfolder internal reference default value expression"

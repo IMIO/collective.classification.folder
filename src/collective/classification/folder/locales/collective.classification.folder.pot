@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-03-08 08:54+0000\n"
+"POT-Creation-Date: 2022-03-08 12:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,11 +27,11 @@ msgstr ""
 msgid "Archived"
 msgstr ""
 
-#: ../vocabularies.py:23
+#: ../vocabularies.py:25
 msgid "Archived folder"
 msgstr ""
 
-#: ../vocabularies.py:24
+#: ../vocabularies.py:26
 msgid "Archived subfolder"
 msgstr ""
 
@@ -105,16 +105,20 @@ msgstr ""
 msgid "Equivalent to a paper folder"
 msgstr ""
 
-#: ../vocabularies.py:21
+#: ../vocabularies.py:23
 msgid "Folder Informations"
 msgstr ""
 
-#: ../vocabularies.py:19
+#: ../vocabularies.py:21
 msgid "Folder Name"
 msgstr ""
 
-#: ../vocabularies.py:17
+#: ../vocabularies.py:19
 msgid "Folder classification categories"
+msgstr ""
+
+#: ../vocabularies.py:17
+msgid "Folder identifier"
 msgstr ""
 
 #: ../browser/settings.py:22
@@ -182,16 +186,20 @@ msgstr ""
 msgid "Services in copy"
 msgstr ""
 
-#: ../vocabularies.py:22
+#: ../vocabularies.py:24
 msgid "Subfolder Informations"
 msgstr ""
 
-#: ../vocabularies.py:20
+#: ../vocabularies.py:22
 msgid "Subfolder Name"
 msgstr ""
 
-#: ../vocabularies.py:18
+#: ../vocabularies.py:20
 msgid "Subfolder classification categories"
+msgstr ""
+
+#: ../vocabularies.py:18
+msgid "Subfolder identifier"
 msgstr ""
 
 #: ../browser/settings.py:37
