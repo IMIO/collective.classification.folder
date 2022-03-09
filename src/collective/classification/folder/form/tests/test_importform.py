@@ -2,7 +2,7 @@
 
 from StringIO import StringIO
 from collective.classification.folder import testing
-from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
+from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from collective.classification.folder.form import importform
 from operator import itemgetter
 from persistent.dict import PersistentDict
@@ -10,6 +10,9 @@ from plone import api
 from plone.namedfile import NamedBlobFile
 from zope.annotation import IAnnotations
 from zope.component import createObject
+from zope.component import getUtility
+from zope.component.interfaces import Invalid
+from zope.schema.interfaces import IVocabularyFactory
 
 import csv
 import json
@@ -42,6 +45,7 @@ class TestImportForm(unittest.TestCase):
         self.folders = api.content.create(
             title="Folders", type="ClassificationFolders", container=self.folder
         )
+        api.group.create('group_1', 'My new group 1')
 
     def tearDown(self):
         api.content.delete(self.folder)
@@ -610,3 +614,69 @@ class TestImportForm(unittest.TestCase):
             },
         }
         self.assertEqual(expected_result, result)
+
+    def test_process_csv_complex_treating_groups_title(self):
+        """Test _process_csv with csv data with treating_groups_title column"""
+        groups = [(t.value, t.title) for t in services_in_charge_vocabulary()
+                  if t.value not in ('AuthenticatedUsers', 'Site Administrators')]
+        self.assertListEqual(groups, [('Administrators', 'Administrators'), ('Reviewers', 'Reviewers'),
+                                      ('group_1', 'My new group 1')])
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["001", "Folder 1", "My new group 1", "001.1", "Folder 1.1"],
+            ["001", "Folder 1", "Reviewers", "001.2", "Folder 1.2"],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_0": "folder_categories",
+            "column_1": "title_folder",
+            "column_2": "treating_groups_title",
+            "column_3": "subfolder_categories",
+            "column_4": "title_subfolder",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
+        expected_result = {
+            None: {
+                "F0001": (
+                    u"Folder 1",
+                    {'treating_groups_title': u'My new group 1',
+                     'classification_categories': [u'001']},
+                )
+            },
+            "F0001": {
+                "F0001-01": (
+                    u"Folder 1.1",
+                    {'treating_groups_title': u'My new group 1',
+                     'classification_categories': [u'001.1']},
+                ),
+                "F0001-02": (
+                    u"Folder 1.2",
+                    {'treating_groups_title': u'Reviewers',
+                     'classification_categories': [u'001.2']},
+                ),
+            },
+        }
+        self.assertEqual(expected_result, result)
+        # import nodes
+        form.vocabulary = getUtility(IVocabularyFactory,
+                                     "collective.classification.vocabularies:tree_id_mapping")(self.folders)
+        form.data = []
+        form._import_node(form._process_data(result)[0])
+        data_to_import = json.loads(form.data[0][1])['data']
+        folder_dic = data_to_import[0]
+        self.assertEqual(folder_dic[u'title'], u'Folder 1')
+        self.assertEqual(folder_dic[u'treating_groups'], u'group_1')
+        subfolders = folder_dic[u'__children__']
+        self.assertEqual(subfolders[0][u'title'], u'Folder 1.1')
+        self.assertEqual(subfolders[0][u'treating_groups'], u'group_1')
+        self.assertEqual(subfolders[1][u'title'], u'Folder 1.2')
+        self.assertEqual(subfolders[1][u'treating_groups'], u'Reviewers')
+        # treating_groups_title not found
+        result[None]['F0001'] = (u"Folder 1", {'treating_groups_title': u'Unknown group title',
+                                               'classification_categories': [u'001']})
+        self.assertRaises(Invalid, form._import_node, form._process_data(result)[0])
