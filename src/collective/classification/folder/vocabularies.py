@@ -6,6 +6,8 @@ from collective.classification.tree.vocabularies import iterable_to_vocabulary
 
 def import_keys_vocabulary_factory(context):
     values = (
+        # common
+        (u"treating_groups_title", _(u"Treating groups title")),
         # _process_with_ref
         (u"parent_identifier", _(u"Parent Identifier")),
         (u"internal_reference_no", _(u"Identifier")),
@@ -24,7 +26,5 @@ def import_keys_vocabulary_factory(context):
         (u"informations_subfolder", _(u"Subfolder Informations")),
         (u"archived_folder", _(u"Archived folder")),
         (u"archived_subfolder", _(u"Archived subfolder")),
-        # common
-        (u"treating_groups_title", _(u"Treating groups title")),
     )
     return iterable_to_vocabulary(values)
