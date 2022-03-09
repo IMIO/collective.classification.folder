@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from collective.classification.folder import _
 from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from plone import api
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
+from zope.component.interfaces import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
 
@@ -107,7 +109,10 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
         has_change = True
     if data.get('treating_groups_title'):
         value = treating_groups_titles.get(data.get('treating_groups_title'))
-        if value and (not existing_element or getattr(existing_element, key) != value):
+        if value is None:
+            raise Invalid(_("Cannot find treating_groups title '${title}'",
+                            mapping={'title': data.get('treating_groups_title')}))
+        elif not existing_element or getattr(existing_element, key) != value:
             element[key] = value
             has_change = True
 
