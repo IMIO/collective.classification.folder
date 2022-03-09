@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-03-08 12:29+0000\n"
+"POT-Creation-Date: 2022-03-09 11:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,16 +20,20 @@ msgstr ""
 
 #: ../browser/templates/folder-listing.pt:91
 #: ../content/classification_folder.py:102
-#: ../vocabularies.py:15
+#: ../vocabularies.py:17
 msgid "Archived"
 msgstr ""
 
-#: ../vocabularies.py:25
+#: ../vocabularies.py:27
 msgid "Archived folder"
 msgstr ""
 
-#: ../vocabularies.py:26
+#: ../vocabularies.py:28
 msgid "Archived subfolder"
+msgstr ""
+
+#: ../utils.py:113
+msgid "Cannot find treating_groups title '${title}'"
 msgstr ""
 
 #: ../browser/settings.py:51
@@ -102,19 +106,19 @@ msgstr ""
 msgid "Equivalent to a paper folder"
 msgstr ""
 
-#: ../vocabularies.py:23
+#: ../vocabularies.py:25
 msgid "Folder Informations"
 msgstr ""
 
-#: ../vocabularies.py:21
+#: ../vocabularies.py:23
 msgid "Folder Name"
 msgstr ""
 
-#: ../vocabularies.py:19
+#: ../vocabularies.py:21
 msgid "Folder classification categories"
 msgstr ""
 
-#: ../vocabularies.py:17
+#: ../vocabularies.py:19
 msgid "Folder identifier"
 msgstr ""
 
@@ -126,15 +130,15 @@ msgstr ""
 msgid "Folder listing view"
 msgstr ""
 
-#: ../vocabularies.py:11
+#: ../vocabularies.py:13
 msgid "Identifier"
 msgstr ""
 
-#: ../form/importform.py:88
+#: ../form/importform.py:92
 msgid "Import folders"
 msgstr ""
 
-#: ../vocabularies.py:14
+#: ../vocabularies.py:16
 msgid "Informations"
 msgstr ""
 
@@ -148,7 +152,7 @@ msgstr ""
 
 #: ../browser/templates/folder-listing.pt:120
 #: ../content/classification_folder.py:56
-#: ../vocabularies.py:13
+#: ../vocabularies.py:15
 msgid "Name"
 msgstr ""
 
@@ -164,7 +168,7 @@ msgstr ""
 msgid "Number of next subfolder"
 msgstr ""
 
-#: ../vocabularies.py:10
+#: ../vocabularies.py:12
 msgid "Parent Identifier"
 msgstr ""
 
@@ -174,7 +178,7 @@ msgstr ""
 msgid "Service in charge"
 msgstr ""
 
-#: ../form/importform.py:51
+#: ../form/importform.py:52
 msgid "Service that will be set on all imported folders"
 msgstr ""
 
@@ -183,19 +187,19 @@ msgstr ""
 msgid "Services in copy"
 msgstr ""
 
-#: ../vocabularies.py:24
+#: ../vocabularies.py:26
 msgid "Subfolder Informations"
 msgstr ""
 
-#: ../vocabularies.py:22
+#: ../vocabularies.py:24
 msgid "Subfolder Name"
 msgstr ""
 
-#: ../vocabularies.py:20
+#: ../vocabularies.py:22
 msgid "Subfolder classification categories"
 msgstr ""
 
-#: ../vocabularies.py:18
+#: ../vocabularies.py:20
 msgid "Subfolder identifier"
 msgstr ""
 
@@ -223,6 +227,10 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
+#: ../vocabularies.py:10
+msgid "Treating groups title"
+msgstr ""
+
 #: ../configure.zcml:45
 msgid "Uninstalls the collective.classification.folder add-on."
 msgstr ""
@@ -235,6 +243,10 @@ msgstr ""
 
 #: ../browser/templates/folder-listing.pt:94
 msgid "Yes"
+msgstr ""
+
+#: ../form/importform.py:61
+msgid "You can't select both a treating_groups and a column associated to treating groups title"
 msgstr ""
 
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
