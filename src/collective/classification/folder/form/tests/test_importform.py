@@ -358,10 +358,10 @@ class TestImportForm(unittest.TestCase):
         _csv.seek(0)
         reader = csv.reader(_csv, delimiter=";")
         data = {
-            "column_0": "title_folder",
-            "column_1": "archived_folder",
-            "column_2": "title_subfolder",
-            "column_3": "archived_subfolder",
+            "column_0": "folder_title",
+            "column_1": "folder_archived",
+            "column_2": "subfolder_title",
+            "column_3": "subfolder_archived",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups='Administrators')
@@ -390,12 +390,12 @@ class TestImportForm(unittest.TestCase):
         self.assertEqual(expected_result, result)
 
     def test_process_csv_complex_titles(self):
-        """Test _process_csv for title_folder/title_subfolder"""
+        """Test _process_csv for folder_title/subfolder_title"""
         form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
         reader = csv.reader(self._complex_csv, delimiter=";")
         data = {
-            "column_2": "title_folder",
-            "column_3": "title_subfolder",
+            "column_2": "folder_title",
+            "column_3": "subfolder_title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
@@ -424,8 +424,8 @@ class TestImportForm(unittest.TestCase):
         data = {
             "column_0": "folder_categories",
             "column_1": "subfolder_categories",
-            "column_2": "title_folder",
-            "column_3": "title_subfolder",
+            "column_2": "folder_title",
+            "column_3": "subfolder_title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
@@ -543,11 +543,11 @@ class TestImportForm(unittest.TestCase):
         _csv.seek(0)
         reader = csv.reader(_csv, delimiter=";")
         data = {
-            "column_0": "title_folder",
-            "column_1": "archived_folder",
-            "column_2": "informations_folder",
-            "column_3": "title_subfolder",
-            "column_4": "informations_subfolder",
+            "column_0": "folder_title",
+            "column_1": "folder_archived",
+            "column_2": "folder_informations",
+            "column_3": "subfolder_title",
+            "column_4": "subfolder_informations",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
@@ -592,10 +592,10 @@ class TestImportForm(unittest.TestCase):
         _csv.seek(0)
         reader = csv.reader(_csv, delimiter=";")
         data = {
-            "column_0": "title_folder",
-            "column_1": "internal_reference_no_folder",
-            "column_2": "title_subfolder",
-            "column_3": "internal_reference_no_subfolder",
+            "column_0": "folder_title",
+            "column_1": "folder_internal_reference_no",
+            "column_2": "subfolder_title",
+            "column_3": "subfolder_internal_reference_no",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
@@ -633,10 +633,10 @@ class TestImportForm(unittest.TestCase):
         reader = csv.reader(_csv, delimiter=";")
         data = {
             "column_0": "folder_categories",
-            "column_1": "title_folder",
+            "column_1": "folder_title",
             "column_2": "treating_groups_title",
             "column_3": "subfolder_categories",
-            "column_4": "title_subfolder",
+            "column_4": "subfolder_title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)

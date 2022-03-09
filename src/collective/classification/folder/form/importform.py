@@ -38,8 +38,8 @@ def extract_required_columns(obj):
         required.append("title")
     if "parent_identifier" in filled_columns:
         required.extend(["parent_identifier", "identifier"])
-    if "title_subfolder" in filled_columns:
-        required.extend(["title_folder"])  # title_subfolder can be empty but title_folder must be there to get parent
+    if "subfolder_title" in filled_columns:
+        required.extend(["folder_title"])  # subfolder_title can be empty but folder_title must be there to get parent
     if not required:
         required.append("title")
     return required
@@ -66,7 +66,7 @@ class IImportSecondStepBase(Interface):
     def validate_data(obj):
         annotations = IAnnotations(obj.__context__)
         required = extract_required_columns(obj)
-        # required.remove("title_folder")  # folder title may be empty #TODO which case ??
+        # required.remove("folder_title")  # folder title may be empty #TODO which case ??
         return tree_utils.validate_csv_content(
             obj,
             annotations[ANNOTATION_KEY],
@@ -191,23 +191,23 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         data[parent_identifier][identifier] = (title, line_data)
 
     def _process_without_ref(self, data, line_data, last_ref, last_title):
-        folder_title = line_data.pop("title_folder", None) or None
-        subfolder_title = line_data.pop("title_subfolder", None) or None
+        folder_title = line_data.pop("folder_title", None) or None
+        subfolder_title = line_data.pop("subfolder_title", None) or None
 
         folder_mapping = {
             "folder_categories": "classification_categories",
-            "archived_folder": "archived",
+            "folder_archived": "archived",
             "treating_groups": "treating_groups",
-            "informations_folder": "classification_informations",
-            "internal_reference_no_folder": "internal_reference_no",
+            "folder_informations": "classification_informations",
+            "folder_internal_reference_no": "internal_reference_no",
             "treating_groups_title": "treating_groups_title",
         }
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
-            "archived_subfolder": "archived",
-            "informations_subfolder": "classification_informations",
+            "subfolder_archived": "archived",
+            "subfolder_informations": "classification_informations",
             "treating_groups": "treating_groups",
-            "internal_reference_no_subfolder": "internal_reference_no",
+            "subfolder_internal_reference_no": "internal_reference_no",
             "treating_groups_title": "treating_groups_title",
         }
 

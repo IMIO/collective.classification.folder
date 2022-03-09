@@ -16,15 +16,15 @@ def import_keys_vocabulary_factory(context):
         (u"classification_informations", _(u"Informations")),
         (u"archived", _(u"Archived")),
         # _process_without_ref
-        (u"internal_reference_no_folder", _(u"Folder identifier")),
-        (u"internal_reference_no_subfolder", _(u"Subfolder identifier")),
+        (u"folder_internal_reference_no", _(u"Folder identifier")),
+        (u"subfolder_internal_reference_no", _(u"Subfolder identifier")),
         (u"folder_categories", _(u"Folder classification categories")),
         (u"subfolder_categories", _(u"Subfolder classification categories")),
-        (u"title_folder", _(u"Folder Name")),
-        (u"title_subfolder", _(u"Subfolder Name")),
-        (u"informations_folder", _(u"Folder Informations")),
-        (u"informations_subfolder", _(u"Subfolder Informations")),
-        (u"archived_folder", _(u"Archived folder")),
-        (u"archived_subfolder", _(u"Archived subfolder")),
+        (u"folder_title", _(u"Folder Name")),
+        (u"subfolder_title", _(u"Subfolder Name")),
+        (u"folder_informations", _(u"Folder Informations")),
+        (u"subfolder_informations", _(u"Subfolder Informations")),
+        (u"folder_archived", _(u"Archived folder")),
+        (u"subfolder_archived", _(u"Archived subfolder")),
     )
     return iterable_to_vocabulary(values)
