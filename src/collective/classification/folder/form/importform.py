@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from collective.classification.tree.form.importform import GeneratedBool
 from collective.classification.tree.form.importform import GeneratedChoice
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.classification.folder import _
 from collective.classification.folder import utils
 from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
+from collective.classification.tree import _ as _ct
 from collective.classification.tree import utils as tree_utils
 from collective.classification.tree.form import importform as baseform
 from plone import api
@@ -46,6 +48,12 @@ def extract_required_columns(obj):
 
 
 class IImportSecondStepBase(Interface):
+
+    replace_slash = GeneratedBool(
+        title=_ct(u"Replace slash in title"),
+        default=True,
+        required=False,
+    )
 
     treating_groups = GeneratedChoice(  # this overrided Choice field is adapted to folders (see tree importform)
         title=_(u"Service in charge"),
@@ -140,7 +148,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             ref = formatter.format(reference, base)
         return ref
 
-    def _replace_newline(self, string):
+    def _replace_newline(self, string, replace_slash=False):
         """Replaced newline by a space or deleted it, following character before and after"""
         def repl(mo):
             if mo.group(0) in (u'\n', u' \n', u'\n '):
@@ -154,6 +162,8 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             else:
                 return u'{} {}'.format(mo.group(1), mo.group(2))
 
+        if replace_slash:
+            string = string.replace('/', '-')
         str1 = re.sub('(^|.)\n+(.|$)', repl, string, re.UNICODE)
         # Need to call it a second time to resolve overlapping matches
         return re.sub('(^|.)\n+(.|$)', repl, str1, re.UNICODE)
@@ -174,10 +184,10 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             if key in line_data:
                 line_data[key] = line_data[key] and True or False
 
-    def _process_with_ref(self, data, line_data):
+    def _process_with_ref(self, data, line_data, replace_slash=False):
         parent_identifier = line_data.pop("parent_identifier", None) or None
         identifier = line_data.pop("internal_reference_no")
-        title = self._replace_newline(line_data.pop("title"))
+        title = self._replace_newline(line_data.pop("title"), replace_slash=replace_slash)
         if not identifier or not title:
             return
         self._process_multikey_values(line_data)
@@ -190,7 +200,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
                 line_data['classification_informations'])
         data[parent_identifier][identifier] = (title, line_data)
 
-    def _process_without_ref(self, data, line_data, last_ref, last_title):
+    def _process_without_ref(self, data, line_data, last_ref, last_title, replace_slash=False):
         folder_title = line_data.pop("folder_title", None) or None
         subfolder_title = line_data.pop("subfolder_title", None) or None
 
@@ -227,7 +237,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
                 subfolder_data['classification_informations'])
 
         if folder_title is not None:
-            folder_title = self._replace_newline(folder_title)
+            folder_title = self._replace_newline(folder_title, replace_slash=replace_slash)
         # if there is a irn related to parent, we get it. Otherwise we generate it
         if folder_data.get('internal_reference_no'):
             last_ref = folder_data['internal_reference_no']
@@ -253,7 +263,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if subfolder_title is None:
             return last_ref, last_title
         else:
-            subfolder_title = self._replace_newline(subfolder_title)
+            subfolder_title = self._replace_newline(subfolder_title, replace_slash=replace_slash)
 
         # Inherit categories from folder if relevant
         key = "classification_categories"
@@ -281,16 +291,17 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         last_title = None
         for line in csv_reader:
             line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
-            if kwargs['treating_groups']:
+            if kwargs.get('treating_groups', None):
                 line_data['treating_groups'] = kwargs['treating_groups']
             if "parent_identifier" in line_data or "internal_reference_no" in line_data:
-                self._process_with_ref(data, line_data)
+                self._process_with_ref(data, line_data, replace_slash=kwargs.get('replace_slash', False))
             else:
                 last_ref, last_title = self._process_without_ref(
                     data,
                     line_data,
                     last_ref,
                     last_title,
+                    replace_slash=kwargs.get('replace_slash', False),
                 )
 
         return data

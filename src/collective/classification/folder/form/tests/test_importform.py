@@ -279,7 +279,7 @@ class TestImportForm(unittest.TestCase):
         _csv = StringIO()
         lines = [
             ["", "001", "First", "", "F1", "Folder 1"],
-            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1.1"],
+            ["001", "001.1", "first 1", "F1", "F1.1", "Folder 1/1"],
             ["", "003", "Third", "", "", ""],
         ]
         for line in lines:
@@ -293,11 +293,11 @@ class TestImportForm(unittest.TestCase):
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None, replace_slash=True)
         expected_result = {
             None: {u"F1": (u"Folder 1", {"classification_categories": [u"001"]})},
             u"F1": {
-                u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"]}),
+                u"F1.1": (u"Folder 1-1", {"classification_categories": [u"001.1"]}),
             },
         }
         self.assertEqual(expected_result, result)
@@ -583,9 +583,9 @@ class TestImportForm(unittest.TestCase):
             ["Folder 1", "1", "", ""],
             ["Folder 1", "1", "Subfolder 1.1", "11"],
             ["Folder 1", "1", "Subfolder 1.2", "12"],
-            ["Folder 2", "2", "", ""],
-            ["Folder 2", "2", "Subfolder 2.1", "21"],
-            ["Folder 2", "2", "Subfolder 2.2", "22"],
+            ["Folder 2/a", "2", "", ""],
+            ["Folder 2/a", "2", "Subfolder 2/a.1", "21"],
+            ["Folder 2/a", "2", "Subfolder 2/a.2", "22"],
         ]
         for line in lines:
             _csv.write(";".join(line) + "\n")
@@ -598,19 +598,19 @@ class TestImportForm(unittest.TestCase):
             "column_3": "subfolder_internal_reference_no",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None, replace_slash=True)
         expected_result = {
             None: {
                 "1": (u"Folder 1", {u'internal_reference_no': u'1'}),
-                "2": (u"Folder 2", {u'internal_reference_no': u'2'}),
+                "2": (u"Folder 2-a", {u'internal_reference_no': u'2'}),
             },
             "1": {
                 "11": (u"Subfolder 1.1", {u'internal_reference_no': u'11'}),
                 "12": (u"Subfolder 1.2", {u'internal_reference_no': u'12'}),
             },
             "2": {
-                "21": (u"Subfolder 2.1", {u'internal_reference_no': u'21'}),
-                "22": (u"Subfolder 2.2", {u'internal_reference_no': u'22'}),
+                "21": (u"Subfolder 2-a.1", {u'internal_reference_no': u'21'}),
+                "22": (u"Subfolder 2-a.2", {u'internal_reference_no': u'22'}),
             },
         }
         self.assertEqual(expected_result, result)
@@ -680,3 +680,33 @@ class TestImportForm(unittest.TestCase):
         result[None]['F0001'] = (u"Folder 1", {'treating_groups_title': u'Unknown group title',
                                                'classification_categories': [u'001']})
         self.assertRaises(Invalid, form._import_node, form._process_data(result)[0])
+
+    def test_process_csv_replace_slash(self):
+        """Test _process_csv with csv data that contains slashes"""
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        _csv = StringIO()
+        lines = [
+            ["Folder 1/a", "1", "", ""],
+            ["Folder 1/a", "1", "Subfolder 1/a.1 // cor", "11"],
+            ["Folder 1/a", "1", "Subfolder 1/a.2", "12"],
+        ]
+        for line in lines:
+            _csv.write(";".join(line) + "\n")
+        _csv.seek(0)
+        reader = csv.reader(_csv, delimiter=";")
+        data = {
+            "column_0": "folder_title",
+            "column_2": "subfolder_title",
+        }
+        mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
+        result = form._process_csv(reader, mapping, "utf-8", {}, replace_slash=True)
+        expected_result = {
+            None: {
+                "F0001": (u"Folder 1-a", {}),
+            },
+            "F0001": {
+                "F0001-01": (u"Subfolder 1-a.1 -- cor", {}),
+                "F0001-02": (u"Subfolder 1-a.2", {}),
+            },
+        }
+        self.assertEqual(expected_result, result)
