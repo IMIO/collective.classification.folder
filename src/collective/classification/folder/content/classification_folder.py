@@ -70,7 +70,7 @@ class IClassificationFolder(model.Schema):
         title=_(u"Classification categories"),
         # description=_(u"List of categories / subcategories"),
         value_type=schema.Choice(
-            source=ClassificationTreeSourceBinder(),
+            source=ClassificationTreeSourceBinder(enabled=True),
         ),
     )
 
