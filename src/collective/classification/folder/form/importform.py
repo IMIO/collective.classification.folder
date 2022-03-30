@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from collective.classification.tree.form.importform import GeneratedBool
 from collective.classification.tree.form.importform import GeneratedChoice
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -306,10 +307,16 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 
         return data
 
+    def _get_treating_groups_titles(self):
+        voc = services_in_charge_vocabulary(self.context)
+        return {t.title: t.value for t in voc}
+
     def _import_node(self, node):
         args = (None, node.pop("internal_reference_no"), node.pop("title"))
         raw_data = utils.importer(
-            self.context, *args, vocabulary=self.vocabulary, **node
+            self.context, *args, vocabulary=self.vocabulary,
+            treating_groups_titles=self._get_treating_groups_titles(),
+            **node
         )
         if raw_data[1]["data"]:
             self.data.append((raw_data[0], json.dumps(raw_data[1])))

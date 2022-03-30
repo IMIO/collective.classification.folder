@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from plone import api
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -35,6 +34,7 @@ def importer(
     data=None,
     _children=None,
     vocabulary=None,
+    treating_groups_titles={},
 ):
     """
     Expected structure for _children (iterable) with dict element that contains :
@@ -53,8 +53,6 @@ def importer(
             IVocabularyFactory,
             "collective.classification.vocabularies:tree_id_mapping",
         )(context)
-    voc = services_in_charge_vocabulary(context)
-    treating_groups_titles = {t.title: t.value for t in voc}
 
     elements = element_importer(parent, identifier, title, data, _children, vocabulary, treating_groups_titles)
     children = []
