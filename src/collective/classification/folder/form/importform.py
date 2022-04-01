@@ -292,9 +292,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         data = {}
         last_ref = None
         last_title = None
-        for i, line in enumerate(csv_reader, start=(import_data["has_header"] and 2 or 1)):
+        for i, line in enumerate(csv_reader, start=(import_data.get("has_header", False) and 2 or 1)):
             line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
-            line_data['_ln'] = i
+            # line_data['_ln'] = i
             if kwargs.get('treating_groups', None):
                 line_data['treating_groups'] = kwargs['treating_groups']
             if "parent_identifier" in line_data or "internal_reference_no" in line_data:

@@ -89,7 +89,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     element = {}
     existing_element = None
     portal_type = get_portal_type(parent)
-    csv_line = data.pop('_ln')
+    csv_line = data.pop('_ln', 0)
     if len(existing_elements) >= 1:
         existing_element = parent[existing_elements[0].id]
         exist = True
