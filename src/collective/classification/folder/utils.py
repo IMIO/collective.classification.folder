@@ -53,14 +53,13 @@ def importer(
             IVocabularyFactory,
             "collective.classification.vocabularies:tree_id_mapping",
         )(context)
-
     elements = element_importer(parent, identifier, title, data, _children, vocabulary, treating_groups_titles)
     children = []
-    if len(elements) > 1:
+    if len(elements) > 1:  # folder is first, then subfolders
         root, children = elements[0], elements[1:]
     else:
         root = elements[0]
-    method, root_element = root
+    method, root_element = root  # method = exists (True, False), root_element = Folder
     if children:
         if "internal_reference_no" not in root_element:
             root_element["internal_reference_no"] = identifier
@@ -90,6 +89,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     element = {}
     existing_element = None
     portal_type = get_portal_type(parent)
+    csv_line = data.pop('_ln')
     if len(existing_elements) >= 1:
         existing_element = parent[existing_elements[0].id]
         exist = True

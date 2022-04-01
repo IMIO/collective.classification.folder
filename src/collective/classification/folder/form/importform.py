@@ -212,6 +212,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             "folder_informations": "classification_informations",
             "folder_internal_reference_no": "internal_reference_no",
             "treating_groups_title": "treating_groups_title",
+            "_ln": "_ln",
         }
         subfolder_mapping = {
             "subfolder_categories": "classification_categories",
@@ -220,6 +221,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             "treating_groups": "treating_groups",
             "subfolder_internal_reference_no": "internal_reference_no",
             "treating_groups_title": "treating_groups_title",
+            "_ln": "_ln",
         }
 
         folder_data = {
@@ -290,8 +292,9 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         data = {}
         last_ref = None
         last_title = None
-        for line in csv_reader:
+        for i, line in enumerate(csv_reader, start=(import_data["has_header"] and 2 or 1)):
             line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
+            line_data['_ln'] = i
             if kwargs.get('treating_groups', None):
                 line_data['treating_groups'] = kwargs['treating_groups']
             if "parent_identifier" in line_data or "internal_reference_no" in line_data:
