@@ -261,10 +261,10 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             data[None][last_ref] = (folder_title, folder_data)
 
         # Handled the case when a line is defined for a folder and another for a folder and a subfolder
-        if subfolder_title is None:
+        if subfolder_title is None and not subfolder_data.get('internal_reference_no'):
             return last_ref, last_title
-        else:
-            subfolder_title = self._replace_newline(subfolder_title, replace_slash=replace_slash)
+
+        subfolder_title = self._replace_newline(subfolder_title or u'', replace_slash=replace_slash)
 
         # Inherit categories from folder if relevant
         key = "classification_categories"
@@ -328,7 +328,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 @implementer(baseform.IImportFormView)
 class ImportSecondStepView(FormWrapper):
     form = ImportFormSecondStep
-    index = ViewPageTemplateFile("import.pt")
+    index = ViewPageTemplateFile("import.pt")  # contains javascript to call rest methods
 
     @property
     def data(self):
