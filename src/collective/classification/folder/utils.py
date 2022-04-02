@@ -96,6 +96,8 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     else:
         element["@type"] = portal_type
         element["internal_reference_no"] = identifier
+    # if not exist:
+    #     print(u"{}: '{}', '{}'".format(csv_line, identifier, title))
 
     if not existing_element or existing_element.title != title:
         element["title"] = title

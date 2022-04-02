@@ -17,6 +17,7 @@ from zope.interface.exceptions import Invalid
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import invariant
+from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
 
 import json
@@ -266,7 +267,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if subfolder_title is None and not subfolder_data.get('internal_reference_no'):
             return last_ref, last_title
 
-        subfolder_title = self._replace_newline(subfolder_title or u'', replace_slash=replace_slash)
+        subfolder_title = self._replace_newline(subfolder_title or u'-', replace_slash=replace_slash)
 
         # Inherit categories from folder if relevant
         key = "classification_categories"
@@ -322,10 +323,40 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             **node
         )
         if raw_data[1]["data"]:
-            self.data.append((raw_data[0], json.dumps(raw_data[1])))
+            self._direct_operation(raw_data)
+            # self.data.append((raw_data[0], json.dumps(raw_data[1])))
 
     def _after_import(self):
         self.finished = True
+
+    def _create_or_update(self, parent, dic):
+        identifier = dic.get("internal_reference_no", None)
+        if not identifier:
+            raise ValueError(u"Missing identifier {0}".format(identifier))
+        elements = api.content.find(context=parent, internal_reference_no=identifier)
+        if not elements:
+            typ = dic.pop('@type', parent == self.context and 'ClassificationFolder' or 'ClassificationSubfolder')
+            obj = api.content.create(parent, typ, **dic)
+        else:
+            obj = elements[0].getObject()
+            identifier = dic.pop("internal_reference_no")
+            changes = False
+            for attr, value in dic.items():
+                if value is not None:
+                    changes = True
+                    setattr(obj, attr, value)
+            if changes:
+                modified(obj)
+        return obj
+
+    def _direct_operation(self, data):
+        method, items = data[0], data[1]['data']
+        for item in items:
+            children = item.pop("__children__", [])
+            obj = self._create_or_update(self.context, item)
+            for child in children:
+                self._create_or_update(obj, child)
+
 
 
 @implementer(baseform.IImportFormView)
