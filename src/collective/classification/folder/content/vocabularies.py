@@ -2,12 +2,12 @@
 
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
-from imio.helpers.content import uuidToCatalogBrain
 from plone import api
 from unidecode import unidecode
 from z3c.form import util
 from z3c.form.i18n import MessageFactory as _zf
 from z3c.formwidget.query.interfaces import IQuerySource
+from zope.annotation import IAnnotations
 from zope.component import getUtility
 from zope.component import queryAdapter
 from zope.interface import implementer
@@ -73,6 +73,40 @@ class BaseSourceVocabulary(object):
         return results
 
 
+def set_folders_tree(portal):
+    """Dict containing uid: (title, categories)"""
+    dic = {}
+    annot = IAnnotations(portal)
+    key = u'classification.folder.dic'
+    crits = {'object_provides': 'collective.classification.folder.content.classification_folder.'
+                                'IClassificationFolder',
+             'sort_on': 'ClassificationFolderSort'}
+    for brain in portal.portal_catalog.unrestrictedSearchResults(**crits):
+        folder = brain._unrestrictedGetObject()
+        categories = set([])
+        cf_parent = folder.cf_parent()
+        if cf_parent:
+            title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
+            categories.update(cf_parent.classification_categories or [])
+        else:
+            title = u"{0}".format(folder.title)
+        if folder.internal_reference_no:
+            title = u'{} ({})'.format(title, folder.internal_reference_no)
+        categories.update(folder.classification_categories or [])
+        dic[brain.UID] = (title, categories)
+    annot[key] = dic
+
+
+def get_folders_tree():
+    """Dict containing uid: (title, categories)"""
+    portal = api.portal.get()
+    annot = IAnnotations(portal)
+    key = u'classification.folder.dic'
+    if key not in annot:
+        set_folders_tree(portal)
+    return annot[key]
+
+
 @implementer(IQuerySource)
 class ClassificationFolderSource(BaseSourceVocabulary):
     @property
@@ -102,34 +136,20 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             object_provides="collective.classification.folder.content.classification_folder.IClassificationFolder",
             sort_on="ClassificationFolderSort",
         )
-
-        def make_tuple(br, folder):
-            categories = set([])
-            cf_parent = folder.cf_parent()
-            if cf_parent:
-                title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
-                categories.update(cf_parent.classification_categories or [])
-            else:
-                title = u"{0}".format(folder.title)
-            if folder.internal_reference_no:
-                title = u'{} ({})'.format(title, folder.internal_reference_no)
-            categories.update(folder.classification_categories or [])
-            return br.UID, title, categories
-
+        all_folders = get_folders_tree()
         results = []
         uids = []
         for brain in folder_brains:
-            results.append(make_tuple(brain, brain.getObject()))
             uids.append(brain.UID)
+            infos = all_folders[brain.UID]
+            results.append((brain.UID, infos[0], infos[1]))
         # check if all stored values are in the results, so view and edit are possible
         # we assume the concerned field is 'classification_folders'
         for uid in getattr(self.context, 'classification_folders', None) or []:
             if uid in uids:
                 continue
-            # we found it unrestrictedly
-            brain = uuidToCatalogBrain(uid, unrestricted=True)
-            if brain:
-                results.append(make_tuple(brain, brain._unrestrictedGetObject()))
+            infos = all_folders[uid]
+            results.append((uid, infos[0], infos[1]))
         return results
 
     def search(self, query_string, categories_filter=None):
