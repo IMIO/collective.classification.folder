@@ -2,6 +2,7 @@
 
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
+from persistent.dict import PersistentDict
 from plone import api
 from unidecode import unidecode
 from z3c.form import util
@@ -73,9 +74,24 @@ class BaseSourceVocabulary(object):
         return results
 
 
+def full_title_categories(folder):
+    """Get full title and full categories"""
+    categories = set([])
+    cf_parent = folder.cf_parent()
+    if cf_parent:
+        title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
+        categories.update(cf_parent.classification_categories or [])
+    else:
+        title = u"{0}".format(folder.title)
+    if folder.internal_reference_no:
+        title = u'{} ({})'.format(title, folder.internal_reference_no)
+    categories.update(folder.classification_categories or [])
+    return title, categories
+
+
 def set_folders_tree(portal):
     """Dict containing uid: (title, categories)"""
-    dic = {}
+    dic = PersistentDict()
     annot = IAnnotations(portal)
     key = u'classification.folder.dic'
     crits = {'object_provides': 'collective.classification.folder.content.classification_folder.'
@@ -83,17 +99,7 @@ def set_folders_tree(portal):
              'sort_on': 'ClassificationFolderSort'}
     for brain in portal.portal_catalog.unrestrictedSearchResults(**crits):
         folder = brain._unrestrictedGetObject()
-        categories = set([])
-        cf_parent = folder.cf_parent()
-        if cf_parent:
-            title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
-            categories.update(cf_parent.classification_categories or [])
-        else:
-            title = u"{0}".format(folder.title)
-        if folder.internal_reference_no:
-            title = u'{} ({})'.format(title, folder.internal_reference_no)
-        categories.update(folder.classification_categories or [])
-        dic[brain.UID] = (title, categories)
+        dic[brain.UID] = full_title_categories(folder)
     annot[key] = dic
 
 
