@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from Products.statusmessages.interfaces import IStatusMessage
 from collective import dexteritytextindexer
 from collective.classification.folder import _
 from collective.classification.folder import utils
-from collective.classification.folder.browser.faceted import (
-    IClassificationFacetedNavigable,
-)
-from collective.classification.folder.content.vocabularies import (
-    ServiceInChargeSourceBinder,
-)
-from collective.classification.folder.content.vocabularies import (
-    ServiceInCopySourceBinder,
-)
+from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
+from collective.classification.folder.content.vocabularies import full_title_categories
+from collective.classification.folder.content.vocabularies import get_folders_tree
+from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
+from collective.classification.folder.content.vocabularies import ServiceInCopySourceBinder
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
 from collective.z3cform.chosen.widget import ChosenMultiFieldWidget
 from dexterity.localrolesfield.field import LocalRoleField
@@ -27,6 +22,7 @@ from plone.autoform import directives as form
 from plone.dexterity.content import Container
 from plone.formwidget.autocomplete import AutocompleteMultiFieldWidget
 from plone.supermodel import model
+from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
 from zope import schema
 from zope.component import getMultiAdapter
@@ -175,6 +171,9 @@ def on_modify(obj, event):
             contentFilter={"portal_type": "ClassificationSubfolder"}
         ):
             subfolder.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])
+    # update annotated tree
+    folders_dic = get_folders_tree()
+    folders_dic[obj.UID()] = full_title_categories(obj)
 
 
 def on_delete(obj, event):
@@ -196,3 +195,12 @@ def on_delete(obj, event):
             (obj, obj.REQUEST), name=u"plone_context_state"
         ).view_url()
         raise Redirect(view_url)
+
+
+def on_move(obj, event):
+    # update annotated tree
+    folders_dic = get_folders_tree()
+    if event.newParent is None:
+        del folders_dic[obj.UID()]
+    else:
+        folders_dic[obj.UID()] = full_title_categories(obj)
