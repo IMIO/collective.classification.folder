@@ -240,6 +240,8 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             subfolder_data['classification_informations'] = self._replace_newline_by_crlf(
                 subfolder_data['classification_informations'])
 
+        # if folder_title == 'ERREUR':
+        #     folder_title = line_data.get('title')
         if folder_title is not None:
             folder_title = self._replace_newline(folder_title, replace_slash=replace_slash)
         # if there is a irn related to parent, we get it. Otherwise we generate it
