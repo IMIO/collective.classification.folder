@@ -176,6 +176,7 @@ def on_modify(obj, event):
     folders_dic = get_folders_tree()
     if obj.UID() not in folders_dic:
         set_folders_tree(api.portal.get())
+        folders_dic = get_folders_tree()
     folders_dic[obj.UID()] = full_title_categories(obj)
 
 
@@ -206,6 +207,7 @@ def on_move(obj, event):
     if event.newParent is None:
         if obj.UID() not in folders_dic:
             set_folders_tree(api.portal.get())
+            folders_dic = get_folders_tree()
         del folders_dic[obj.UID()]
     else:
         folders_dic[obj.UID()] = full_title_categories(obj)
