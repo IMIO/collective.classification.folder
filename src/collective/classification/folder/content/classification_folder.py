@@ -204,10 +204,11 @@ def on_delete(obj, event):
 def on_move(obj, event):
     # update annotated tree
     folders_dic = get_folders_tree()
-    if event.newParent is None:
+    if event.newParent is None:  # delete
         if obj.UID() not in folders_dic:
             set_folders_tree(api.portal.get())
             folders_dic = get_folders_tree()
-        del folders_dic[obj.UID()]
+        else:
+            del folders_dic[obj.UID()]
     else:
         folders_dic[obj.UID()] = full_title_categories(obj)
