@@ -8,6 +8,7 @@ from collective.classification.folder.content.vocabularies import full_title_cat
 from collective.classification.folder.content.vocabularies import get_folders_tree
 from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
 from collective.classification.folder.content.vocabularies import ServiceInCopySourceBinder
+from collective.classification.folder.content.vocabularies import set_folders_tree
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
 from collective.z3cform.chosen.widget import ChosenMultiFieldWidget
 from dexterity.localrolesfield.field import LocalRoleField
@@ -173,6 +174,8 @@ def on_modify(obj, event):
             subfolder.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])
     # update annotated tree
     folders_dic = get_folders_tree()
+    if obj.UID() not in folders_dic:
+        set_folders_tree(api.portal.get())
     folders_dic[obj.UID()] = full_title_categories(obj)
 
 
@@ -201,6 +204,8 @@ def on_move(obj, event):
     # update annotated tree
     folders_dic = get_folders_tree()
     if event.newParent is None:
+        if obj.UID() not in folders_dic:
+            set_folders_tree(api.portal.get())
         del folders_dic[obj.UID()]
     else:
         folders_dic[obj.UID()] = full_title_categories(obj)
