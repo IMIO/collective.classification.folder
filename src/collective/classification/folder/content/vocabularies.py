@@ -220,7 +220,10 @@ class ServiceInCopySource(BaseSourceVocabulary):
     @property
     def vocabulary(self):
         if not self._vocabulary:
-            with api.env.adopt_user(user=self._verified_user):
+            if self._verified_user:
+                with api.env.adopt_user(user=self._verified_user):
+                    self._vocabulary = services_in_copy_vocabulary(self.context)
+            else:
                 self._vocabulary = services_in_copy_vocabulary(self.context)
         return self._vocabulary
 
@@ -235,7 +238,10 @@ class ServiceInChargeSource(BaseSourceVocabulary):
     @property
     def vocabulary(self):
         if not self._vocabulary:
-            with api.env.adopt_user(user=self._verified_user):
+            if self._verified_user:
+                with api.env.adopt_user(user=self._verified_user):
+                    self._vocabulary = services_in_charge_vocabulary(self.context)
+            else:
                 self._vocabulary = services_in_charge_vocabulary(self.context)
         return self._vocabulary
 
