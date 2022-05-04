@@ -12,6 +12,8 @@ from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from zope.component import createObject
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 
 import unittest
 
@@ -113,6 +115,7 @@ class ClassificationFolderSourceTest(unittest.TestCase):
     def test_voc_with_reference(self):
         source = ClassificationFolderSource(self.portal)
         self.folder1.internal_reference_no = 'Pastaga'
+        notify(ObjectModifiedEvent(self.folder1))
         terms = [(term.value, term.title) for term in source]
         self.assertEqual(
             [(self.folder1_uid, u"Folder 1 (Pastaga)"), (self.folder2_uid, u"Folder 2")], terms
