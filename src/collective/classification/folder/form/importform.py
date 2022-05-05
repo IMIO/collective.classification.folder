@@ -20,7 +20,7 @@ from zope.interface import invariant
 from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
 
-import json
+# import json
 import re
 
 
@@ -352,13 +352,12 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         return obj
 
     def _direct_operation(self, data):
-        method, items = data[0], data[1]['data']
+        method, items = data[0], data[1]['data']  # noqa
         for item in items:
             children = item.pop("__children__", [])
             obj = self._create_or_update(self.context, item)
             for child in children:
                 self._create_or_update(obj, child)
-
 
 
 @implementer(baseform.IImportFormView)
