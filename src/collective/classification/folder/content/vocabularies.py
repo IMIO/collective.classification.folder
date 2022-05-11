@@ -74,7 +74,7 @@ class BaseSourceVocabulary(object):
         return results
 
 
-def full_title_categories(folder):
+def full_title_categories(folder, tree_voc=None):
     """Get full title and full categories"""
     categories = set([])
     cf_parent = folder.cf_parent()
@@ -86,6 +86,9 @@ def full_title_categories(folder):
     if folder.internal_reference_no:
         title = u'{} ({})'.format(title, folder.internal_reference_no)
     categories.update(folder.classification_categories or [])
+    if categories and not tree_voc:
+        tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree",)(None)
+    categories = {uid: tree_voc.getTerm(uid) for uid in categories}
     return title, categories
 
 
@@ -97,9 +100,10 @@ def set_folders_tree(portal):
     crits = {'object_provides': 'collective.classification.folder.content.classification_folder.'
                                 'IClassificationFolder',
              'sort_on': 'ClassificationFolderSort'}
+    tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:fulltree", )(portal)
     for brain in portal.portal_catalog.unrestrictedSearchResults(**crits):
         folder = brain._unrestrictedGetObject()
-        dic[brain.UID] = full_title_categories(folder)
+        dic[brain.UID] = full_title_categories(folder, tree_voc)
     annot[key] = dic
 
 
@@ -148,7 +152,7 @@ class ClassificationFolderSource(BaseSourceVocabulary):
         for brain in folder_brains:
             uids.append(brain.UID)
             infos = all_folders[brain.UID]
-            results.append((brain.UID, infos[0], infos[1]))
+            results.append((brain.UID, infos[0], infos[1]))  # title, categories
         # check if all stored values are in the results, so view and edit are possible
         # we assume the concerned field is 'classification_folders'
         for uid in getattr(self.context, 'classification_folders', None) or []:
