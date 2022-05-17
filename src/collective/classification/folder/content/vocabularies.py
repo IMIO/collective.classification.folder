@@ -74,7 +74,7 @@ class BaseSourceVocabulary(object):
         return results
 
 
-def full_title_categories(folder, tree_voc=None):
+def full_title_categories(folder, tree_voc=None, with_irn=False, with_cat=False):
     """Get full title and full categories"""
     categories = set([])
     cf_parent = folder.cf_parent()
@@ -170,10 +170,11 @@ class ClassificationFolderSource(BaseSourceVocabulary):
         terms_matching_query = []
         terms_matching_query_and_category = []
         for (value, title, categories) in self.results:
-            decoded_title = unidecode(title).lower()
-            if all([part in decoded_title for part in query_parts]):
+            search_in = '{} {}'.format(unidecode(title).lower(),
+                                       ' '.join([unidecode(term.title).lower() for term in categories.values()]))
+            if all([part in search_in for part in query_parts]):
                 term = self.getTerm(value)
-                if categories_filter and categories.intersection(categories_filter):
+                if categories_filter and categories and set(categories.keys()).intersection(categories_filter):
                     terms_matching_query_and_category.append(term)
                 else:
                     terms_matching_query.append(term)
