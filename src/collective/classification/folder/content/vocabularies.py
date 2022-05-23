@@ -94,8 +94,8 @@ def full_title_categories(folder, tree_voc=None, with_irn=False, with_cat=False)
         tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree",)(None)
     try:
         categories = {uid: tree_voc.getTerm(uid) for uid in categories}
-    except KeyError as kem:
-        logger.error("category no more found ! Folder is '{}', error: '{}'".format(folder.absolute_url(), kem))
+    except (LookupError, KeyError) as em:
+        logger.error("category no more found ! Folder is '{}', error: '{}'".format(folder.absolute_url(), em))
         categories = {}
     return title, categories
 
