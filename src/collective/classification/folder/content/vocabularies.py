@@ -18,6 +18,10 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
+import logging
+
+logger = logging.getLogger('folder.content.vocabularies')
+
 
 @implementer(IQuerySource)
 class BaseSourceVocabulary(object):
@@ -88,7 +92,11 @@ def full_title_categories(folder, tree_voc=None, with_irn=False, with_cat=False)
     categories.update(folder.classification_categories or [])
     if categories and not tree_voc:
         tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree",)(None)
-    categories = {uid: tree_voc.getTerm(uid) for uid in categories}
+    try:
+        categories = {uid: tree_voc.getTerm(uid) for uid in categories}
+    except KeyError as kem:
+        logger.error("category no more found ! Folder is '{}', error: '{}'".format(folder.absolute_url(), kem))
+        categories = {}
     return title, categories
 
 
