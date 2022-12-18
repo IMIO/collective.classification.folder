@@ -146,6 +146,9 @@ class ClassificationFolder(Container):
 
 
 def on_create(obj, event):
+    """Configures faceted navigation. Disables querynextprev. Increases settings counter.
+
+    data transfer: ✅"""
     notify(FacetedWillBeEnabledEvent(obj))
     alsoProvides(obj, IClassificationFacetedNavigable)
     if not IDisableSmartFacets.providedBy(obj):
@@ -166,6 +169,10 @@ def on_create(obj, event):
 
 
 def on_modify(obj, event):
+    """Reindexes SearchableText (folder, subfolder) and ClassificationFolderSort (sub).
+    Updates folders tree.
+
+    data transfer: ❓"""
     obj.reindexObject(idxs=["SearchableText"])
 
     if obj.portal_type == "ClassificationFolder":
@@ -173,7 +180,7 @@ def on_modify(obj, event):
             contentFilter={"portal_type": "ClassificationSubfolder"}
         ):
             subfolder.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])
-    # update annotated tree
+    # update annotated tree on portal annotation (uid: (title, categories))
     folders_dic = get_folders_tree()
     if obj.UID() not in folders_dic:
         set_folders_tree(api.portal.get())
@@ -182,6 +189,9 @@ def on_modify(obj, event):
 
 
 def on_delete(obj, event):
+    """Checks if some content is linked to the folder to delete.
+
+    data transfer: ❌"""
     obj_uid = api.content.get_uuid(obj)
     try:
         linked_content = api.content.find(classification_folders=obj_uid)
@@ -203,6 +213,9 @@ def on_delete(obj, event):
 
 
 def on_move(obj, event):
+    """Updates folders tree.
+
+    data transfer: ❓"""
     # update annotated tree
     folders_dic = get_folders_tree()
     if event.newParent is None:  # delete

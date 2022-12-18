@@ -23,6 +23,9 @@ class ClassificationFolders(Container):
 
 
 def on_create(obj, event):
+    """Configures faceted navigation.
+
+    data transfer: ❌"""
     faceted_subtyper = obj.unrestrictedTraverse("@@faceted_subtyper")
     faceted_subtyper.enable()
 
