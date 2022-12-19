@@ -34,4 +34,7 @@ class ClassificationSubfolder(Item):
 
 
 def on_move(obj, event):
+    """Reindexes SearchableText and ClassificationFolderSort.
+
+    data transfer: ❓"""
     obj.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])
