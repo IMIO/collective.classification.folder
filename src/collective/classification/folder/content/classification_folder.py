@@ -32,6 +32,7 @@ from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Invalid
 from zope.interface import invariant
+from zope.lifecycleevent import IObjectRemovedEvent
 from zope.schema.fieldproperty import FieldProperty
 
 import pkg_resources
@@ -208,6 +209,8 @@ def on_delete(obj, event):
 
 def on_move(obj, event):
     """Updates folders tree."""
+    if IObjectRemovedEvent.providedBy(event) and event.object.portal_type == 'Plone Site':
+        return
     # update annotated tree
     folders_dic = get_folders_tree()
     if event.newParent is None:  # delete
