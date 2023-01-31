@@ -15,6 +15,7 @@ lib/
 local/
 node_modules/
 parts/
+.plone.versioncheck*
 dist/*
 test.plone_addon/
 var/
