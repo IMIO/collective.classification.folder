@@ -64,6 +64,7 @@ setup(
         "collective.classification.tree",
         "eea.facetednavigation",
         "collective.eeafaceted.z3ctable",
+        "imio.helpers",
         "imio.prettylink",
         "collective.dexteritytextindexer",
         "dexterity.localrolesfield",
