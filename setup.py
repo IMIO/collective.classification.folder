@@ -67,6 +67,7 @@ setup(
         "imio.helpers",
         "imio.prettylink",
         "collective.dexteritytextindexer",
+        "collective.z3cform.select2",
         "dexterity.localrolesfield",
         "collective.z3cform.chosen",
         "plone.formwidget.autocomplete",

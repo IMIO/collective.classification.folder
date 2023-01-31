@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<object name="portal_javascripts">
+  <javascript remove="True" id="++resource++collective.js.chosen/chosen.jquery.js"/>
+  <javascript remove="True" id="++resource++collective.js.chosen/ajax-chosen.js"/>
+  <javascript remove="True" id="++resource++collective.js.chosen/chosen.proto.js"/>
+  <javascript remove="True" id="++resource++collective.js.chosen/chosen.proto.min.js"/>
+  <javascript remove="True" id="++resource++collective.js.chosen/chosen.jquery.min.js"/>
+  <javascript remove="True" id="++resource++collective.js.chosen/ajax-chosen.min.js"/>
+</object>
