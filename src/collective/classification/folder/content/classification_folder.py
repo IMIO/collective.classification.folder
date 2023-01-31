@@ -10,7 +10,7 @@ from collective.classification.folder.content.vocabularies import ServiceInCharg
 from collective.classification.folder.content.vocabularies import ServiceInCopySourceBinder
 from collective.classification.folder.content.vocabularies import set_folders_tree
 from collective.classification.tree.vocabularies import ClassificationTreeSourceBinder
-from collective.z3cform.chosen.widget import ChosenMultiFieldWidget
+from collective.z3cform.select2.widget.widget import MultiSelect2FieldWidget
 from dexterity.localrolesfield.field import LocalRoleField
 from dexterity.localrolesfield.field import LocalRolesField
 from eea.facetednavigation.events import FacetedEnabledEvent
@@ -80,7 +80,7 @@ class IClassificationFolder(model.Schema):
         required=False,
     )
 
-    form.widget(recipient_groups=ChosenMultiFieldWidget)
+    form.widget(recipient_groups=MultiSelect2FieldWidget)
     recipient_groups = LocalRolesField(
         title=_(u"Services in copy"),
         # description=_(u"ID of the services that can access this folder"),
