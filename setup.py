@@ -69,6 +69,7 @@ setup(
         "collective.dexteritytextindexer",
         "dexterity.localrolesfield",
         "collective.z3cform.chosen",
+        "plone.formwidget.autocomplete",
         "Unidecode",
     ],
     extras_require={
