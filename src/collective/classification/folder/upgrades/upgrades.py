@@ -4,6 +4,11 @@ from Products.GenericSetup.registry import GlobalRegistryStorage
 
 
 def to1001(context):
+    pqi = api.portal.get_tool("portal_quickinstaller")
+    inst_prd = [dic['id'] for dic in pqi.listInstalledProducts() if dic['status'] == 'installed']
+    for prd in ('collective.z3cform.chosen', 'collective.js.chosen'):
+        if prd in inst_prd:
+            pqi.uninstallProducts([prd])
     gs = api.portal.get_tool('portal_setup')
     gs.runAllImportStepsFromProfile('profile-collective.classification.folder.upgrades:to1001',
                                     dependency_strategy='new')
