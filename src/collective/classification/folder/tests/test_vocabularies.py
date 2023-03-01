@@ -3,6 +3,7 @@
 from collective.classification.folder.content.vocabularies import (
     ClassificationFolderSource,
 )
+from collective.classification.folder.content.vocabularies import full_title_categories
 from collective.classification.folder.testing import (
     COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
 )  # noqa
@@ -70,6 +71,18 @@ class ClassificationFolderSourceTest(unittest.TestCase):
             recipient_groups=[],
         )
         self.folder2_uid = api.content.get_uuid(self.folder2)
+
+    def test_full_title_categories(self):
+        subfolder1 = api.content.create(
+            container=self.folder1,
+            type="ClassificationSubfolder",
+            id="subfolder1",
+            title=u"Subfolder 1",
+            recipient_groups=[],
+            internal_reference_no='1.1'
+        )
+        self.assertTupleEqual(full_title_categories(subfolder1), (u'Folder 1 ⏩ Subfolder 1 (1.1)', {}))
+        self.assertTupleEqual(full_title_categories(subfolder1, with_irn=False), (u'Folder 1 ⏩ Subfolder 1', {}))
 
     def test_available_folders_as_manager(self):
         source = ClassificationFolderSource(self.portal)

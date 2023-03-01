@@ -78,19 +78,19 @@ class BaseSourceVocabulary(object):
         return results
 
 
-def full_title_categories(folder, tree_voc=None, with_irn=False, with_cat=False):
+def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True):
     """Get full title and full categories"""
     categories = set([])
     cf_parent = folder.cf_parent()
     if cf_parent:
         title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
-        categories.update(cf_parent.classification_categories or [])
+        categories.update(with_cat and cf_parent.classification_categories or [])
     else:
         title = u"{0}".format(folder.title)
-    if folder.internal_reference_no:
+    if with_irn and folder.internal_reference_no:
         title = u'{} ({})'.format(title, folder.internal_reference_no)
-    categories.update(folder.classification_categories or [])
-    if categories and not tree_voc:
+    categories.update(with_cat and folder.classification_categories or [])
+    if with_cat and categories and not tree_voc:
         tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree",)(None)
     try:
         categories = {uid: tree_voc.getTerm(uid) for uid in categories}
