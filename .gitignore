@@ -39,3 +39,4 @@ reports/
 .python-version
 .plone.versioncheck*
 checkversion*
+pyvenv.cfg
