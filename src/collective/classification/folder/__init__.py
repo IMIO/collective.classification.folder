@@ -7,6 +7,8 @@ from zope.i18nmessageid import MessageFactory
 
 
 _ = MessageFactory("collective.classification.folder")
+PLONE_VERSION = api.env.plone_version()[:3]
+
 
 def _tr(msgid, domain='collective.classification.folder', mapping=None):
     translation_domain = queryUtility(ITranslationDomain, domain)
