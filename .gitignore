@@ -20,6 +20,8 @@ parts/
 dist/*
 test.plone_addon/
 var/
+src/*
+!src/collective
 # files
 .installed.cfg
 .mr.developer.cfg
@@ -37,4 +39,3 @@ reports/
 .python-version
 .plone.versioncheck*
 checkversion*
-src/collective.classification.tree/
