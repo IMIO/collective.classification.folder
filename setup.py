@@ -69,7 +69,7 @@ setup(
         "collective.dexteritytextindexer",
         "collective.z3cform.select2",
         "dexterity.localrolesfield",
-        "collective.z3cform.chosen",
+        "collective.z3cform.chosen; python_version<='2.7.18'",
         "plone.formwidget.autocomplete",
         "Unidecode",
     ],
