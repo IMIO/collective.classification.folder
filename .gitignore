@@ -1,4 +1,5 @@
 .coverage
+.idea
 *.egg-info
 *.log
 *.mo
@@ -32,3 +33,8 @@ report.html
 reports/
 # excludes
 !src/collective
+.plone-version
+.python-version
+.plone.versioncheck*
+checkversion*
+src/collective.classification.tree/
