@@ -7,8 +7,8 @@ from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
 if PLONE_VERSION < '6.0':
-    from zope.component.interfaces import ComponentLookupError
-    from zope.component.interfaces import Invalid
+    from zope.component.interfaces import ComponentLookupError  # noqa
+    from zope.component.interfaces import Invalid  # noqa
 else:
     from zope.interface.interfaces import ComponentLookupError
     from zope.interface.interfaces import Invalid

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from StringIO import StringIO
 from collective.classification.folder import testing
 from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from collective.classification.folder.form import importform
@@ -8,6 +7,7 @@ from operator import itemgetter
 from persistent.dict import PersistentDict
 from plone import api
 from plone.namedfile import NamedBlobFile
+from six import StringIO
 from zope.annotation import IAnnotations
 from zope.component import createObject
 from zope.component import getUtility
