@@ -11,13 +11,19 @@ from collective.classification.folder.testing import (
 import unittest
 
 
-try:
-    from Products.CMFPlone.utils import get_installer
-except ImportError:
-    get_installer = None
+class CommonSetup():  # noqa
+
+    def set_installer(self):
+        if PLONE_VERSION >= '5.1':
+            from Products.CMFPlone.utils import get_installer  # noqa
+            self.installer = get_installer(self.portal, self.layer["request"])
+            self.ipi = self.installer.is_product_installed
+        else:
+            self.installer = api.portal.get_tool('portal_quickinstaller')  # noqa
+            self.ipi = self.installer.isProductInstalled
 
 
-class TestSetup(unittest.TestCase):
+class TestSetup(unittest.TestCase, CommonSetup):
     """Test that collective.classification.folder is properly installed."""
 
     layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
@@ -25,19 +31,11 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
-        if get_installer:
-            self.installer = get_installer(self.portal, self.layer["request"])
-        else:
-            self.installer = api.portal.get_tool("portal_quickinstaller")
+        self.set_installer()
 
     def test_product_installed(self):
         """Test if collective.classification.folder is installed."""
-        if PLONE_VERSION >= '5.1':
-            self.assertTrue(
-                self.installer.is_product_installed("collective.classification.folder"))
-        else:
-            self.assertTrue(
-                self.installer.isProductInstalled("collective.classification.folder"))
+        self.assertTrue(self.ipi("collective.classification.folder"))
 
     def test_browserlayer(self):
         """Test that ICollectiveClassificationFolderLayer is registered."""
@@ -49,7 +47,7 @@ class TestSetup(unittest.TestCase):
         self.assertIn(ICollectiveClassificationFolderLayer, utils.registered_layers())
 
 
-class TestUninstall(unittest.TestCase):
+class TestUninstall(unittest.TestCase, CommonSetup):
 
     layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
 
@@ -57,22 +55,16 @@ class TestUninstall(unittest.TestCase):
         self.portal = self.layer["portal"]
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        if get_installer:
-            self.installer = get_installer(self.portal, self.layer["request"])
+        self.set_installer()
+        if PLONE_VERSION >= '5.1':
             self.installer.uninstall_product("collective.classification.folder")
         else:
-            self.installer = api.portal.get_tool("portal_quickinstaller")
             self.installer.uninstallProducts(["collective.classification.folder"])
         setRoles(self.portal, TEST_USER_ID, roles_before)
 
     def test_product_uninstalled(self):
         """Test if collective.classification.folder is cleanly uninstalled."""
-        if PLONE_VERSION >= '5.1':
-            self.assertFalse(
-                self.installer.is_product_installed("collective.classification.folder"))
-        else:
-            self.assertFalse(
-                self.installer.isProductInstalled("collective.classification.folder"))
+        self.assertFalse(self.ipi("collective.classification.folder"))
 
     def test_browserlayer_removed(self):
         """Test that ICollectiveClassificationFolderLayer is removed."""
