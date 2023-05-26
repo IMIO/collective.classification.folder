@@ -1,14 +1,22 @@
+from collective.classification.folder import PLONE_VERSION
 from plone import api
 from Products.GenericSetup.interfaces import IUpgradeSteps
 from Products.GenericSetup.registry import GlobalRegistryStorage
 
 
 def to1001(context):
-    pqi = api.portal.get_tool("portal_quickinstaller")
-    inst_prd = [dic['id'] for dic in pqi.listInstalledProducts() if dic['status'] == 'installed']
+    if PLONE_VERSION >= '5.1':
+        from Products.CMFPlone.utils import get_installer  # noqa
+        installer = get_installer(context, context.REQUEST)
+        ipi = installer.is_product_installed
+        uni = installer.uninstall_product
+    else:
+        installer = api.portal.get_tool('portal_quickinstaller')  # noqa
+        ipi = installer.isProductInstalled
+        uni = installer.uninstallProducts
     for prd in ('collective.z3cform.chosen', 'collective.js.chosen'):
-        if prd in inst_prd:
-            pqi.uninstallProducts([prd])
+        if ipi(prd):
+            uni(PLONE_VERSION >= '5.1' and prd or [prd])
     gs = api.portal.get_tool('portal_setup')
     gs.runAllImportStepsFromProfile('profile-collective.classification.folder.upgrades:to1001',
                                     dependency_strategy='new')
