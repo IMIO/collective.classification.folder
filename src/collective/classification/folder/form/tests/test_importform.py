@@ -11,11 +11,9 @@ from plone.namedfile import NamedBlobFile
 from zope.annotation import IAnnotations
 from zope.component import createObject
 from zope.component import getUtility
-from zope.component.interfaces import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
 import csv
-import json
 import unittest
 
 

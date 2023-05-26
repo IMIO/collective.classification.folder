@@ -32,8 +32,8 @@ class CollectiveClassificationFolderLayer(PloneSandboxLayer):
         import plone.app.event.dx
 
         self.loadZCML(package=plone.app.event.dx)
-        import Products.DateRecurringIndex
 
+        import Products.DateRecurringIndex  # noqa
         z2.installProduct(app, "Products.DateRecurringIndex")
 
         self.loadZCML(package=plone.restapi)
