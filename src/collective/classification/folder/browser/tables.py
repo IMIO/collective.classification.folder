@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from collective.classification.folder import _
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.interfaces import IFacetedTable

@@ -272,9 +272,6 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
             self.assertEqual(len(titles), 4)
 
     def test_folder_matches_category_titles(self):
-        cat_used = self.category_uids["001"]
-        cat_not_used = self.category_uids["002"]
-
         self.folder1 = self._create_folder("folder1", "Folder 1", self.folders, categories=[self.category_uids["001"]])
         self.folder1_1 = self._create_subfolder("folder1-1", "Folder 1-1", self.folder1, tg="Reviewers")
         self.folder2 = self._create_folder("folder2", "Folder 2", self.folders)
