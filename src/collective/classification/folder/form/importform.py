@@ -13,6 +13,7 @@ from imio.helpers.security import check_zope_admin
 from plone import api
 from plone.z3cform.layout import FormWrapper
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from six import ensure_text
 from zope import schema
 from zope.annotation import IAnnotations
 from zope.component import getUtility
@@ -326,7 +327,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         last_ref = None
         last_title = None
         for i, line in enumerate(csv_reader, start=(import_data.get("has_header", False) and 2 or 1)):
-            line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
+            line_data = {v: ensure_text(line[k].strip(' \n'), encoding) for k, v in mapping.items()}
             # line_data['_ln'] = i
             if kwargs.get('treating_groups', None):
                 line_data['treating_groups'] = kwargs['treating_groups']
