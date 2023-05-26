@@ -57,7 +57,7 @@ setup(
         "plone.api>=1.8.4",
         "plone.restapi",
         "plone.app.dexterity",
-        "plone.app.referenceablebehavior",
+        # "plone.app.referenceablebehavior",  # not py3 compatible
         "plone.app.relationfield",
         "plone.app.lockingbehavior",
         "plone.schema",
