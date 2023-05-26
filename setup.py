@@ -70,6 +70,7 @@ setup(
         "collective.z3cform.select2",
         "dexterity.localrolesfield",
         "collective.z3cform.chosen; python_version<='2.7.18'",
+        "plone.app.contenttypes",
         "plone.formwidget.autocomplete",
         "Unidecode",
     ],
@@ -81,7 +82,6 @@ setup(
             # plone_coredev tests as of 2016-04-01.
             "plone.testing",
             "plone.app.robotframework[debug]",
-            "plone.app.contenttypes",
         ]
     },
     entry_points="""
