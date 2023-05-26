@@ -145,7 +145,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         base = 1
         formatter = "{0}-{1:02d}"
         ref = formatter.format(reference, base)
-        while ref in data[reference].keys():
+        while ref in list(data[reference].keys()):
             base += 1
             ref = formatter.format(reference, base)
         return ref
