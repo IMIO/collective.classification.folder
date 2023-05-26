@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from eea.faceted.vocabularies.autocomplete import IAutocompleteSuggest
-from zope.interface import implementer
-from Products.Five import BrowserView
-from plone import api
 from collective.classification.tree.vocabularies import ClassificationTreeSource
+from eea.faceted.vocabularies.autocomplete import IAutocompleteSuggest
+from plone import api
+from Products.Five import BrowserView
+from six import ensure_text
+from zope.interface import implementer
 
 import json
 
@@ -29,7 +30,7 @@ class ClassificationCategorySuggest(BaseSuggestView):
 
     def __call__(self):
         result = []
-        query = self.request.get("term").decode("utf8").lower()
+        query = ensure_text(self.request.get("term"), "utf8").lower()
         if not query:
             return self._return_result(result)
         vocabulary = ClassificationTreeSource(self.context).vocabulary

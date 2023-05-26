@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from collective.classification.folder import utils
-from collective.classification.folder.content.classification_folder import (
-    IClassificationFolder,
-)
-from collective.classification.folder.content.classification_folders import (
-    IClassificationFolders,
-)
+from collective.classification.folder.content.classification_folder import IClassificationFolder
+from collective.classification.folder.content.classification_folders import IClassificationFolders
+from six import ensure_text
 from z3c.form.interfaces import IAddForm
 from z3c.form.interfaces import IFormLayer
 from z3c.form.interfaces import IValue
@@ -30,12 +27,12 @@ class BaseDataProvider(object):
 class FolderDataProvider(BaseDataProvider):
     def get(self):
         if self.field.__name__ == "internal_reference_no":
-            return utils.evaluate_internal_reference(
+            return ensure_text(utils.evaluate_internal_reference(
                 self.context,
                 self.request,
                 "folder_number",
                 "folder_talexpression",
-            ).decode("utf8")
+            ), "utf8")
         else:
             return
 
@@ -52,11 +49,11 @@ class SubfolderDataProvider(BaseDataProvider):
         if self.field.__name__ in inherit_fields:
             return getattr(self.context, self.field.__name__, None)
         elif self.field.__name__ == "internal_reference_no":
-            return utils.evaluate_internal_reference(
+            return ensure_text(utils.evaluate_internal_reference(
                 self.context,
                 self.request,
                 "subfolder_number",
                 "subfolder_talexpression",
-            ).decode("utf8")
+            ), "utf8")
         else:
             return

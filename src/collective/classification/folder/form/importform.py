@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
-from collective.classification.tree.form.importform import GeneratedBool
-from collective.classification.tree.form.importform import GeneratedChoice
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.classification.folder import _
 from collective.classification.folder import utils
 from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
+from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from collective.classification.tree import _ as _ct
 from collective.classification.tree import utils as tree_utils
 from collective.classification.tree.form import importform as baseform
+from collective.classification.tree.form.importform import GeneratedBool
+from collective.classification.tree.form.importform import GeneratedChoice
 from plone import api
 from plone.z3cform.layout import FormWrapper
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from six import ensure_text
 from zope.annotation import IAnnotations
 from zope.component import getUtility
-from zope.interface.exceptions import Invalid
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import invariant
+from zope.interface.exceptions import Invalid
 from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -296,7 +297,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         last_ref = None
         last_title = None
         for i, line in enumerate(csv_reader, start=(import_data.get("has_header", False) and 2 or 1)):
-            line_data = {v: line[k].strip(' \n').decode(encoding) for k, v in mapping.items()}
+            line_data = {v: ensure_text(line[k].strip(' \n'), encoding) for k, v in mapping.items()}
             # line_data['_ln'] = i
             if kwargs.get('treating_groups', None):
                 line_data['treating_groups'] = kwargs['treating_groups']

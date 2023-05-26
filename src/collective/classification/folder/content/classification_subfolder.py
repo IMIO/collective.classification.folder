@@ -2,10 +2,9 @@
 
 from Acquisition import aq_parent
 from collective.classification.folder import utils
-from collective.classification.folder.content.classification_folder import (
-    IClassificationFolder,
-)
+from collective.classification.folder.content.classification_folder import IClassificationFolder
 from plone.dexterity.content import Item
+from six import ensure_text
 from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
 
@@ -27,7 +26,7 @@ class ClassificationSubfolder(Item):
         return aq_parent(self)
 
     def get_full_title(self):
-        return u"{0} ⏩ {1}".format(self.cf_parent().Title().decode("utf8"), self.Title().decode("utf8"))
+        return u"{0} ⏩ {1}".format(ensure_text(self.cf_parent().Title(), "utf8"), ensure_text(self.Title(), "utf8"))
 
     def _increment_internal_reference(self):
         utils.increment_internal_reference("subfolder_number")
