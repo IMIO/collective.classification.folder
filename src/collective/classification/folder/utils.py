@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
-
+from collective.classification.folder import PLONE_VERSION
 from plone import api
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.component.interfaces import ComponentLookupError
-from zope.component.interfaces import Invalid
 from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
+
+if PLONE_VERSION < '6.0':
+    from zope.component.interfaces import ComponentLookupError
+    from zope.component.interfaces import Invalid
+else:
+    from zope.interface.interfaces import ComponentLookupError
+    from zope.interface.interfaces import Invalid
 
 
 def get_portal_type(parent):
@@ -112,10 +117,9 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     if data.get('treating_groups_title'):
         value = treating_groups_titles.get(data.get('treating_groups_title'))
         if value is None:
-            sp = api.portal.get().portal_properties.site_properties
             raise Invalid(translate(u"Cannot find treating_groups title '${title}'",
                                     domain='collective.classification.folder',
-                                    target_language=sp.getProperty('default_language', 'fr'),
+                                    target_language=api.portal.get_default_language(),
                                     mapping={'title': data.get('treating_groups_title')}).encode('utf8'))
         elif not existing_element or getattr(existing_element, key) != value:
             element[key] = value
