@@ -1,6 +1,6 @@
 #!/usr/bin/make
 # pyenv is a requirement, with 2.7, 3.7 and 3.10 python versions, and virtualenv installed in each version
-# plone parameter must be passed to create environment or after a make cleanall
+# plone parameter must be passed to create environment 'make setup plone=6.0' or after a make cleanall
 
 SHELL=/bin/bash
 plones=4.3 6.0
