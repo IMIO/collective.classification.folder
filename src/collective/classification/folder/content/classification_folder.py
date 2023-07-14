@@ -71,6 +71,7 @@ class IClassificationFolder(model.Schema):
             source=ClassificationTreeSourceBinder(enabled=True),
         ),
         min_length=1,
+        required=False,
     )
 
     treating_groups = LocalRoleField(
