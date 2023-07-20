@@ -33,12 +33,12 @@ setup(
     keywords="Python Plone CMS",
     author="Martin Peeters",
     author_email="support@imio.be",
-    url="https://github.com/collective/collective.classification.folder",
+    url="https://github.com/imio/collective.classification.folder",
     project_urls={
         "PyPI": "https://pypi.python.org/pypi/collective.classification.folder",
-        "Source": "https://github.com/collective/collective.classification.folder",
+        "Source": "https://github.com/imio/collective.classification.folder",
         "Tracker": (
-            "https://github.com/collective/collective.classification.folder/issues"
+            "https://github.com/imio/collective.classification.folder/issues"
         ),
         # 'Documentation': 'https://collective.classification.folder.readthedocs.io/en/latest/',
     },
