@@ -77,7 +77,7 @@ class IClassificationFolder(model.Schema):
         title=_(u"Service in charge"),
         # description=_(u"ID of the service that are in charge of this folder"),
         source=ServiceInChargeSourceBinder(),
-        required=False,
+        required=True,
     )
 
     form.widget(recipient_groups=MultiSelect2FieldWidget)

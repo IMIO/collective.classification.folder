@@ -6,6 +6,8 @@ Changelog
 
 - Set really `classification_categories` field on folders as not mandatory
   [sgeulette]
+- Set `treating_groups` field as required
+  [sgeulette]
 
 1.0a2 (2023-07-20)
 ------------------
