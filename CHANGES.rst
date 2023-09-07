@@ -1,17 +1,16 @@
 Changelog
 =========
 
-
 1.0a3 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Set really `classification_categories` field on folders as not mandatory
+  [sgeulette]
 
 1.0a2 (2023-07-20)
 ------------------
 
-- Set classification_categories field on folders as not required
+- Set `classification_categories` field on folders as not required
   [sgeulette]
 
 1.0a1 (2023-03-29)
