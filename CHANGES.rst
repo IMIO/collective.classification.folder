@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0a3 (unreleased)
+1.0.0 (2023-09-07)
 ------------------
 
 - Set really `classification_categories` field on folders as not mandatory
