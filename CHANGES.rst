@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
+1.0.1 (2023-09-08)
 ------------------
 
 - Removed python_requires causing problem to download from pypi.
