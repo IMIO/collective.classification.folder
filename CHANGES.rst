@@ -4,8 +4,8 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Removed python_requires causing problem to download from pypi.
+  [sgeulette]
 
 1.0.0 (2023-09-07)
 ------------------
