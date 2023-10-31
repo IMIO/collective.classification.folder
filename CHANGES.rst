@@ -4,8 +4,8 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Added `collective.classification.folder.vocabularies:folder_portal_types` vocabulary to be used in faceted criteria.
+  [sgeulette]
 
 1.0.1 (2023-09-08)
 ------------------

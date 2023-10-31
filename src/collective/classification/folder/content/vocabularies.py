@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from collective.classification.folder import _
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
 from persistent.dict import PersistentDict
@@ -19,6 +19,7 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 import logging
+
 
 logger = logging.getLogger('folder.content.vocabularies')
 
@@ -263,3 +264,15 @@ class ServiceInChargeSource(BaseSourceVocabulary):
 class ServiceInChargeSourceBinder(object):
     def __call__(self, context):
         return ServiceInChargeSource(context)
+
+
+@implementer(IVocabularyFactory)
+class ClassificationFolderPortalTypesVocabulary(object):
+    """ Classification folders portal types vocabulary """
+
+    def __call__(self, context):
+        terms = []
+        for typ, title in ((u'ClassificationFolder', u'Classification Folder'),
+                           (u'ClassificationSubfolder', u'Classification Subfolder')):
+            terms.append(SimpleVocabulary.createTerm(typ, typ, _(title)))
+        return SimpleVocabulary(terms)

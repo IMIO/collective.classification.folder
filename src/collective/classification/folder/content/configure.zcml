@@ -56,6 +56,11 @@
         name="collective.classification.folder.vocabularies:services_in_copy"
         />
 
+    <utility
+        name="collective.classification.folder.vocabularies:folder_portal_types"
+        factory=".vocabularies.ClassificationFolderPortalTypesVocabulary"
+        />
+
   <adapter
     name="ClassificationFolderSort"
     factory=".indexers.classification_folder_sort"
