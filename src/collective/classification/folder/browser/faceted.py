@@ -3,12 +3,9 @@
 from Acquisition import aq_parent
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
-from plone.batching import Batch
 from collective.classification.folder import _
 from collective.classification.folder.browser.tables import SubFoldersFacetedTableView
-from collective.classification.folder.content.vocabularies import (
-    ClassificationFolderSource,
-)
+from collective.classification.folder.content.vocabularies import ClassificationFolderSource
 from collective.classification.folder.content.vocabularies import ServiceInChargeSource
 from collective.classification.folder.content.vocabularies import ServiceInCopySource
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
@@ -20,6 +17,7 @@ from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
 from persistent.list import PersistentList
 from plone import api
+from plone.batching import Batch
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -163,6 +161,7 @@ class FolderListingView(BrowserView):
 
 
 class FolderTitleColumn(PrettyLinkColumn):
+    """Prettylink column for combined titles. If contentValue is None, Title is used."""
 
     params = {
         "showIcons": True,
@@ -174,6 +173,37 @@ class FolderTitleColumn(PrettyLinkColumn):
         if hasattr(item, "get_full_title"):
             return item.get_full_title()
         return None
+
+
+class ClassificationFolderTitleColumn(PrettyLinkColumn):
+    """Prettylink title column for ClassificationFolder"""
+
+    header = _('Classification Folder')
+    params = {
+        "showIcons": True,
+        "display_tag_title": False,
+    }
+
+    def renderCell(self, item):
+        obj = self._getObject(item)
+        if obj.portal_type == 'ClassificationSubfolder':
+            obj = obj.cf_parent()
+        return self.getPrettyLink(obj)
+
+
+class ClassificationSubfolderTitleColumn(PrettyLinkColumn):
+    """Title column for ClassificationFolder"""
+
+    header = _('Classification Subfolder')
+    params = {
+        "showIcons": True,
+        "display_tag_title": False,
+    }
+
+    def getPrettyLink(self, obj):
+        if obj.portal_type == 'ClassificationFolder':
+            return '-'
+        return super(ClassificationSubfolderTitleColumn, self).getPrettyLink(obj)
 
 
 class ClassificationFolderIdColumn(BaseColumn):

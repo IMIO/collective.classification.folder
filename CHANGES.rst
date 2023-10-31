@@ -6,6 +6,8 @@ Changelog
 
 - Added `collective.classification.folder.vocabularies:folder_portal_types` vocabulary to be used in faceted criteria.
   [sgeulette]
+- Added separate ClassificationFolder title and ClassificationSubfolder title columns.
+  [sgeulette]
 
 1.0.1 (2023-09-08)
 ------------------
