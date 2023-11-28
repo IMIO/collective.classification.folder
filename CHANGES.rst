@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.2 (unreleased)
+1.0.2 (2023-11-28)
 ------------------
 
 - Added `collective.classification.folder.vocabularies:folder_portal_types` vocabulary to be used in faceted criteria.
