@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from Products.CMFPlone.interfaces import INonInstallable
-from collective.classification.folder import _
 from plone import api
 from plone.registry import field
 from plone.registry import Record
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from zope.i18n import translate as _
 from zope.interface import implementer
 
 
@@ -19,7 +19,10 @@ def create_classification_folder_facet():
     folder = api.content.create(
         container=portal,
         id=folder_id,
-        title=_(u"Classification folder faceted configuration"),
+        title=_(u"Classification folder faceted configuration",
+                domain='collective.classification.folder',
+                target_language=portal.portal_properties.site_properties.getProperty('default_language', 'fr'),
+                ),
         type="Folder",
     )
     folder.exclude_from_nav = True
@@ -79,7 +82,10 @@ def create_annexes_config():
         folder = api.content.create(
             container=portal,
             id='annexes_types',
-            title=_(u"Annexes Types"),
+            title=_(u"Annexes Types",
+                    domain='collective.classification.folder',
+                    target_language=portal.portal_properties.site_properties.getProperty('default_language', 'fr'),
+                    ),
             type="ContentCategoryConfiguration",
         )
         folder.exclude_from_nav = True
