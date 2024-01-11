@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-01-11 15:17+0000\n"
+"POT-Creation-Date: 2024-01-11 15:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 msgid "A classification folder's position in its hierarchy"
 msgstr ""
 
-#: ../setuphandlers.py:82
+#: ../setuphandlers.py:83
 msgid "Annexes Types"
 msgstr ""
 
@@ -34,6 +34,10 @@ msgstr ""
 
 #: ../vocabularies.py:28
 msgid "Archived subfolder"
+msgstr ""
+
+#: ../utils.py:115
+msgid "Cannot find treating_groups title '${title}'"
 msgstr ""
 
 #: ../browser/settings.py:51
@@ -65,7 +69,7 @@ msgstr ""
 msgid "Classification categories"
 msgstr ""
 
-#: ../setuphandlers.py:22
+#: ../setuphandlers.py:23
 msgid "Classification folder faceted configuration"
 msgstr ""
 

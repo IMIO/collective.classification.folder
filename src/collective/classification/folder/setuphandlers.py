@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective.classification.folder import _tr as _
 from Products.CMFPlone.interfaces import INonInstallable
 from plone import api
 from plone.registry import field
@@ -19,10 +20,7 @@ def create_classification_folder_facet():
     folder = api.content.create(
         container=portal,
         id=folder_id,
-        title=_(u"Classification folder faceted configuration",
-                domain='collective.classification.folder',
-                target_language=portal.portal_properties.site_properties.getProperty('default_language', 'fr'),
-                ),
+        title=_(u"Classification folder faceted configuration"),
         type="Folder",
     )
     folder.exclude_from_nav = True
@@ -82,10 +80,7 @@ def create_annexes_config():
         folder = api.content.create(
             container=portal,
             id='annexes_types',
-            title=_(u"Annexes Types",
-                    domain='collective.classification.folder',
-                    target_language=portal.portal_properties.site_properties.getProperty('default_language', 'fr'),
-                    ),
+            title=_(u"Annexes Types"),
             type="ContentCategoryConfiguration",
         )
         folder.exclude_from_nav = True
