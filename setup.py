@@ -63,6 +63,7 @@ setup(
         "collective.classification.tree",
         "eea.facetednavigation",
         "collective.eeafaceted.z3ctable",
+        "imio.annex",
         "imio.helpers",
         "imio.prettylink",
         "collective.dexteritytextindexer",

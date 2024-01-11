@@ -18,3 +18,8 @@ def to1001(context):
     for profile in (u'collective.js.chosen:default', u'collective.z3cform.chosen:default'):
         if profile in upgrade_registry.keys():
             del upgrade_registry[profile]
+
+
+def to1002(context):
+    gs = api.portal.get_tool('portal_setup')
+    gs.runAllImportStepsFromProfile('profile-imio.annex:default', dependency_strategy='new')
