@@ -247,6 +247,7 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             type="ClassificationFolder",
             id="classification_folder_2",
             title=u"Folder 2",
+            treating_groups=u'Reviewers',
             classification_categories=[self.category.UID()],
             internal_reference_no=u"future acceptable",
         )
@@ -266,6 +267,7 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_2",
+            treating_groups=u'Reviewers',
             title=u"Folder 2",
             classification_categories=[self.category.UID()],
             internal_reference_no=u"future unacceptable",
