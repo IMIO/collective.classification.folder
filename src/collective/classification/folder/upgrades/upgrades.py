@@ -1,3 +1,4 @@
+from collective.classification.folder.setuphandlers import create_annexes_config
 from plone import api
 from Products.GenericSetup.interfaces import IUpgradeSteps
 from Products.GenericSetup.registry import GlobalRegistryStorage
@@ -23,3 +24,5 @@ def to1001(context):
 def to1002(context):
     gs = api.portal.get_tool('portal_setup')
     gs.runAllImportStepsFromProfile('profile-imio.annex:default', dependency_strategy='new')
+    gs.runImportStepFromProfile('profile-collective.classification.folder:default', 'typeinfo', run_dependencies=False)
+    create_annexes_config()

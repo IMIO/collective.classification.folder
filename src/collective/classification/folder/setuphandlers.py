@@ -11,6 +11,7 @@ from zope.interface import implementer
 
 
 def create_classification_folder_facet():
+    """Used to configure faceted table on folder and subfolder views"""
     portal = api.portal.get()
     folder_id = "classification_folder_faceted_configuration"
     if folder_id in portal:
@@ -72,6 +73,19 @@ def set_registry():
         registry.records[key] = registry_record
 
 
+def create_annexes_config():
+    portal = api.portal.get()
+    if 'annexes_types' not in portal:
+        folder = api.content.create(
+            container=portal,
+            id='annexes_types',
+            title=_(u"Annexes Types"),
+            type="ContentCategoryConfiguration",
+        )
+        folder.exclude_from_nav = True
+        folder.reindexObject()
+
+
 @implementer(INonInstallable)
 class HiddenProfiles(object):
     def getNonInstallableProfiles(self):
@@ -82,7 +96,6 @@ class HiddenProfiles(object):
 def post_install(context):
     """Post install script"""
     # Do something at the end of the installation of this package.
-
     create_classification_folder_facet()
     set_registry()
 
