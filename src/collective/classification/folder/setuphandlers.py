@@ -22,8 +22,8 @@ def create_classification_folder_facet():
         id=folder_id,
         title=_(u"Classification folder faceted configuration"),
         type="Folder",
+        exclude_from_nav=True,
     )
-    folder.exclude_from_nav = True
 
     # backup location to avoid redirection after enabling the facets
     response_status = folder.REQUEST.RESPONSE.getStatus()
@@ -82,9 +82,8 @@ def create_annexes_config():
             id='annexes_types',
             title=_(u"Annexes Types"),
             type="ContentCategoryConfiguration",
+            exclude_from_nav=True
         )
-        folder.exclude_from_nav = True
-        folder.reindexObject()
 
 
 @implementer(INonInstallable)
