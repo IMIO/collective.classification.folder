@@ -22,8 +22,10 @@ def create_classification_folder_facet():
         id=folder_id,
         title=_(u"Classification folder faceted configuration"),
         type="Folder",
-        exclude_from_nav=True,
+
     )
+    folder.exclude_from_nav = True
+    folder.reindexObject()
 
     # backup location to avoid redirection after enabling the facets
     response_status = folder.REQUEST.RESPONSE.getStatus()
@@ -98,6 +100,7 @@ def post_install(context):
     # Do something at the end of the installation of this package.
     create_classification_folder_facet()
     set_registry()
+    create_annexes_config()
 
 
 def uninstall(context):
