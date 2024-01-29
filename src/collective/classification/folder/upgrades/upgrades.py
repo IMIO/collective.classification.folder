@@ -1,5 +1,6 @@
 from collective.classification.folder.setuphandlers import create_annexes_config
 from plone import api
+from plone.app.contenttypes.migration.dxmigration import migrate_base_class_to_new_class
 from Products.GenericSetup.interfaces import IUpgradeSteps
 from Products.GenericSetup.registry import GlobalRegistryStorage
 
@@ -26,3 +27,11 @@ def to1002(context):
     gs.runAllImportStepsFromProfile('profile-imio.annex:default', dependency_strategy='new')
     gs.runImportStepFromProfile('profile-collective.classification.folder:default', 'typeinfo', run_dependencies=False)
     create_annexes_config()
+    catalog = api.portal.get_tool('portal_catalog')
+    for brain in catalog(portal_type='ClassificationSubfolder'):
+        obj = brain.getObject()
+        migrate_base_class_to_new_class(obj, old_class_name='collective.classification.folder.content.'
+                                                            'classification_subfolder.ClassificationSubfolder',
+                                        new_class_name='collective.classification.folder.content.'
+                                                       'classification_subfolder.ClassificationSubfolder',
+                                        migrate_to_folderish=True)
