@@ -2,7 +2,9 @@
 
 from Acquisition import aq_parent
 from imio.annex.content.annex import IAnnex
+from imio.prettylink.interfaces import IPrettyLink
 from plone.indexer import indexer
+from Products.CMFPlone.utils import base_hasattr
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from collective.classification.folder import _
@@ -123,14 +125,23 @@ class FolderFacetedTableView(FacetedTableView):
 
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
-        return [
-            u"pretty_link",
-            u"subfolder_classification_folders",
-            u"review_state",
-            u"ModificationDate",
-            u"CreationDate",
-            u"actions",
-        ]
+        if self.context.portal_type == 'ClassificationSubfolder':
+            return [
+                u"pretty_link",
+                u"review_state",
+                u"ModificationDate",
+                u"CreationDate",
+                u"actions",
+            ]
+        else:
+            return [
+                u"pretty_link",
+                u"subfolder_classification_folders",
+                u"review_state",
+                u"ModificationDate",
+                u"CreationDate",
+                u"actions",
+            ]
 
 
 class FolderListingView(BrowserView):
@@ -185,8 +196,17 @@ class FolderTitleColumn(PrettyLinkColumn):
         "display_tag_title": False,
     }
 
+    def getPrettyLink(self, obj):
+        pl = IPrettyLink(obj)
+        for k, v in self.params.items():
+            setattr(pl, k, v)
+        if obj.portal_type == 'annex':
+            pl.showContentIcon = False
+        pl.contentValue = self.contentValue(obj)
+        return pl.getLink()
+
     def contentValue(self, item):
-        if hasattr(item, "get_full_title"):
+        if base_hasattr(item, "get_full_title"):
             return item.get_full_title()
         return None
 
