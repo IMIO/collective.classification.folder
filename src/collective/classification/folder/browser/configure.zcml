@@ -57,6 +57,8 @@
       factory=".faceted.Criteria"
       />
 
+  <adapter name="classification_folders" factory=".faceted.annex_classification_folders_indexer" />
+
   <browser:page
     name="classification_helper"
     for="collective.classification.folder.content.classification_folders.IClassificationFolders"

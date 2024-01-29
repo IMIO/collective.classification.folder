@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_parent
+from imio.annex.content.annex import IAnnex
+from plone.indexer import indexer
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from collective.classification.folder import _
@@ -27,6 +29,20 @@ class IClassificationFacetedNavigable(IFacetedNavigable):
     More specific IFacetedNavigable to be able to override
     ICriteria adapter only for specific content
     """
+
+
+@indexer(IAnnex)
+def annex_classification_folders_indexer(obj):
+    """Custom indexer on annex, so an annex can be used in faceted criteria"""
+    parent = aq_parent(obj)
+    parent_pt = parent.portal_type
+    values = []
+    if parent_pt == "ClassificationFolder":
+        values.append(parent.UID())
+    elif parent_pt == "ClassificationSubfolder":
+        values.append(parent.UID())
+        values.append("p:{0}".format(aq_parent(parent).UID()))
+    return values
 
 
 class Criteria(eeaCriteria):
