@@ -6,6 +6,8 @@ Changelog
 
 - Corrected tests.
   [sgeulette]
+- Corrected bug in indexer when the stored folders cannot be seen by the current user.
+  [sgeulette]
 
 1.0.2 (2023-11-28)
 ------------------
