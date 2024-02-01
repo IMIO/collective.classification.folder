@@ -7,7 +7,6 @@ from plone.registry import field
 from plone.registry import Record
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
-from zope.i18n import translate as _
 from zope.interface import implementer
 
 

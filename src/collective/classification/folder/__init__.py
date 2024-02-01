@@ -10,6 +10,5 @@ _ = MessageFactory("collective.classification.folder")
 
 def _tr(msgid, domain='collective.classification.folder', mapping=None):
     translation_domain = queryUtility(ITranslationDomain, domain)
-    sp = api.portal.get().portal_properties.site_properties
-    return translation_domain.translate(msgid, target_language=sp.getProperty('default_language', 'fr'),
+    return translation_domain.translate(msgid, target_language=api.portal.get_current_language(),
                                         mapping=mapping)
