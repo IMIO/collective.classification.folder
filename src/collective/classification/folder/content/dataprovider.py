@@ -58,5 +58,7 @@ class SubfolderDataProvider(BaseDataProvider):
                 "subfolder_number",
                 "subfolder_talexpression",
             ).decode("utf8")
+        elif self.field.__name__ == "description":  # here on annex, need to return empty string not None
+            return self.widget.value
         else:
             return
