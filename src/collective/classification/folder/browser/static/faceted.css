@@ -1,7 +1,8 @@
-.folder-list {
-
-}
-
 .folder-list .Classification-Subfolder {
     margin-left: 20px;
+}
+
+.template-facetednavigation_view.portaltype-classificationfolder .annex-filename,
+.template-facetednavigation_view.portaltype-classificationsubfolder .annex-filename {
+    margin-left: 19px;
 }

@@ -26,6 +26,8 @@ def to1002(context):
     gs = api.portal.get_tool('portal_setup')
     gs.runAllImportStepsFromProfile('profile-imio.annex:default', dependency_strategy='new')
     gs.runImportStepFromProfile('profile-collective.classification.folder:default', 'typeinfo', run_dependencies=False)
+    gs.runImportStepFromProfile('profile-collective.classification.folder:default', 'cssregistry',
+                                run_dependencies=False)
     create_annexes_config()
     catalog = api.portal.get_tool('portal_catalog')
     for brain in catalog(portal_type='ClassificationSubfolder'):

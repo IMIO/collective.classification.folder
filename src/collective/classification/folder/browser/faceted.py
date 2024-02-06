@@ -23,6 +23,7 @@ from persistent.list import PersistentList
 from plone import api
 from plone.batching import Batch
 from zope.component import getUtility
+from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
 
@@ -200,10 +201,19 @@ class FolderTitleColumn(PrettyLinkColumn):
         pl = IPrettyLink(obj)
         for k, v in self.params.items():
             setattr(pl, k, v)
+        infos = u''
         if obj.portal_type == 'annex':
             pl.showContentIcon = False
+            infos += u'<p class="discreet"></p>'
+            # display description if any
+            # description = safe_unicode(obj.Description() or u'').replace('\n', '<br/>')
+            # if description:
+            #     infos += u'<p class="discreet">{0}</p>'.format(description)
+            # display filename
+            infos += u'<div class="discreet type-text-widget annex-filename">{0}</div>'.format(obj.file.filename)
+
         pl.contentValue = self.contentValue(obj)
-        return pl.getLink()
+        return pl.getLink() + infos
 
     def contentValue(self, item):
         if base_hasattr(item, "get_full_title"):

@@ -3,6 +3,6 @@
 
  <!-- Faceted View -->
  <stylesheet id="++resource++collective.classification.folder-faceted.css"
-             bundle="collective-classification-folder" />
+             rel="stylesheet" rendering="import" />
 
 </object>
