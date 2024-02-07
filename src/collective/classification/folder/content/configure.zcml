@@ -61,24 +61,24 @@
         factory=".vocabularies.ClassificationFolderPortalTypesVocabulary"
         />
 
-  <adapter
-    name="ClassificationFolderSort"
-    factory=".indexers.classification_folder_sort"
-    />
+    <adapter
+        name="yesno_value"
+        factory=".indexers.archived_classification_folder_index" />
 
-  <adapter
-    name="ClassificationSubfolder.SearchableTextIndexer"
-    factory=".indexers.ClassificationSubfolderSearchableText"
-    />
+    <adapter
+        name="ClassificationFolderSort"
+        factory=".indexers.classification_folder_sort" />
 
-  <adapter
-    name="default"
-    factory=".dataprovider.FolderDataProvider"
-    />
+    <adapter
+        name="ClassificationSubfolder.SearchableTextIndexer"
+        factory=".indexers.ClassificationSubfolderSearchableText" />
 
-  <adapter
-    name="default"
-    factory=".dataprovider.SubfolderDataProvider"
-    />
+    <adapter
+        name="default"
+        factory=".dataprovider.FolderDataProvider" />
+
+    <adapter
+        name="default"
+        factory=".dataprovider.SubfolderDataProvider" />
 
 </configure>

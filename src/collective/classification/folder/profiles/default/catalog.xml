@@ -24,4 +24,8 @@
  </index>
  <column value="recipient_groups"/>
 
+ <index name="yesno_value" meta_type="FieldIndex">
+  <indexed_attr value="yesno_value"/>
+ </index>
+
 </object>

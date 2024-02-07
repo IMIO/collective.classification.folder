@@ -8,6 +8,10 @@ Changelog
   [sgeulette]
 - Corrected bug in indexer when the stored folders cannot be seen by the current user.
   [sgeulette]
+- Used imio.annex product so it is possible to add categorized annexe in folder and subfolder.
+  [sgeulette]
+- Added `yesno_value` index to store archived value and possibly use it in a faceted widget.
+  [sgeulette]
 
 1.0.2 (2023-11-28)
 ------------------
