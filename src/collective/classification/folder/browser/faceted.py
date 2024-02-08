@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_parent
-from imio.annex.content.annex import IAnnex
-from imio.prettylink.interfaces import IPrettyLink
-from plone.indexer import indexer
-from Products.CMFPlone.utils import base_hasattr
-from Products.CMFPlone.utils import safe_unicode
-from Products.Five.browser import BrowserView
 from collective.classification.folder import _
 from collective.classification.folder.browser.tables import SubFoldersFacetedTableView
 from collective.classification.folder.content.vocabularies import ClassificationFolderSource
@@ -14,16 +8,22 @@ from collective.classification.folder.content.vocabularies import ServiceInCharg
 from collective.classification.folder.content.vocabularies import ServiceInCopySource
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
+from collective.eeafaceted.z3ctable.columns import ColorColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from collective.eeafaceted.z3ctable.columns import VocabularyColumn
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
+from imio.annex.content.annex import IAnnex
+from imio.prettylink.interfaces import IPrettyLink
 from persistent.list import PersistentList
 from plone import api
 from plone.batching import Batch
+from plone.indexer import indexer
+from Products.CMFPlone.utils import base_hasattr
+from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser import BrowserView
 from zope.component import getUtility
-from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
 
@@ -280,6 +280,36 @@ class ClassificationTreeIdentifiersColumn(VocabularyColumn):
     header = _(u"Classification categories")
     attrName = u"classification_categories"
     vocabulary = u"collective.classification.vocabularies:tree"
+
+
+class ClassificationFolderArchivedColumn(ColorColumn):
+    attrName = u'archived'
+    i18n_domain = 'collective.classification.folder'
+    sort_index = -1  # not sortable
+    the_object = True
+    header = u'&nbsp;'
+    msgid_prefix = u'archived_'
+
+    def getValue(self, item):
+        obj = self._getObject(item)
+        if obj.portal_type == 'ClassificationSubfolder':
+            obj = obj.aq_parent
+        return obj.archived and '1' or '0'
+
+
+class ClassificationSubfolderArchivedColumn(ColorColumn):
+    attrName = u'archived'
+    i18n_domain = 'collective.classification.folder'
+    sort_index = -1  # not sortable
+    the_object = True
+    header = u'&nbsp;'
+    msgid_prefix = u'archived_'
+
+    def getValue(self, item):
+        obj = self._getObject(item)
+        if obj.portal_type == 'ClassificationFolder':
+            return ''
+        return obj.archived and '1' or '0'
 
 
 class ClassificationFoldersColumn(VocabularyColumn):
