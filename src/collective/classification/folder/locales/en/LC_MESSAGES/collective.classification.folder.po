@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-01-11 15:38+0000\n"
+"POT-Creation-Date: 2024-02-08 09:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 msgid "A classification folder's position in its hierarchy"
 msgstr ""
 
-#: ../setuphandlers.py:83
+#: ../setuphandlers.py:84
 msgid "Annexes Types"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Classification Config"
 msgstr ""
 
-#: ../browser/faceted.py:181
+#: ../browser/faceted.py:229
 #: ../browser/templates/folder-listing.pt:114
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Classification Folders"
 msgstr ""
 
-#: ../browser/faceted.py:197
+#: ../browser/faceted.py:245
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "Classification Subfolder"
 msgstr ""
@@ -63,13 +63,13 @@ msgstr ""
 msgid "Classification Subfolders"
 msgstr ""
 
-#: ../browser/faceted.py:234
+#: ../browser/faceted.py:282
 #: ../browser/templates/folder-listing.pt:59
 #: ../content/classification_folder.py:68
 msgid "Classification categories"
 msgstr ""
 
-#: ../setuphandlers.py:23
+#: ../setuphandlers.py:22
 msgid "Classification folder faceted configuration"
 msgstr ""
 
@@ -77,12 +77,12 @@ msgstr ""
 msgid "Classification folder sort"
 msgstr ""
 
-#: ../behaviors/classification_folder.py:36
-#: ../browser/faceted.py:240
+#: ../behaviors/classification_folder.py:30
+#: ../browser/faceted.py:300
 msgid "Classification folders"
 msgstr ""
 
-#: ../browser/faceted.py:210
+#: ../browser/faceted.py:258
 #: ../browser/templates/folder-listing.pt:53
 #: ../content/classification_folder.py:60
 msgid "Classification identifier"
@@ -147,11 +147,11 @@ msgstr ""
 msgid "Informations"
 msgstr ""
 
-#: ../configure.zcml:38
+#: ../configure.zcml:39
 msgid "Installs the collective.classification.folder add-on."
 msgstr ""
 
-#: ../behaviors/classification_folder.py:37
+#: ../behaviors/classification_folder.py:31
 msgid "List of folders / subfolders in which this content is filed"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Parent Identifier"
 msgstr ""
 
-#: ../browser/faceted.py:222
+#: ../browser/faceted.py:270
 #: ../browser/templates/folder-listing.pt:69
 #: ../content/classification_folder.py:77
 msgid "Service in charge"
@@ -236,7 +236,7 @@ msgstr ""
 msgid "Treating groups title"
 msgstr ""
 
-#: ../configure.zcml:47
+#: ../configure.zcml:48
 msgid "Uninstalls the collective.classification.folder add-on."
 msgstr ""
 
@@ -254,15 +254,27 @@ msgstr ""
 msgid "You can't select both a treating_groups and a column associated to treating groups title"
 msgstr ""
 
+#: ../faceted.py
+msgid "archived_0"
+msgstr "Non archived"
+
+#: ../faceted.py
+msgid "archived_1"
+msgstr "Archived"
+
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
 #: ../content/classification_folder.py:198
 msgid "cannot_delete_referenced_folder"
 msgstr ""
 
-#: ../configure.zcml:38
+#: ../configure.zcml:39
 msgid "collective.classification.folder"
 msgstr ""
 
-#: ../configure.zcml:47
+#: ../configure.zcml:48
 msgid "collective.classification.folder (uninstall)"
+msgstr ""
+
+#: ../testing.zcml:17
+msgid "collective.classification.folder testing profile"
 msgstr ""

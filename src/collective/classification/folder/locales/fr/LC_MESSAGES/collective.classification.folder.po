@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-01-11 15:38+0000\n"
+"POT-Creation-Date: 2024-02-08 09:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 msgid "A classification folder's position in its hierarchy"
 msgstr "Position d'une farde dans sa hiérarchie"
 
-#: ../setuphandlers.py:83
+#: ../setuphandlers.py:84
 msgid "Annexes Types"
 msgstr "Types d'annexes"
 
@@ -44,7 +44,7 @@ msgstr "Le nom du service traitant fourni <${title}> n'a pas été trouvé"
 msgid "Classification Config"
 msgstr "Gestion de dossiers"
 
-#: ../browser/faceted.py:181
+#: ../browser/faceted.py:229
 #: ../browser/templates/folder-listing.pt:114
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
@@ -54,7 +54,7 @@ msgstr "Farde"
 msgid "Classification Folders"
 msgstr "Dossiers"
 
-#: ../browser/faceted.py:197
+#: ../browser/faceted.py:245
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "Classification Subfolder"
 msgstr "Chemise"
@@ -63,13 +63,13 @@ msgstr "Chemise"
 msgid "Classification Subfolders"
 msgstr "Chemises de la farde"
 
-#: ../browser/faceted.py:234
+#: ../browser/faceted.py:282
 #: ../browser/templates/folder-listing.pt:59
 #: ../content/classification_folder.py:68
 msgid "Classification categories"
 msgstr "Codes de classement"
 
-#: ../setuphandlers.py:23
+#: ../setuphandlers.py:22
 msgid "Classification folder faceted configuration"
 msgstr "Config dashboard farde"
 
@@ -77,12 +77,12 @@ msgstr "Config dashboard farde"
 msgid "Classification folder sort"
 msgstr "Tri des fardes"
 
-#: ../behaviors/classification_folder.py:36
-#: ../browser/faceted.py:240
+#: ../behaviors/classification_folder.py:30
+#: ../browser/faceted.py:300
 msgid "Classification folders"
 msgstr "Dossiers"
 
-#: ../browser/faceted.py:210
+#: ../browser/faceted.py:258
 #: ../browser/templates/folder-listing.pt:53
 #: ../content/classification_folder.py:60
 msgid "Classification identifier"
@@ -147,11 +147,11 @@ msgstr "Importation des dossiers"
 msgid "Informations"
 msgstr "Informations"
 
-#: ../configure.zcml:38
+#: ../configure.zcml:39
 msgid "Installs the collective.classification.folder add-on."
 msgstr "Installs the collective.classification.folder add-on."
 
-#: ../behaviors/classification_folder.py:37
+#: ../behaviors/classification_folder.py:31
 msgid "List of folders / subfolders in which this content is filed"
 msgstr "Liste des codes de classement associés"
 
@@ -177,7 +177,7 @@ msgstr "Chemise: numéro du prochain élément"
 msgid "Parent Identifier"
 msgstr "Identifiant du parent"
 
-#: ../browser/faceted.py:222
+#: ../browser/faceted.py:270
 #: ../browser/templates/folder-listing.pt:69
 #: ../content/classification_folder.py:77
 msgid "Service in charge"
@@ -236,7 +236,7 @@ msgstr "Titre"
 msgid "Treating groups title"
 msgstr "Intitulé exact du service traitant"
 
-#: ../configure.zcml:47
+#: ../configure.zcml:48
 msgid "Uninstalls the collective.classification.folder add-on."
 msgstr "Uninstalls the collective.classification.folder add-on."
 
@@ -254,15 +254,27 @@ msgstr "Oui"
 msgid "You can't select both a treating_groups and a column associated to treating groups title"
 msgstr "Vous ne pouvez pas sélectionner à la fois une valeur pour le service traitant et une colonne associée à l'intitulé exact du service traitant"
 
+#: ../faceted.py
+msgid "archived_0"
+msgstr "Non archivé"
+
+#: ../faceted.py
+msgid "archived_1"
+msgstr "Archivé"
+
 #. Default: "This folder cannot be deleted because it is referenced elsewhere"
 #: ../content/classification_folder.py:198
 msgid "cannot_delete_referenced_folder"
 msgstr "Ce dossier ne peut être supprimé car il est référencé autre part"
 
-#: ../configure.zcml:38
+#: ../configure.zcml:39
 msgid "collective.classification.folder"
 msgstr "collective.classification.folder"
 
-#: ../configure.zcml:47
+#: ../configure.zcml:48
 msgid "collective.classification.folder (uninstall)"
 msgstr "collective.classification.folder (uninstall)"
+
+#: ../testing.zcml:17
+msgid "collective.classification.folder testing profile"
+msgstr "collective.classification.folder testing profile"
