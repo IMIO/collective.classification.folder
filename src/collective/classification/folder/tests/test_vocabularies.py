@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from collective.classification.folder.content.vocabularies import (
-    ClassificationFolderSource,
-)
+from collective.classification.folder.content.vocabularies import ClassificationFolderSource
 from collective.classification.folder.content.vocabularies import full_title_categories
-from collective.classification.folder.testing import (
-    COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
-)  # noqa
+from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
 from dexterity.localroles.utils import add_fti_configuration
 from plone import api
 from plone.app.testing import login

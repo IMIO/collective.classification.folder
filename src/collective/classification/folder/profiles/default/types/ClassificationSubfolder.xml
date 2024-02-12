@@ -19,6 +19,10 @@
 
   <!-- Hierarchy control -->
   <property name="global_allow">False</property>
+  <property name="filter_content_types">True</property>
+  <property name="allowed_content_types">
+    <element value="annex" />
+  </property>
   <!-- Schema, class and security -->
   <property name="add_permission">collective.classification.folder.AddClassificationSubfolder</property>
   <property name="klass">collective.classification.folder.content.classification_subfolder.ClassificationSubfolder</property>

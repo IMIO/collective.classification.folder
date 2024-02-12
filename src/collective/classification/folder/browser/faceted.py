@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_parent
-from Products.CMFPlone.utils import safe_unicode
-from Products.Five.browser import BrowserView
 from collective.classification.folder import _
 from collective.classification.folder.browser.tables import SubFoldersFacetedTableView
 from collective.classification.folder.content.vocabularies import ClassificationFolderSource
@@ -10,14 +8,21 @@ from collective.classification.folder.content.vocabularies import ServiceInCharg
 from collective.classification.folder.content.vocabularies import ServiceInCopySource
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
 from collective.eeafaceted.z3ctable.columns import BaseColumn
+from collective.eeafaceted.z3ctable.columns import ColorColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from collective.eeafaceted.z3ctable.columns import VocabularyColumn
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
+from imio.annex.content.annex import IAnnex
+from imio.prettylink.interfaces import IPrettyLink
 from persistent.list import PersistentList
 from plone import api
 from plone.batching import Batch
+from plone.indexer import indexer
+from Products.CMFPlone.utils import base_hasattr
+from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser import BrowserView
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -27,6 +32,20 @@ class IClassificationFacetedNavigable(IFacetedNavigable):
     More specific IFacetedNavigable to be able to override
     ICriteria adapter only for specific content
     """
+
+
+@indexer(IAnnex)
+def annex_classification_folders_indexer(obj):
+    """Custom indexer on annex, so an annex can be used in faceted criteria"""
+    parent = aq_parent(obj)
+    parent_pt = parent.portal_type
+    values = []
+    if parent_pt == "ClassificationFolder":
+        values.append(parent.UID())
+    elif parent_pt == "ClassificationSubfolder":
+        values.append(parent.UID())
+        values.append("p:{0}".format(aq_parent(parent).UID()))
+    return values
 
 
 class Criteria(eeaCriteria):
@@ -107,14 +126,23 @@ class FolderFacetedTableView(FacetedTableView):
 
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
-        return [
-            u"pretty_link",
-            u"subfolder_classification_folders",
-            u"review_state",
-            u"ModificationDate",
-            u"CreationDate",
-            u"actions",
-        ]
+        if self.context.portal_type == 'ClassificationSubfolder':
+            return [
+                u"pretty_link",
+                u"review_state",
+                u"ModificationDate",
+                u"CreationDate",
+                u"actions",
+            ]
+        else:
+            return [
+                u"pretty_link",
+                u"subfolder_classification_folders",
+                u"review_state",
+                u"ModificationDate",
+                u"CreationDate",
+                u"actions",
+            ]
 
 
 class FolderListingView(BrowserView):
@@ -169,8 +197,26 @@ class FolderTitleColumn(PrettyLinkColumn):
         "display_tag_title": False,
     }
 
+    def getPrettyLink(self, obj):
+        pl = IPrettyLink(obj)
+        for k, v in self.params.items():
+            setattr(pl, k, v)
+        infos = u''
+        if obj.portal_type == 'annex':
+            pl.showContentIcon = False
+            infos += u'<p class="discreet"></p>'
+            # display description if any
+            # description = safe_unicode(obj.Description() or u'').replace('\n', '<br/>')
+            # if description:
+            #     infos += u'<p class="discreet">{0}</p>'.format(description)
+            # display filename
+            infos += u'<div class="discreet type-text-widget annex-filename">{0}</div>'.format(obj.file.filename)
+
+        pl.contentValue = self.contentValue(obj)
+        return pl.getLink() + infos
+
     def contentValue(self, item):
-        if hasattr(item, "get_full_title"):
+        if base_hasattr(item, "get_full_title"):
             return item.get_full_title()
         return None
 
@@ -234,6 +280,36 @@ class ClassificationTreeIdentifiersColumn(VocabularyColumn):
     header = _(u"Classification categories")
     attrName = u"classification_categories"
     vocabulary = u"collective.classification.vocabularies:tree"
+
+
+class ClassificationFolderArchivedColumn(ColorColumn):
+    attrName = u'archived'
+    i18n_domain = 'collective.classification.folder'
+    sort_index = -1  # not sortable
+    the_object = True
+    header = u'&nbsp;'
+    msgid_prefix = u'archived_'
+
+    def getValue(self, item):
+        obj = self._getObject(item)
+        if obj.portal_type == 'ClassificationSubfolder':
+            obj = obj.aq_parent
+        return obj.archived and '1' or '0'
+
+
+class ClassificationSubfolderArchivedColumn(ColorColumn):
+    attrName = u'archived'
+    i18n_domain = 'collective.classification.folder'
+    sort_index = -1  # not sortable
+    the_object = True
+    header = u'&nbsp;'
+    msgid_prefix = u'archived_'
+
+    def getValue(self, item):
+        obj = self._getObject(item)
+        if obj.portal_type == 'ClassificationFolder':
+            return ''
+        return obj.archived and '1' or '0'
 
 
 class ClassificationFoldersColumn(VocabularyColumn):

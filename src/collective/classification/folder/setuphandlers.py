@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from collective.classification.folder import _tr as _
 from Products.CMFPlone.interfaces import INonInstallable
-from collective.classification.folder import _
 from plone import api
 from plone.registry import field
 from plone.registry import Record
@@ -11,6 +11,7 @@ from zope.interface import implementer
 
 
 def create_classification_folder_facet():
+    """Used to configure faceted table on folder and subfolder views"""
     portal = api.portal.get()
     folder_id = "classification_folder_faceted_configuration"
     if folder_id in portal:
@@ -20,8 +21,10 @@ def create_classification_folder_facet():
         id=folder_id,
         title=_(u"Classification folder faceted configuration"),
         type="Folder",
+
     )
     folder.exclude_from_nav = True
+    folder.reindexObject()
 
     # backup location to avoid redirection after enabling the facets
     response_status = folder.REQUEST.RESPONSE.getStatus()
@@ -72,6 +75,18 @@ def set_registry():
         registry.records[key] = registry_record
 
 
+def create_annexes_config():
+    portal = api.portal.get()
+    if 'annexes_types' not in portal:
+        folder = api.content.create(
+            container=portal,
+            id='annexes_types',
+            title=_(u"Annexes Types"),
+            type="ContentCategoryConfiguration",
+            exclude_from_nav=True
+        )
+
+
 @implementer(INonInstallable)
 class HiddenProfiles(object):
     def getNonInstallableProfiles(self):
@@ -82,9 +97,9 @@ class HiddenProfiles(object):
 def post_install(context):
     """Post install script"""
     # Do something at the end of the installation of this package.
-
     create_classification_folder_facet()
     set_registry()
+    create_annexes_config()
 
 
 def uninstall(context):

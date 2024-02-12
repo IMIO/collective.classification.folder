@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <version>1000</version>
+  <version>1002</version>
   <dependencies>
     <dependency>profile-collective.classification.tree:default</dependency>
     <dependency>profile-collective.eeafaceted.z3ctable:default</dependency>
     <dependency>profile-dexterity.localrolesfield:default</dependency>
     <dependency>profile-eea.facetednavigation:default</dependency>
+    <dependency>profile-imio.annex:default</dependency>
     <dependency>profile-plone.app.dexterity:default</dependency>
     <dependency>profile-plone.formwidget.autocomplete:default</dependency>
     <dependency>profile-collective.z3cform.select2:default</dependency>

@@ -11,6 +11,7 @@ from plone.app.testing import setRoles
 from plone.testing import z2
 
 import collective.classification.folder
+from zope.globalrequest import setLocal
 
 
 class CollectiveClassificationFolderLayer(PloneSandboxLayer):
@@ -37,15 +38,16 @@ class CollectiveClassificationFolderLayer(PloneSandboxLayer):
         z2.installProduct(app, "Products.DateRecurringIndex")
 
         self.loadZCML(package=plone.restapi)
-        self.loadZCML(package=collective.classification.folder)
+        self.loadZCML(package=collective.classification.folder, name="testing.zcml")
         self.loadZCML(package=collective.classification.tree)
 
     def tearDownZope(self, app):
         z2.uninstallProduct(app, "Products.DateRecurringIndex")
 
     def setUpPloneSite(self, portal):
+        setLocal('request', portal.REQUEST)  # set request for fingerpointing
         applyProfile(portal, "plone.app.contenttypes:default")
-        applyProfile(portal, "collective.classification.folder:default")
+        applyProfile(portal, "collective.classification.folder:testing")
         setRoles(portal, TEST_USER_ID, ["Manager"])
 
 

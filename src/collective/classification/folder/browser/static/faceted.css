@@ -1,7 +1,37 @@
-.folder-list {
-
-}
-
 .folder-list .Classification-Subfolder {
     margin-left: 20px;
+}
+
+.template-facetednavigation_view.portaltype-classificationfolder .annex-filename,
+.template-facetednavigation_view.portaltype-classificationsubfolder .annex-filename {
+    margin-left: 19px;
+}
+
+table.listing th.th_header_classification_folder_archived,
+table.listing th.th_header_classification_subfolder_archived {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+table.listing tbody tr.odd td.column_archived_0,
+table.listing tbody tr.even td.column_archived_0 {
+    background: lightgreen;
+    padding: 0;
+    outline: solid 3px white;
+    outline-offset: -3px;
+    height: 100%;
+}
+
+table.listing tbody tr.odd td.column_archived_1,
+table.listing tbody tr.even td.column_archived_1 {
+    background: maroon;
+    padding: 0;
+    outline: solid 3px white;
+    outline-offset: -3px;
+    height: 100%;
+}
+
+table.listing tbody tr.odd td.column_archived_,
+table.listing tbody tr.even td.column_archived_ {
+    padding: 0;
 }

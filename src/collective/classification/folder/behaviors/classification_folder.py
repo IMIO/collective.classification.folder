@@ -3,17 +3,11 @@
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from collective.classification.folder import _
-from collective.classification.folder.browser.widget import (
-    FolderAutocompleteMultiFieldWidget,
-)
-from collective.classification.folder.content.vocabularies import (
-    ClassificationFolderSourceBinder,
-)
-from collective.classification.tree.behaviors.classification import (
-    IClassificationCategory,
-)
+from collective.classification.folder.browser.widget import FolderAutocompleteMultiFieldWidget
+from collective.classification.folder.content.vocabularies import ClassificationFolderSourceBinder
+from collective.classification.tree.behaviors.classification import IClassificationCategory
+from imio.helpers.content import uuidToObject
 from plone import schema
-from plone import api
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.indexer.decorator import indexer
@@ -78,7 +72,7 @@ def classification_folders_indexer(obj):
     obj = aq_base(obj)
     for uid in obj.classification_folders:
         values.append(uid)
-        related_obj = api.content.get(UID=uid)
+        related_obj = uuidToObject(uid, unrestricted=True)
         if related_obj.portal_type == "ClassificationSubfolder":
             values.append("p:{0}".format(aq_parent(related_obj).UID()))
     return values

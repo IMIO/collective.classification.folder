@@ -2,10 +2,8 @@
 
 from Acquisition import aq_parent
 from collective.classification.folder import utils
-from collective.classification.folder.content.classification_folder import (
-    IClassificationFolder,
-)
-from plone.dexterity.content import Item
+from collective.classification.folder.content.classification_folder import IClassificationFolder
+from plone.dexterity.content import Container
 from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
 
@@ -15,7 +13,7 @@ class IClassificationSubfolder(IClassificationFolder):
 
 
 @implementer(IClassificationSubfolder)
-class ClassificationSubfolder(Item):
+class ClassificationSubfolder(Container):
     """ """
 
     __ac_local_roles_block__ = True

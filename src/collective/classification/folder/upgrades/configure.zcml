@@ -19,4 +19,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:upgradeStep
+    source="1001"
+    destination="1002"
+    title="Added imio.annex"
+    description=""
+    profile="collective.classification.folder:default"
+    handler=".upgrades.to1002"
+    />
+
+
 </configure>
