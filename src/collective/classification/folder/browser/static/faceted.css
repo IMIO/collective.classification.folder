@@ -15,7 +15,7 @@ table.listing th.th_header_classification_subfolder_archived {
 
 table.listing tbody tr.odd td.column_archived_0,
 table.listing tbody tr.even td.column_archived_0 {
-    background: green;
+    background: lightgreen;
     padding: 0;
     outline: solid 3px white;
     outline-offset: -3px;
