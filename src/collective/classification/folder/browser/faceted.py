@@ -63,7 +63,7 @@ class Criteria(eeaCriteria):
         self.criteria = PersistentList()
 
         for crit in self._criteria():
-            if crit.index != u"classification_folders" or crit.widget != u"sorting":
+            if crit.index != u"classification_folders":
                 self.criteria.append(crit)
 
         default = [
@@ -93,19 +93,6 @@ class Criteria(eeaCriteria):
             }
         )
         self.criteria.append(select_criterion)
-
-        sort_criterion = Criterion(
-            **{
-                "_cid_": u"sorton",
-                "title": u"Sort on",
-                "position": u"top",
-                "section": u"default",
-                "hidden": u"True",
-                "default": u"created(reverse)",
-                "widget": u"sorting",
-            }
-        )
-        self.criteria.append(sort_criterion)
 
 
 class FoldersFacetedTableView(FacetedTableView):

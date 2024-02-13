@@ -26,7 +26,7 @@
    <property name="widget">sorting</property>
    <property name="title">Sort on</property>
    <property name="vocabulary"></property>
-   <property name="default">sortable_title(reverse)</property>
+   <property name="default">created(reverse)</property>
    <property name="position">right</property>
    <property name="section">default</property>
    <property name="hidden">True</property>

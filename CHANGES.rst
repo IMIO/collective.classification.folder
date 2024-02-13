@@ -12,7 +12,9 @@ Changelog
   [sgeulette]
 - Added `yesno_value` index to store archived value and possibly use it in a faceted widget.
   [sgeulette]
-- Added `state_filesize` column in `FolderFacetedTableView`
+- Added `state_filesize` column in `FolderFacetedTableView`.
+  [sgeulette]
+- Removed fixed created sorting on IClassificationFacetedNavigable.
   [sgeulette]
 
 1.0.2 (2023-11-28)
