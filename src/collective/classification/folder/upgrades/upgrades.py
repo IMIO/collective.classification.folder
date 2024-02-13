@@ -1,9 +1,10 @@
 from collective.classification.folder.setuphandlers import create_annexes_config
 from plone import api
-from plone.app.contenttypes.migration.dxmigration import migrate_base_class_to_new_class
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
 from Products.GenericSetup.interfaces import IUpgradeSteps
 from Products.GenericSetup.registry import GlobalRegistryStorage
+
+import os
 
 
 def to1001(context):
@@ -37,7 +38,11 @@ def to1002(context):
         if brain.portal_type == 'ClassificationSubfolder':
             # from plone/app/contenttypes/migration/dxmigration.py, migrate_base_class_to_new_class
             # migrate_base_class_to_new_class breaks object if called a second time
-            # was_item test doesn't work the first time
+            # because was_item test doesn't work the first time
             if obj._tree is None:
                 BTreeFolder2Base._initBTrees(obj)
         obj.reindexObject(idxs=['yesno_value', 'is_folderish', 'object_provides'])
+    portal = api.portal.get()
+    portal['classification_folder_faceted_configuration'].unrestrictedTraverse('@@faceted_exportimport').import_xml(
+        import_file=open(os.path.dirname(__file__) + '/../browser/templates/classification-folder-faceted.xml'))
+
