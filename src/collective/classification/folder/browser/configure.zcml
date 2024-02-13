@@ -178,6 +178,15 @@
     />
 
   <adapter
+    name="state_filesize"
+    for="zope.interface.Interface
+         zope.interface.Interface
+         collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+    provides="z3c.table.interfaces.IColumn"
+    factory=".faceted.CombinedReviewstateSizeColumn"
+    />
+
+  <adapter
     for="collective.classification.folder.content.classification_folder.IClassificationFolder
          zope.publisher.interfaces.browser.IBrowserRequest
          .tables.ISubfolderFacetedTable"

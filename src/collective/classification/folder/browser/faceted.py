@@ -11,6 +11,7 @@ from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import ColorColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from collective.eeafaceted.z3ctable.columns import VocabularyColumn
+from collective.iconifiedcategory import utils
 from eea.facetednavigation.criteria.handler import Criteria as eeaCriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.widgets.storage import Criterion
@@ -24,6 +25,7 @@ from Products.CMFPlone.utils import base_hasattr
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from zope.component import getUtility
+from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
 
@@ -129,7 +131,7 @@ class FolderFacetedTableView(FacetedTableView):
         if self.context.portal_type == 'ClassificationSubfolder':
             return [
                 u"pretty_link",
-                u"review_state",
+                u"state_filesize",
                 u"ModificationDate",
                 u"CreationDate",
                 u"actions",
@@ -138,7 +140,7 @@ class FolderFacetedTableView(FacetedTableView):
             return [
                 u"pretty_link",
                 u"subfolder_classification_folders",
-                u"review_state",
+                u"state_filesize",
                 u"ModificationDate",
                 u"CreationDate",
                 u"actions",
@@ -396,3 +398,36 @@ class SubfolderClassificationFoldersColumn(ClassificationFoldersColumn):
         else:
             title = obj.title
         return title
+
+
+class CombinedReviewstateSizeColumn(BaseColumn):
+
+    header = _(u'State or Filesize')
+    i18n_domain = 'plone'
+    sort_index = -1  # not sortable
+
+    def __init__(self, context, request, table):
+        super(CombinedReviewstateSizeColumn, self).__init__(context, request, table)
+        self.wtool = api.portal.get_tool('portal_workflow')
+
+    def renderHeadCell(self):
+        """ """
+        header = super(CombinedReviewstateSizeColumn, self).renderHeadCell()
+        [self._getObject(v) for v in self.table.values]
+        total = sum([v.aq_parent.categorized_elements.get(k, {}).get('filesize', 0)
+                     for k, v in self.table._v_cached_objects.items() if v.portal_type == 'annex'])
+        header += u"<p>(Total: {0})</p>".format(utils.render_filesize(total))
+        return header
+
+    def renderCell(self, item):
+        if item.portal_type == 'annex':
+            obj = self._getObject(item)
+            value = obj.aq_parent.categorized_elements.get(item.UID, {}).get('filesize', None)
+            if value is None:
+                return ''
+            return utils.render_filesize(value)
+        else:
+            state_title = self.wtool.getTitleForStateOnType(item.review_state, item.portal_type)
+            return translate(safe_unicode(state_title), domain=self.i18n_domain, context=self.request)
+
+

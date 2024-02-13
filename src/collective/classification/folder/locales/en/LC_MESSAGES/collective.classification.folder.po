@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-02-08 09:51+0000\n"
+"POT-Creation-Date: 2024-02-13 08:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Classification Config"
 msgstr ""
 
-#: ../browser/faceted.py:229
+#: ../browser/faceted.py:232
 #: ../browser/templates/folder-listing.pt:114
 #: ../profiles/default/types/ClassificationFolder.xml
 msgid "Classification Folder"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Classification Folders"
 msgstr ""
 
-#: ../browser/faceted.py:245
+#: ../browser/faceted.py:248
 #: ../profiles/default/types/ClassificationSubfolder.xml
 msgid "Classification Subfolder"
 msgstr ""
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Classification Subfolders"
 msgstr ""
 
-#: ../browser/faceted.py:282
+#: ../browser/faceted.py:285
 #: ../browser/templates/folder-listing.pt:59
 #: ../content/classification_folder.py:68
 msgid "Classification categories"
@@ -78,11 +78,11 @@ msgid "Classification folder sort"
 msgstr ""
 
 #: ../behaviors/classification_folder.py:30
-#: ../browser/faceted.py:300
+#: ../browser/faceted.py:321
 msgid "Classification folders"
 msgstr ""
 
-#: ../browser/faceted.py:258
+#: ../browser/faceted.py:261
 #: ../browser/templates/folder-listing.pt:53
 #: ../content/classification_folder.py:60
 msgid "Classification identifier"
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Parent Identifier"
 msgstr ""
 
-#: ../browser/faceted.py:270
+#: ../browser/faceted.py:273
 #: ../browser/templates/folder-listing.pt:69
 #: ../content/classification_folder.py:77
 msgid "Service in charge"
@@ -190,6 +190,10 @@ msgstr ""
 #: ../browser/templates/folder-listing.pt:75
 #: ../content/classification_folder.py:85
 msgid "Services in copy"
+msgstr ""
+
+#: ../browser/faceted.py:408
+msgid "State or Filesize"
 msgstr ""
 
 #: ../vocabularies.py:26
