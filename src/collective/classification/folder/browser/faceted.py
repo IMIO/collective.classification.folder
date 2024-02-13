@@ -373,6 +373,7 @@ class ClassificationFoldersColumn(VocabularyColumn):
 
 class SubfolderClassificationFoldersColumn(ClassificationFoldersColumn):
     header = _(u"Classification Subfolder")
+    sort_index = 'classification_folders'
 
     def _get_title(self, obj):
         """Extract title from object"""

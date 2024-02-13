@@ -16,6 +16,8 @@ Changelog
   [sgeulette]
 - Removed fixed created sorting on IClassificationFacetedNavigable.
   [sgeulette]
+- Defined sort_index on subfolder column.
+  [sgeulette]
 
 1.0.2 (2023-11-28)
 ------------------
