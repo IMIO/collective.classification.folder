@@ -18,6 +18,8 @@ Changelog
   [sgeulette]
 - Defined sort_index on subfolder column.
   [sgeulette]
+- Avoided folder rename
+  [sgeulette]
 
 1.0.2 (2023-11-28)
 ------------------

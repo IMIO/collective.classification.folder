@@ -184,6 +184,7 @@ class FolderTitleColumn(PrettyLinkColumn):
         "showIcons": True,
         "showContentIcon": True,
         "display_tag_title": False,
+        "target": "_blank",
     }
 
     def getPrettyLink(self, obj):

@@ -18,6 +18,7 @@ from eea.facetednavigation.events import FacetedWillBeEnabledEvent
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
 from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
+from os import path
 from plone import api
 from plone.autoform import directives as form
 from plone.dexterity.content import Container
@@ -205,6 +206,19 @@ def on_delete(obj, event):
             (obj, obj.REQUEST), name=u"plone_context_state"
         ).view_url()
         raise Redirect(view_url)
+
+
+def on_will_move(obj, event):
+    """Avoid being renamed."""
+    if IObjectRemovedEvent.providedBy(event) and event.object.portal_type == "Plone Site":
+        return
+    if event.oldParent != event.newParent:  # move
+        status = 'move'
+    elif event.oldName != event.newName:  # rename
+        IStatusMessage(obj.REQUEST).addStatusMessage(_(u"Renaming of folder is not allowed"), type="error")
+        # so the redirection is made to the original page, not the renamed one
+        event.object.REQUEST.set('orig_template', path.join(event.oldParent.absolute_url(), event.oldName))
+        raise ValueError(_(u"Renaming of folder is not allowed"))
 
 
 def on_move(obj, event):
