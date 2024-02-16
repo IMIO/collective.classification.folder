@@ -212,9 +212,7 @@ def on_will_move(obj, event):
     """Avoid being renamed."""
     if IObjectRemovedEvent.providedBy(event) and event.object.portal_type == "Plone Site":
         return
-    if event.oldParent != event.newParent:  # move
-        status = 'move'
-    elif event.oldName != event.newName:  # rename
+    if event.oldName is not None and event.oldName != event.newName:  # rename
         IStatusMessage(obj.REQUEST).addStatusMessage(_(u"Renaming of folder is not allowed"), type="error")
         # so the redirection is made to the original page, not the renamed one
         event.object.REQUEST.set('orig_template', path.join(event.oldParent.absolute_url(), event.oldName))
