@@ -4,8 +4,8 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Corrected `on_will_move` to avoid error on delete.
+  [sgeulette]
 
 1.1.0 (2024-02-19)
 ------------------
