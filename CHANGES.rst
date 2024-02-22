@@ -6,6 +6,8 @@ Changelog
 
 - Corrected `on_will_move` to avoid error on delete.
   [sgeulette]
+- Removed `collective.z3cform.chosen` dependency.
+  [sgeulette]
 
 1.1.0 (2024-02-19)
 ------------------
