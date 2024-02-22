@@ -209,7 +209,7 @@ def on_delete(obj, event):
 
 
 def on_will_move(obj, event):
-    """Avoid being renamed."""
+    """Avoid being renamed. No more used !"""
     if IObjectRemovedEvent.providedBy(event) and event.object.portal_type == "Plone Site":
         return
     if event.oldName is not None and event.newName is not None and event.oldName != event.newName:  # rename

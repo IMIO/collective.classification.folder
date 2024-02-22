@@ -32,11 +32,11 @@
         handler=".classification_folder.on_delete"
         />
 
-    <subscriber
+    <!--subscriber
         for=".classification_subfolder.IClassificationFolder
              OFS.interfaces.IObjectWillBeMovedEvent"
         handler=".classification_folder.on_will_move"
-        />
+        /-->
 
     <subscriber
         for=".classification_folder.IClassificationFolder

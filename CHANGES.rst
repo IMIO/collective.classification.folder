@@ -8,6 +8,8 @@ Changelog
   [sgeulette]
 - Removed `collective.z3cform.chosen` dependency.
   [sgeulette]
+- Removed folder rename restriction (now well handled in iconifiedcategory).
+  [sgeulette]
 
 1.1.0 (2024-02-19)
 ------------------
