@@ -1,8 +1,21 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="collective.classification.folder">
+
+    <configure zcml:condition="installed collective.querynextprev">
+        <class class="collective.classification.folder.content.classification_folders.ClassificationFolders">
+            <implements interface="collective.querynextprev.interfaces.INextPrevNotNavigable" />
+        </class>
+        <class class="collective.classification.folder.content.classification_folder.ClassificationFolder">
+            <implements interface="collective.querynextprev.interfaces.INextPrevNotNavigable" />
+        </class>
+        <class class="collective.classification.folder.content.classification_subfolder.ClassificationSubfolder">
+            <implements interface="collective.querynextprev.interfaces.INextPrevNotNavigable" />
+        </class>
+    </configure>
 
     <class class="collective.classification.folder.content.classification_subfolder.ClassificationSubfolder">
       <implements interface="eea.facetednavigation.subtypes.interfaces.IPossibleFacetedNavigable" />

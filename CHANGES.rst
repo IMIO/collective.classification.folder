@@ -10,6 +10,8 @@ Changelog
   [sgeulette]
 - Removed folder rename restriction (now well handled in iconifiedcategory).
   [sgeulette]
+- Added INextPrevNotNavigable on folder classes (in zcml).
+  [sgeulette]
 
 1.1.0 (2024-02-19)
 ------------------
