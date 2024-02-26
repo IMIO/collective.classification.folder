@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1.1 (unreleased)
+1.1.1 (2024-02-26)
 ------------------
 
 - Corrected `on_will_move` to avoid error on delete.
