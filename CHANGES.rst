@@ -4,8 +4,8 @@ Changelog
 1.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Do not update folder children when modify event is ContainerModifiedEvent.
+  [sgeulette]
 
 1.1.1 (2024-02-26)
 ------------------

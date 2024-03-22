@@ -28,6 +28,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
 from zope import schema
 from zope.component import getMultiAdapter
+from zope.container.contained import ContainerModifiedEvent
 from zope.event import notify
 from zope.interface import alsoProvides
 from zope.interface import implementer
@@ -156,8 +157,9 @@ def on_create(obj, event):
 def on_modify(obj, event):
     """Reindexes SearchableText (folder, subfolder) and ClassificationFolderSort (sub).
     Updates folders tree."""
-    obj.reindexObject(idxs=["SearchableText"])
-
+    if isinstance(event, ContainerModifiedEvent):  # when adding a subfolder, the folder is modified
+        return
+    # obj.reindexObject(idxs=["SearchableText"])
     if obj.portal_type == "ClassificationFolder":
         for subfolder in obj.listFolderContents(
             contentFilter={"portal_type": "ClassificationSubfolder"}
