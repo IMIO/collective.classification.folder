@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1.3 (unreleased)
+1.1.3 (2024-04-17)
 ------------------
 
 - Set maxRssults to 50 to enlarge folders selection behavior search results.
