@@ -4,8 +4,8 @@ Changelog
 1.1.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Set maxRssults to 50 to enlarge folders selection behavior search results.
+  [sgeulette]
 
 1.1.2 (2024-04-12)
 ------------------

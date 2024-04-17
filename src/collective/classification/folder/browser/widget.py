@@ -54,6 +54,7 @@ class FolderAutocompleteSearch(AutocompleteSearch):
 @implementer(IFolderAutocompleteWidget)
 class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
 
+    maxResults = 50
     js_template = """\
     (function($) {
         $().ready(function() {
