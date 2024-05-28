@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import six
 from collective.classification.folder import _tr as _
 from collective.classification.folder import PLONE_VERSION
 from plone import api
@@ -117,8 +118,8 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     if data.get('treating_groups_title'):
         value = treating_groups_titles.get(data.get('treating_groups_title'))
         if value is None:
-            raise Invalid(_(u"Cannot find treating_groups title '${title}'",
-                            mapping={'title': data.get('treating_groups_title')}).encode('utf8'))
+            raise Invalid(six.ensure_str(_(u"Cannot find treating_groups title '${title}'",
+                                           mapping={'title': data.get('treating_groups_title')})))
         elif not existing_element or getattr(existing_element, key) != value:
             element[key] = value
             has_change = True
