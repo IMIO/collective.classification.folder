@@ -7,7 +7,7 @@ from collective.classification.folder.content.classification_folder import (
 from collective.classification.folder.content.classification_subfolder import (
     IClassificationSubfolder,
 )
-from collective.dexteritytextindexer import IDynamicTextIndexExtender
+from collective.dexteritytextindexer.interfaces import IDynamicTextIndexExtender
 from plone.indexer.decorator import indexer
 from zope.component import adapter
 from zope.interface import implementer
