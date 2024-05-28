@@ -3,6 +3,7 @@
   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
   xmlns:i18n="http://namespaces.zope.org/i18n"
   xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
   i18n_domain="collective.classification.folder">
 
   <i18n:registerTranslations directory="locales" />
@@ -29,13 +30,31 @@
   <include file="permissions.zcml" />
 
   <genericsetup:registerProfile
-    name="default"
+    name="install-base"
     title="collective.classification.folder"
-    directory="profiles/default"
+    directory="profiles/base"
     description="Installs the collective.classification.folder add-on."
     provides="Products.GenericSetup.interfaces.EXTENSION"
     post_handler=".setuphandlers.post_install"
     />
+
+  <genericsetup:registerProfile
+    zcml:condition="not-have plone-5"
+    name="default"
+    title="collective.classification.folder"
+    directory="profiles/plone4"
+    description="Installs the collective.classification.folder add-on."
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <!--genericsetup:registerProfile
+    zcml:condition="have plone-60"
+    name="default"
+    title="collective.classification.folder"
+    directory="profiles/plone6"
+    description="Installs the collective.classification.folder add-on."
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    /-->
 
   <genericsetup:registerProfile
     name="uninstall"
