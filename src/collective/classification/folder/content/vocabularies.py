@@ -79,8 +79,8 @@ class BaseSourceVocabulary(object):
         return results
 
 
-def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True):
-    """Get full title and full categories"""
+def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True, tg_voc=None):
+    """Get full title, full categories and treating_groups title"""
     categories = set([])
     cf_parent = folder.cf_parent()
     if cf_parent:
@@ -98,7 +98,15 @@ def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True):
     except (LookupError, KeyError) as em:
         logger.error("category no more found ! Folder is '{}', error: '{}'".format(folder.absolute_url(), em))
         categories = {}
-    return title, categories
+    if not tg_voc:
+        tg_voc = services_in_charge_vocabulary(folder)
+    if hasattr(tg_voc, "vocab"):
+        tg_voc = tg_voc.vocab
+    if folder.treating_groups:
+        tg_title = tg_voc.getTerm(folder.treating_groups).title  # could be term is necessary
+    else:
+        tg_title = u""
+    return title, categories, tg_title
 
 
 def set_folders_tree(portal):
@@ -110,9 +118,10 @@ def set_folders_tree(portal):
                                 'IClassificationFolder',
              'sort_on': 'ClassificationFolderSort'}
     tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:fulltree", )(portal)
+    tg_voc = services_in_charge_vocabulary(portal)
     for brain in portal.portal_catalog.unrestrictedSearchResults(**crits):
         folder = brain._unrestrictedGetObject()
-        dic[brain.UID] = full_title_categories(folder, tree_voc)
+        dic[brain.UID] = full_title_categories(folder, tree_voc, tg_voc=tg_voc)
     annot[key] = dic
 
 
@@ -135,7 +144,11 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             if current_user:
                 with api.env.adopt_user(user=self._verified_user):
                     terms = [
-                        SimpleTerm(value=pair[0], token=pair[0], title=pair[1])
+                        SimpleTerm(
+                            value=pair[0],
+                            token=pair[0],
+                            title=(pair[3] and u"{} [{}]".format(pair[1], pair[3]) or pair[1]),
+                        )
                         for pair in self.results
                     ]
                 self._vocabulary = SimpleVocabulary(terms)
@@ -161,14 +174,14 @@ class ClassificationFolderSource(BaseSourceVocabulary):
         for brain in folder_brains:
             uids.append(brain.UID)
             infos = all_folders[brain.UID]
-            results.append((brain.UID, infos[0], infos[1]))  # title, categories
+            results.append((brain.UID, infos[0], infos[1], infos[2]))  # title, categories, tg_title
         # check if all stored values are in the results, so view and edit are possible
         # we assume the concerned field is 'classification_folders'
         for uid in getattr(self.context, 'classification_folders', None) or []:
             if uid in uids:
                 continue
             infos = all_folders[uid]
-            results.append((uid, infos[0], infos[1]))
+            results.append((uid, infos[0], infos[1], infos[2]))
         return results
 
     def search(self, query_string, categories_filter=None):
@@ -178,9 +191,12 @@ class ClassificationFolderSource(BaseSourceVocabulary):
 
         terms_matching_query = []
         terms_matching_query_and_category = []
-        for (value, title, categories) in self.results:
-            search_in = '{} {}'.format(unidecode(title).lower(),
-                                       ' '.join([unidecode(term.title).lower() for term in categories.values()]))
+        for (value, title, categories, tg_title) in self.results:
+            search_in = "{} {} {}".format(
+                unidecode(title).lower(),
+                " ".join(unidecode(tg_title).lower().split()),
+                " ".join([unidecode(term.title).lower() for term in categories.values()]),
+            )
             if all([part in search_in for part in query_parts]):
                 term = self.getTerm(value)
                 if categories_filter and categories and set(categories.keys()).intersection(categories_filter):

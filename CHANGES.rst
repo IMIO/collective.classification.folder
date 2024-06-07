@@ -4,8 +4,8 @@ Changelog
 1.1.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Added treating_groups title in folders vocabulary.
+  [sgeulette]
 
 1.1.3 (2024-04-17)
 ------------------

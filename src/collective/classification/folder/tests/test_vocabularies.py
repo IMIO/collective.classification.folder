@@ -193,15 +193,20 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
             classification_categories=categories,
         )
 
-    def _create_subfolder(self, id, title, container, categories=None):
+    def _create_subfolder(self, id, title, container, categories=None, tg=None):
         if not categories:
             categories = []
+        kwargs = {
+            "classification_categories": categories,
+        }
+        if tg:
+            kwargs["treating_groups"] = tg
         return api.content.create(
             container=container,
             type="ClassificationSubfolder",
             id=id,
             title=title,
-            classification_categories=categories,
+            **kwargs,
         )
 
     def test_folder_without_categories(self):
@@ -271,16 +276,12 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
         cat_used = self.category_uids["001"]
         cat_not_used = self.category_uids["002"]
 
-        self.folder1 = self._create_folder(
-            "folder1", u"Folder 1", self.folders, categories=[self.category_uids["001"]]
-        )
-        self.folder1_1 = self._create_subfolder(
-            "folder1-1", u"Folder 1-1", self.folder1
-        )
-        self.folder2 = self._create_folder("folder2", u"Folder 2", self.folders)
+        self.folder1 = self._create_folder("folder1", "Folder 1", self.folders, categories=[self.category_uids["001"]])
+        self.folder1_1 = self._create_subfolder("folder1-1", "Folder 1-1", self.folder1, tg="Reviewers")
+        self.folder2 = self._create_folder("folder2", "Folder 2", self.folders)
 
         source = ClassificationFolderSource(self.portal)
         titles = [term.title for term in source.search("Folder")]
-        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1", u"Folder 2"])
+        self.assertEqual(titles, ["Folder 1", "Folder 1 ⏩ Folder 1-1 [Reviewers]", "Folder 2"])
         titles = [term.title for term in source.search("Folder First")]
         self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1"])
