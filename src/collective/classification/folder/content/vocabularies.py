@@ -4,6 +4,7 @@ from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
 from persistent.dict import PersistentDict
 from plone import api
+from Products.CMFPlone.utils import safe_unicode
 from unidecode import unidecode
 from z3c.form import util
 from z3c.form.i18n import MessageFactory as _zf
@@ -103,7 +104,7 @@ def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True, t
     if hasattr(tg_voc, "vocab"):
         tg_voc = tg_voc.vocab
     if folder.treating_groups:
-        tg_title = tg_voc.getTerm(folder.treating_groups).title  # could be term is necessary
+        tg_title = safe_unicode(tg_voc.getTerm(folder.treating_groups).title)  # could be term is necessary
     else:
         tg_title = u""
     return title, categories, tg_title

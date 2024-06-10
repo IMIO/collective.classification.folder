@@ -77,8 +77,13 @@ class ClassificationFolderSourceTest(unittest.TestCase):
             recipient_groups=[],
             internal_reference_no='1.1'
         )
-        self.assertTupleEqual(full_title_categories(subfolder1), (u'Folder 1 ⏩ Subfolder 1 (1.1)', {}))
-        self.assertTupleEqual(full_title_categories(subfolder1, with_irn=False), (u'Folder 1 ⏩ Subfolder 1', {}))
+        self.assertTupleEqual(full_title_categories(subfolder1), (u"Folder 1 ⏩ Subfolder 1 (1.1)", {}, u""))
+        self.assertTupleEqual(full_title_categories(subfolder1, with_irn=False), (u"Folder 1 ⏩ Subfolder 1", {}, u""))
+        subfolder1.treating_groups = u"group1"
+        self.assertTupleEqual(full_title_categories(subfolder1), (u"Folder 1 ⏩ Subfolder 1 (1.1)", {}, u"Group 1"))
+        self.assertTupleEqual(
+            full_title_categories(subfolder1, with_irn=False), (u"Folder 1 ⏩ Subfolder 1", {}, u"Group 1")
+        )
 
     def test_available_folders_as_manager(self):
         source = ClassificationFolderSource(self.portal)
@@ -201,13 +206,7 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
         }
         if tg:
             kwargs["treating_groups"] = tg
-        return api.content.create(
-            container=container,
-            type="ClassificationSubfolder",
-            id=id,
-            title=title,
-            **kwargs,
-        )
+        return api.content.create(container=container, type="ClassificationSubfolder", id=id, title=title, **kwargs)
 
     def test_folder_without_categories(self):
         self.folder1 = self._create_folder("folder1", u"Folder 1", self.folders)
@@ -282,6 +281,6 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
 
         source = ClassificationFolderSource(self.portal)
         titles = [term.title for term in source.search("Folder")]
-        self.assertEqual(titles, ["Folder 1", "Folder 1 ⏩ Folder 1-1 [Reviewers]", "Folder 2"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1 [Reviewers]", u"Folder 2"])
         titles = [term.title for term in source.search("Folder First")]
-        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1"])
+        self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1 [Reviewers]"])
