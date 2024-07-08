@@ -89,6 +89,10 @@
         factory=".indexers.classification_folder_sort" />
 
     <adapter
+        name="classification_categories"
+        factory=".indexers.classification_categories_index" />
+
+    <adapter
         name="ClassificationSubfolder.SearchableTextIndexer"
         factory=".indexers.ClassificationSubfolderSearchableText" />
 

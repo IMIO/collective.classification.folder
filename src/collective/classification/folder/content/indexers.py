@@ -4,15 +4,25 @@ from Acquisition._Acquisition import aq_parent  # noqa
 from collective.classification.folder.content.classification_folder import IClassificationFolder
 from collective.classification.folder.content.classification_subfolder import IClassificationSubfolder
 from collective.dexteritytextindexer.interfaces import IDynamicTextIndexExtender
+from imio.helpers import EMPTY_STRING
 from plone.indexer.decorator import indexer
+from Products.CMFPlone.utils import base_hasattr
 from zope.component import adapter
 from zope.interface import implementer
 
 
 @indexer(IClassificationFolder)
 def archived_classification_folder_index(obj):
-    """Indexer for the archived field of a classification folder using yesno_value index. """
-    return obj.archived and '1' or '0'
+    """Indexer for the archived field of a classification folder using yesno_value index."""
+    return obj.archived and "1" or "0"
+
+
+@indexer(IClassificationFolder)
+def classification_categories_index(obj):
+    """Indexer of"""
+    if base_hasattr(obj, "classification_categories") and obj.classification_categories:
+        return obj.classification_categories
+    return [EMPTY_STRING]
 
 
 @indexer(IClassificationFolder)
