@@ -6,6 +6,9 @@ Changelog
 
 - Added treating_groups title in folders vocabulary.
   [sgeulette]
+- Stored EMPTY_STRING in classification_categories and classification_folders index values when no value.
+  So it is possible to search on.
+  [sgeulette]
 
 1.1.3 (2024-04-17)
 ------------------

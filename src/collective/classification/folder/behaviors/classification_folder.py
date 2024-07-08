@@ -7,11 +7,13 @@ from collective.classification.folder.browser.widget import FolderAutocompleteMu
 from collective.classification.folder.content.vocabularies import ClassificationFolderSourceBinder
 from collective.classification.tree.behaviors.classification import IClassificationCategory
 from collective.classification.tree.behaviors.classification import IClassificationCategoryMarker
+from imio.helpers import EMPTY_STRING
 from imio.helpers.content import uuidToObject
 from plone import schema
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.indexer.decorator import indexer
+from Products.CMFPlone.utils import base_hasattr
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
@@ -66,8 +68,8 @@ class ClassificationFolder(object):
 @indexer(IClassificationFolderMarker)
 def classification_folders_indexer(obj):
     """Custom indexer to ensure that folder are also indexed for subfolder"""
-    if not getattr(obj, "classification_folders", None):
-        return
+    if not base_hasattr(obj, "classification_folders") or not obj.classification_folders:
+        return [EMPTY_STRING]
     values = []
     obj = aq_base(obj)
     for uid in obj.classification_folders:

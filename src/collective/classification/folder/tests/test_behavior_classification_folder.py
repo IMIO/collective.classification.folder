@@ -22,16 +22,17 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         # we avoid Anonymous having View permission
-        self.portal.manage_permission('View', ('Contributor', 'Editor', 'Manager', 'Reader', 'Site Administrator'),
-                                      acquire=0)
+        self.portal.manage_permission(
+            "View", ("Contributor", "Editor", "Manager", "Reader", "Site Administrator"), acquire=0
+        )
         # we configure localroles
         roles_config = {
-            'treating_groups': {None: {'': {'roles': ['Contributor', 'Editor']}}},
-            'recipient_groups': {None: {'': {'roles': ['Reader']}}}
+            "treating_groups": {None: {"": {"roles": ["Contributor", "Editor"]}}},
+            "recipient_groups": {None: {"": {"roles": ["Reader"]}}},
         }
         for keyname in roles_config:
-            add_fti_configuration('ClassificationFolder', roles_config[keyname], keyname=keyname)
-            add_fti_configuration('ClassificationSubfolder', roles_config[keyname], keyname=keyname)
+            add_fti_configuration("ClassificationFolder", roles_config[keyname], keyname=keyname)
+            add_fti_configuration("ClassificationSubfolder", roles_config[keyname], keyname=keyname)
 
         user1 = api.user.create(email="user1@test.com", username="user1")
         user2 = api.user.create(email="user2@test.com", username="user2")
@@ -61,7 +62,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
             type="ClassificationSubfolder",
             id="folder2",
             title=u"Folder 2",
-            treating_groups=u'group2',
+            treating_groups=u"group2",
         )
         self.folder2_uid = api.content.get_uuid(self.folder2)
 
@@ -83,20 +84,20 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
         )
 
     def test_classification_folders_indexer(self):
-        setRoles(self.portal, TEST_USER_ID, ['Member'])
+        setRoles(self.portal, TEST_USER_ID, ["Member"])
         self.assertIsNone(api.content.get(UID=self.folder1_uid))
         self.assertIsNone(api.content.get(UID=self.folder2_uid))
-        self.change_user('user1')
+        self.change_user("user1")
         self.assertEqual(api.content.get(UID=self.folder1_uid).UID(), self.folder1_uid)
         self.assertIsNone(api.content.get(UID=self.folder2_uid))
-        self.change_user('user2')
+        self.change_user("user2")
         self.assertEqual(api.content.get(UID=self.folder2_uid).UID(), self.folder2_uid)
         self.assertIsNone(api.content.get(UID=self.folder1_uid))
         indexer = classification_folders_indexer(self.tt1)
-        self.assertIsNone(indexer())
+        self.assertEqual(indexer(), ["__empty_string__"])
         self.tt1.classification_folders = [self.folder1_uid]
         self.assertEqual(indexer(), [self.folder1_uid])  # no matter user2 cannot see folder1
         self.tt1.classification_folders = [self.folder2_uid]
-        self.assertEqual(indexer(), [self.folder2_uid, 'p:{0}'.format(self.folder1_uid)])
+        self.assertEqual(indexer(), [self.folder2_uid, "p:{0}".format(self.folder1_uid)])
         self.tt1.classification_folders = [self.folder1_uid, self.folder2_uid]
-        self.assertEqual(indexer(), [self.folder1_uid, self.folder2_uid, 'p:{0}'.format(self.folder1_uid)])
+        self.assertEqual(indexer(), [self.folder1_uid, self.folder2_uid, "p:{0}".format(self.folder1_uid)])

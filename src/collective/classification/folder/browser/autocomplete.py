@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from eea.faceted.vocabularies.autocomplete import IAutocompleteSuggest
-from zope.interface import implementer
-from Products.Five import BrowserView
-from plone import api
 from collective.classification.tree.vocabularies import ClassificationTreeSource
+from eea.faceted.vocabularies.autocomplete import IAutocompleteSuggest
+from imio.helpers import EMPTY_STRING
+from imio.helpers import EMPTY_TITLE
+from plone import api
+from Products.Five import BrowserView
+from zope.interface import implementer
 
 import json
 
@@ -33,11 +35,9 @@ class ClassificationCategorySuggest(BaseSuggestView):
         if not query:
             return self._return_result(result)
         vocabulary = ClassificationTreeSource(self.context).vocabulary
-        result = [
-            {"id": e.value, "text": e.title}
-            for e in vocabulary
-            if query in e.title.lower()
-        ]
+        result = [{"id": e.value, "text": e.title} for e in vocabulary if query in e.title.lower()]
+        if query in api.portal.translate(EMPTY_TITLE, "imio.helpers").lower():
+            result.insert(0, {"id": EMPTY_STRING, "text": api.portal.translate(EMPTY_TITLE, "imio.helpers")})
         return self._return_result(result)
 
 
@@ -57,8 +57,7 @@ class FolderSuggest(BaseSuggestView):
             }
         )
         brains = api.content.find(**query)
-        result = [
-            {"id": b.UID, "text": b.get_full_title and b.get_full_title or b.Title}
-            for b in brains
-        ]
+        result = [{"id": b.UID, "text": b.get_full_title and b.get_full_title or b.Title} for b in brains]
+        if self.request.get("term") in api.portal.translate(EMPTY_TITLE, "imio.helpers").lower():
+            result.insert(0, {"id": EMPTY_STRING, "text": api.portal.translate(EMPTY_TITLE, "imio.helpers")})
         return self._return_result(result)
