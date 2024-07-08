@@ -6,6 +6,7 @@ from collective.classification.folder import _
 from collective.classification.folder.browser.widget import FolderAutocompleteMultiFieldWidget
 from collective.classification.folder.content.vocabularies import ClassificationFolderSourceBinder
 from collective.classification.tree.behaviors.classification import IClassificationCategory
+from collective.classification.tree.behaviors.classification import IClassificationCategoryMarker
 from imio.helpers.content import uuidToObject
 from plone import schema
 from plone.autoform import directives as form
@@ -13,11 +14,10 @@ from plone.autoform.interfaces import IFormFieldProvider
 from plone.indexer.decorator import indexer
 from zope.component import adapter
 from zope.interface import implementer
-from zope.interface import Interface
 from zope.interface import provider
 
 
-class IClassificationFolderMarker(Interface):
+class IClassificationFolderMarker(IClassificationCategoryMarker):
     pass
 
 
