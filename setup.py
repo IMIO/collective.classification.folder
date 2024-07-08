@@ -37,9 +37,7 @@ setup(
     project_urls={
         "PyPI": "https://pypi.python.org/pypi/collective.classification.folder",
         "Source": "https://github.com/imio/collective.classification.folder",
-        "Tracker": (
-            "https://github.com/imio/collective.classification.folder/issues"
-        ),
+        "Tracker": ("https://github.com/imio/collective.classification.folder/issues"),
         # 'Documentation': 'https://collective.classification.folder.readthedocs.io/en/latest/',
     },
     license="GPL version 2",
@@ -64,7 +62,7 @@ setup(
         "eea.facetednavigation",
         "collective.eeafaceted.z3ctable",
         "imio.annex",
-        "imio.helpers>=1.0.0rc1",
+        "imio.helpers>=1.0.0rc4",
         "imio.prettylink",
         "collective.dexteritytextindexer",
         "collective.z3cform.select2",
