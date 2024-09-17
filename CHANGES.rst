@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1.4 (unreleased)
+1.2.0 (2024-09-17)
 ------------------
 
 - Added treating_groups title in folders vocabulary.

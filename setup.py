@@ -16,7 +16,7 @@ long_description = "\n\n".join(
 
 setup(
     name="collective.classification.folder",
-    version="1.1.4.dev0",
+    version="1.2.0",
     description="Addon to manage classification folders",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
