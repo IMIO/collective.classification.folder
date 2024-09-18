@@ -4,8 +4,8 @@ Changelog
 1.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Updated following collective.eeafaceted.z3ctable modifications.
+  [sgeulette]
 
 1.2.0 (2024-09-17)
 ------------------

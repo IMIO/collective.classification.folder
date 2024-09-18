@@ -341,7 +341,7 @@ class ClassificationFoldersColumn(VocabularyColumn):
 
     def renderCell(self, item):
         value = self.getValue(item)
-        if not value or value == self.ignored_value:
+        if not value or value in self.ignored_values:
             return u"-"
 
         # caching when several same values in same column
@@ -418,5 +418,3 @@ class CombinedReviewstateSizeColumn(BaseColumn):
         else:
             state_title = self.wtool.getTitleForStateOnType(item.review_state, item.portal_type)
             return translate(safe_unicode(state_title), domain=self.i18n_domain, context=self.request)
-
-
