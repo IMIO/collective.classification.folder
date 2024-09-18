@@ -6,6 +6,8 @@ Changelog
 
 - Updated following collective.eeafaceted.z3ctable modifications.
   [sgeulette]
+- Don't create wheel.
+  [sgeulette]
 
 1.2.0 (2024-09-17)
 ------------------
