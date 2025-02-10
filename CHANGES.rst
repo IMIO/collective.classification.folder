@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2.2 (unreleased)
+1.2.2 (2025-02-10)
 ------------------
 
 - Corrected translation.
