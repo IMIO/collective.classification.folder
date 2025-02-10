@@ -153,7 +153,7 @@ msgstr "Installs the collective.classification.folder add-on."
 
 #: ../behaviors/classification_folder.py:31
 msgid "List of folders / subfolders in which this content is filed"
-msgstr "Liste des codes de classement associés"
+msgstr "Liste des fardes et chemises associées"
 
 #: ../browser/templates/folder-listing.pt:120
 #: ../content/classification_folder.py:55

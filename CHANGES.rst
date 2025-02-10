@@ -4,8 +4,8 @@ Changelog
 1.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Corrected translation.
+  [sgeulette]
 
 1.2.1 (2024-09-18)
 ------------------
