@@ -390,10 +390,16 @@ class SubfolderClassificationFoldersColumn(ClassificationFoldersColumn):
 
 
 class CombinedReviewstateSizeColumn(BaseColumn):
+    """Column showing workflow state (for folders) or filesize (for annexes).
+
+    escape=False because renderCell returns HTML from render_filesize().
+    Subclasses overriding renderCell must escape user-supplied content manually.
+    """
 
     header = _(u'State or Filesize')
     i18n_domain = 'plone'
     sort_index = -1  # not sortable
+    escape = False
 
     def __init__(self, context, request, table):
         super(CombinedReviewstateSizeColumn, self).__init__(context, request, table)
