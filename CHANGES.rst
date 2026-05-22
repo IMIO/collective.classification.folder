@@ -4,8 +4,8 @@ Changelog
 1.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Do not reindex ClassificationFolderSort when deleting.
+  [sgeulette]
 
 1.2.2 (2025-02-10)
 ------------------

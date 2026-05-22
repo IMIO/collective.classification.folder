@@ -5,6 +5,7 @@ from collective.classification.folder import utils
 from collective.classification.folder.content.classification_folder import IClassificationFolder
 from plone.dexterity.content import Container
 from zope.interface import implementer
+from zope.lifecycleevent import IObjectRemovedEvent
 from zope.schema.fieldproperty import FieldProperty
 
 
@@ -33,4 +34,6 @@ class ClassificationSubfolder(Container):
 
 def on_move(obj, event):
     """Reindexes SearchableText and ClassificationFolderSort."""
+    if IObjectRemovedEvent.providedBy(event) or event.newParent is None:
+        return
     obj.reindexObject(idxs=["ClassificationFolderSort", "SearchableText"])
