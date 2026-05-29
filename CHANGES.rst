@@ -1,11 +1,13 @@
 Changelog
 =========
 
-1.2.3 (unreleased)
+1.3.0 (2026-05-29)
 ------------------
 
 - Do not reindex ClassificationFolderSort when deleting.
   [sgeulette]
+- Do not display html in size warning
+  [chris-adam]
 
 1.2.2 (2025-02-10)
 ------------------
