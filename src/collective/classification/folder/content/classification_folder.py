@@ -51,7 +51,7 @@ class IClassificationFolder(model.Schema):
     internal_reference_no = schema.TextLine(
         title=_(u"Classification identifier"),
         # description=_(u"Unique identifier of the folder"),
-        required=False,
+        required=True,
     )
 
     dexteritytextindexer.searchable("classification_categories")
