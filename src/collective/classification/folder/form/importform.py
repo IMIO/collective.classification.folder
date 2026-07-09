@@ -1,27 +1,31 @@
 # -*- coding: utf-8 -*-
-from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
-from collective.classification.tree.form.importform import GeneratedBool
-from collective.classification.tree.form.importform import GeneratedChoice
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.classification.folder import _
 from collective.classification.folder import utils
 from collective.classification.folder.content.vocabularies import ServiceInChargeSourceBinder
+from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from collective.classification.tree import _ as _ct
 from collective.classification.tree import utils as tree_utils
 from collective.classification.tree.form import importform as baseform
+from collective.classification.tree.form.importform import GeneratedBool
+from collective.classification.tree.form.importform import GeneratedChoice
+from collective.classification.tree.form.importform import IGeneratedField
+from imio.helpers.security import check_zope_admin
 from plone import api
 from plone.z3cform.layout import FormWrapper
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from zope import schema
 from zope.annotation import IAnnotations
 from zope.component import getUtility
-from zope.interface.exceptions import Invalid
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import invariant
+from zope.interface.exceptions import Invalid
 from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
 
 # import json
 import re
+import transaction
 
 
 ANNOTATION_KEY = baseform.ANNOTATION_KEY
@@ -49,11 +53,25 @@ def extract_required_columns(obj):
     return required
 
 
+@implementer(IGeneratedField)
+class GeneratedInt(schema.Int):
+    pass
+
+
 class IImportSecondStepBase(Interface):
 
     replace_slash = GeneratedBool(
         title=_ct(u"Replace slash in title"),
         default=True,
+        required=False,
+    )
+
+    commit_every = GeneratedInt(
+        title=_(u"Commit every X created or updated elements"),
+        description=_(
+            u"If greater than 0, a transaction commit is done every X created or updated elements."
+        ),
+        default=0,
         required=False,
     )
 
@@ -108,6 +126,18 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             "collective.classification.vocabularies:tree_id_mapping",
         )(self.context)
         super(ImportFormSecondStep, self).update()
+
+    def updateFieldsFromSchemata(self):
+        super(ImportFormSecondStep, self).updateFieldsFromSchemata()
+        # commit_every is a technical option reserved to the Zope administrator
+        if not check_zope_admin():
+            self.fields = self.fields.omit("commit_every")
+
+    def _import(self, data):
+        # Extract the commit option so it is not passed down as a csv processing kwarg
+        self._commit_every = data.pop("commit_every", 0) or 0
+        self._processed_count = 0
+        super(ImportFormSecondStep, self)._import(data)
 
     def _process_data(self, data, key=None):
         """Return a list of dict containing object keys and a special key
@@ -331,6 +361,15 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
     def _after_import(self):
         self.finished = True
 
+    def _commit_if_needed(self):
+        """Commit the current transaction every `commit_every` created or updated elements."""
+        commit_every = getattr(self, "_commit_every", 0)
+        if not commit_every:
+            return
+        self._processed_count = getattr(self, "_processed_count", 0) + 1
+        if self._processed_count % commit_every == 0:
+            transaction.commit()
+
     def _create_or_update(self, parent, dic):
         identifier = dic.get("internal_reference_no", None)
         if not identifier:
@@ -339,6 +378,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if not elements:
             typ = dic.pop('@type', parent == self.context and 'ClassificationFolder' or 'ClassificationSubfolder')
             obj = api.content.create(parent, typ, **dic)
+            self._commit_if_needed()
         else:
             obj = elements[0].getObject()
             identifier = dic.pop("internal_reference_no")
@@ -349,6 +389,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
                     setattr(obj, attr, value)
             if changes:
                 modified(obj)
+                self._commit_if_needed()
         return obj
 
     def _direct_operation(self, data):

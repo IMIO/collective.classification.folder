@@ -4,8 +4,8 @@ Changelog
 1.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Added a commit_every parameter visible for zope admin to handle intermediate transaction commit.
+  [sgeulette]
 
 1.3.0 (2026-05-29)
 ------------------
