@@ -1,11 +1,13 @@
 Changelog
 =========
 
-1.3.1 (unreleased)
+1.3.1 (2026-08-14)
 ------------------
 
 - Added a commit_every parameter visible for zope admin to handle intermediate transaction commit.
   [sgeulette]
+- Made internal_reference_no required on classification folder
+  [chris-adam]
 
 1.3.0 (2026-05-29)
 ------------------
