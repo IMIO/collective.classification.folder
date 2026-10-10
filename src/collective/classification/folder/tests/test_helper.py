@@ -15,7 +15,7 @@ class TestClassificationHelper(unittest.TestCase):
         """The import action of collective.classification.tree is shown on the folders container"""
         portal = self.layer["portal"]
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title=u"Folders")
+        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title="Folders")
         helper = folders.restrictedTraverse("@@classification_helper")
         self.assertTrue(helper.can_import())
         self.assertFalse(helper.can_add_category())

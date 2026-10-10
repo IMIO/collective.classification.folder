@@ -11,6 +11,8 @@ Library  Remote  ${PLONE_URL}/RobotRemote
 ${MODAL}  css=.modal-dialog
 ${ERROR_PAGE_TEXT}  there seems to be an error
 ${NOT_FOUND_TEXT}  This page does not seem to exist
+# Plone 6.2: the main template renders the content title without class
+${PAGE_TITLE}  css=#content h1
 
 
 *** Keywords ***
@@ -85,3 +87,9 @@ The page is not found
 
 The edit link is not available
     Page should not contain element  css=#contentview-edit
+
+Click the configlet
+    [Documentation]  Link of the control panel overview to a configlet, by the end of its url
+    ...              (Plone 6.2 also lists the configlets in hidden dropdown menus)
+    [Arguments]  ${url_end}
+    Click link  css=a[href$="${url_end}"]:not(.dropdown-item)

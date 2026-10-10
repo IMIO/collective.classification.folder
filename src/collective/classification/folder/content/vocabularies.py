@@ -2,9 +2,9 @@
 from collective.classification.folder import _
 from collective.classification.folder.interfaces import IServiceInCharge
 from collective.classification.folder.interfaces import IServiceInCopy
-from persistent.dict import PersistentDict
+from persistent.mapping import PersistentMapping
 from plone import api
-from Products.CMFPlone.utils import safe_unicode
+from plone.base.utils import safe_text
 from unidecode import unidecode
 from z3c.form import util
 from z3c.form.i18n import MessageFactory as _zf
@@ -12,6 +12,7 @@ from z3c.formwidget.query.interfaces import IQuerySource
 from zope.annotation import IAnnotations
 from zope.component import getUtility
 from zope.component import queryAdapter
+from zope.globalrequest import getRequest
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema.interfaces import IContextSourceBinder
@@ -22,7 +23,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 import logging
 
 
-logger = logging.getLogger('folder.content.vocabularies')
+logger = logging.getLogger("folder.content.vocabularies")
 
 
 @implementer(IQuerySource)
@@ -53,14 +54,10 @@ class BaseSourceVocabulary(object):
             user = None
             if "login" in creds and creds["login"]:
                 # first try the portal (non-admin accounts)
-                user = portal.acl_users.authenticate(
-                    creds["login"], creds["password"], request
-                )
+                user = portal.acl_users.authenticate(creds["login"], creds["password"], request)
                 if not user:
                     # now try the app (i.e. the admin account)
-                    user = app.acl_users.authenticate(
-                        creds["login"], creds["password"], request
-                    )
+                    user = app.acl_users.authenticate(creds["login"], creds["password"], request)
             return user
         else:
             return api.user.get_current()
@@ -85,15 +82,18 @@ def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True, t
     categories = set([])
     cf_parent = folder.cf_parent()
     if cf_parent:
-        title = u"{0} ⏩ {1}".format(cf_parent.title, folder.title)
+        title = "{0} ⏩ {1}".format(cf_parent.title, folder.title)
         categories.update(with_cat and cf_parent.classification_categories or [])
     else:
-        title = u"{0}".format(folder.title)
+        title = "{0}".format(folder.title)
     if with_irn and folder.internal_reference_no:
-        title = u'{} ({})'.format(title, folder.internal_reference_no)
+        title = "{} ({})".format(title, folder.internal_reference_no)
     categories.update(with_cat and folder.classification_categories or [])
     if with_cat and categories and not tree_voc:
-        tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree",)(None)
+        tree_voc = getUtility(
+            IVocabularyFactory,
+            "collective.classification.vocabularies:tree",
+        )(None)
     try:
         categories = {uid: tree_voc.getTerm(uid) for uid in categories}
     except (LookupError, KeyError) as em:
@@ -104,21 +104,25 @@ def full_title_categories(folder, tree_voc=None, with_irn=True, with_cat=True, t
     if hasattr(tg_voc, "vocab"):
         tg_voc = tg_voc.vocab
     if folder.treating_groups:
-        tg_title = safe_unicode(tg_voc.getTerm(folder.treating_groups).title)  # could be term is necessary
+        tg_title = safe_text(tg_voc.getTerm(folder.treating_groups).title)  # could be term is necessary
     else:
-        tg_title = u""
+        tg_title = ""
     return title, categories, tg_title
 
 
 def set_folders_tree(portal):
     """Dict containing uid: (title, categories)"""
-    dic = PersistentDict()
+    dic = PersistentMapping()
     annot = IAnnotations(portal)
-    key = u'classification.folder.dic'
-    crits = {'object_provides': 'collective.classification.folder.content.classification_folder.'
-                                'IClassificationFolder',
-             'sort_on': 'ClassificationFolderSort'}
-    tree_voc = getUtility(IVocabularyFactory, "collective.classification.vocabularies:fulltree", )(portal)
+    key = "classification.folder.dic"
+    crits = {
+        "object_provides": "collective.classification.folder.content.classification_folder." "IClassificationFolder",
+        "sort_on": "ClassificationFolderSort",
+    }
+    tree_voc = getUtility(
+        IVocabularyFactory,
+        "collective.classification.vocabularies:fulltree",
+    )(portal)
     tg_voc = services_in_charge_vocabulary(portal)
     for brain in portal.portal_catalog.unrestrictedSearchResults(**crits):
         folder = brain._unrestrictedGetObject()
@@ -130,7 +134,7 @@ def get_folders_tree():
     """Dict containing uid: (title, categories)"""
     portal = api.portal.get()
     annot = IAnnotations(portal)
-    key = u'classification.folder.dic'
+    key = "classification.folder.dic"
     if key not in annot:
         set_folders_tree(portal)
     return annot[key]
@@ -148,7 +152,7 @@ class ClassificationFolderSource(BaseSourceVocabulary):
                         SimpleTerm(
                             value=pair[0],
                             token=pair[0],
-                            title=(pair[3] and u"{} [{}]".format(pair[1], pair[3]) or pair[1]),
+                            title=(pair[3] and "{} [{}]".format(pair[1], pair[3]) or pair[1]),
                         )
                         for pair in self.results
                     ]
@@ -178,7 +182,7 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             results.append((brain.UID, infos[0], infos[1], infos[2]))  # title, categories, tg_title
         # check if all stored values are in the results, so view and edit are possible
         # we assume the concerned field is 'classification_folders'
-        for uid in getattr(self.context, 'classification_folders', None) or []:
+        for uid in getattr(self.context, "classification_folders", None) or []:
             if uid in uids:
                 continue
             infos = all_folders[uid]
@@ -187,12 +191,16 @@ class ClassificationFolderSource(BaseSourceVocabulary):
 
     def search(self, query_string, categories_filter=None):
         if categories_filter is None:
-            categories_filter = []
+            # selected categories sent by the folders widget (folder_widget.js)
+            categories = (getRequest() or {}).get("categories")
+            categories_filter = categories and categories.split(";") or []
         query_parts = unidecode(query_string).lower().split()
+        if not query_parts:  # select2 queries without a term when it opens: nothing, as on Plone 4
+            return []
 
         terms_matching_query = []
         terms_matching_query_and_category = []
-        for (value, title, categories, tg_title) in self.results:
+        for value, title, categories, tg_title in self.results:
             search_in = "{} {} {}".format(
                 unidecode(title).lower(),
                 " ".join(unidecode(tg_title).lower().split()),
@@ -215,9 +223,12 @@ class ClassificationFolderSource(BaseSourceVocabulary):
             # this is done as anonymous and the vocabulary is then empty
             # it's not necessary here to render the correct term
             # see z3c.form.term
-            if '++widget++' in self.context.REQUEST.get('URL', ''):
-                return SimpleTerm(value, util.createCSSId(util.toUnicode(value)),
-                                  title=_zf(u'Missing: ${value}', mapping=dict(value=util.toUnicode(value))))
+            if "++widget++" in self.context.REQUEST.get("URL", ""):
+                return SimpleTerm(
+                    value,
+                    util.createCSSId(util.toUnicode(value)),
+                    title=_zf("Missing: ${value}", mapping=dict(value=util.toUnicode(value))),
+                )
             raise
 
 
@@ -285,11 +296,13 @@ class ServiceInChargeSourceBinder(object):
 
 @implementer(IVocabularyFactory)
 class ClassificationFolderPortalTypesVocabulary(object):
-    """ Classification folders portal types vocabulary """
+    """Classification folders portal types vocabulary"""
 
     def __call__(self, context):
         terms = []
-        for typ, title in ((u'ClassificationFolder', u'Classification Folder'),
-                           (u'ClassificationSubfolder', u'Classification Subfolder')):
+        for typ, title in (
+            ("ClassificationFolder", "Classification Folder"),
+            ("ClassificationSubfolder", "Classification Subfolder"),
+        ):
             terms.append(SimpleVocabulary.createTerm(typ, typ, _(title)))
         return SimpleVocabulary(terms)

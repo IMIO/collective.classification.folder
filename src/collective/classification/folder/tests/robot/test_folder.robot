@@ -42,5 +42,4 @@ View a folder with its classified content
     Set field value  ${mail_uid}  classification_folders  ['${folder_uid}']  list
     Go to  ${PLONE_URL}/folders/budget
     The table shows  Incoming mail
-    Click link  Incoming mail
-    Location should contain  ${PLONE_URL}/mail
+    The table links to  Incoming mail  ${PLONE_URL}/mail

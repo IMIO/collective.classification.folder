@@ -20,23 +20,23 @@ class TestIndexers(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        tree = api.content.create(container=self.portal, type="ClassificationContainer", id="tree", title=u"Tree")
+        tree = api.content.create(container=self.portal, type="ClassificationContainer", id="tree", title="Tree")
         category = createObject("ClassificationCategory")
-        category.identifier = u"001"
-        category.title = u"Administration"
+        category.identifier = "001"
+        category.title = "Administration"
         tree._add_element(category)
         self.category_uid = category.UID()
-        folders = api.content.create(container=self.portal, type="ClassificationFolders", id="folders", title=u"Folders")
+        folders = api.content.create(container=self.portal, type="ClassificationFolders", id="folders", title="Folders")
         self.folder = api.content.create(
             container=folders,
             type="ClassificationFolder",
             id="folder",
-            title=u"Folder",
+            title="Folder",
             classification_categories=[self.category_uid],
             archived=True,
         )
         self.subfolder = api.content.create(
-            container=self.folder, type="ClassificationSubfolder", id="subfolder", title=u"Subfolder"
+            container=self.folder, type="ClassificationSubfolder", id="subfolder", title="Subfolder"
         )
 
     def test_archived_classification_folder_index(self):
@@ -51,8 +51,8 @@ class TestIndexers(unittest.TestCase):
         self.assertEqual(["subfolder"], [b.id for b in api.content.find(classification_categories=EMPTY_STRING)])
 
     def test_classification_folder_sort(self):
-        self.assertEqual(u"Folder", classification_folder_sort(self.folder)())
-        self.assertEqual(u"Folder|Subfolder", classification_folder_sort(self.subfolder)())
+        self.assertEqual("Folder", classification_folder_sort(self.folder)())
+        self.assertEqual("Folder|Subfolder", classification_folder_sort(self.subfolder)())
 
 
 class TestClassificationSubfolderSearchableText(unittest.TestCase):
@@ -63,8 +63,8 @@ class TestClassificationSubfolderSearchableText(unittest.TestCase):
         """A subfolder is found by the title of its folder"""
         portal = self.layer["portal"]
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title=u"Folders")
-        folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title=u"Finances")
-        subfolder = api.content.create(container=folder, type="ClassificationSubfolder", id="sub", title=u"Budget")
+        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title="Folders")
+        folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title="Finances")
+        subfolder = api.content.create(container=folder, type="ClassificationSubfolder", id="sub", title="Budget")
         self.assertEqual("Finances", ClassificationSubfolderSearchableText(subfolder)())
         self.assertEqual(["folder", "sub"], sorted(b.id for b in api.content.find(SearchableText="Finances")))

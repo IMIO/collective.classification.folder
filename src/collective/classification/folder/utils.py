@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
-import six
 from collective.classification.folder import _tr as _
-from collective.classification.folder import PLONE_VERSION
 from plone import api
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.interface.interfaces import ComponentLookupError
+from zope.interface.interfaces import Invalid
 from zope.schema.interfaces import IVocabularyFactory
-
-if PLONE_VERSION < '6.0':
-    from zope.component.interfaces import ComponentLookupError  # noqa
-    from zope.component.interfaces import Invalid  # noqa
-else:
-    from zope.interface.interfaces import ComponentLookupError
-    from zope.interface.interfaces import Invalid
 
 
 def get_portal_type(parent):
@@ -24,11 +17,7 @@ def get_portal_type(parent):
     }
     portal_type = mapping.get(getattr(parent, "portal_type", None))
     if not portal_type:
-        raise ValueError(
-            u"There is content type that can be created on {0}".format(
-                parent.portal_type
-            )
-        )
+        raise ValueError("There is content type that can be created on {0}".format(parent.portal_type))
     return portal_type
 
 
@@ -84,9 +73,7 @@ def check_value(existing_element, key, data):
 def element_importer(parent, identifier, title, data, children, vocabulary, treating_groups_titles):
     """Format an element for import"""
     if parent:
-        existing_elements = api.content.find(
-            context=parent, internal_reference_no=identifier
-        )
+        existing_elements = api.content.find(context=parent, internal_reference_no=identifier)
     else:
         existing_elements = []
 
@@ -96,7 +83,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     existing_element = None
     portal_type = get_portal_type(parent)
     # csv_line = data.pop('_ln', 0)
-    data.pop('_ln', 0)
+    data.pop("_ln", 0)
     if len(existing_elements) >= 1:
         existing_element = parent[existing_elements[0].id]
         exist = True
@@ -115,11 +102,12 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
     if data.get(key) and (not existing_element or getattr(existing_element, key) != data.get(key)):
         element[key] = data.get(key)
         has_change = True
-    if data.get('treating_groups_title'):
-        value = treating_groups_titles.get(data.get('treating_groups_title'))
+    if data.get("treating_groups_title"):
+        value = treating_groups_titles.get(data.get("treating_groups_title"))
         if value is None:
-            raise Invalid(six.ensure_str(_(u"Cannot find treating_groups title '${title}'",
-                                           mapping={'title': data.get('treating_groups_title')})))
+            raise Invalid(
+                _("Cannot find treating_groups title '${title}'", mapping={"title": data.get("treating_groups_title")})
+            )
         elif not existing_element or getattr(existing_element, key) != value:
             element[key] = value
             has_change = True
@@ -175,9 +163,7 @@ def element_importer(parent, identifier, title, data, children, vocabulary, trea
 
 
 def evaluate_internal_reference(context, request, number_name, expr_name, number=None):
-    settings_iface = (
-        "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
-    )
+    settings_iface = "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
     if not number:
         number = api.portal.get_registry_record(
             settings_iface.format(number_name),
@@ -185,10 +171,10 @@ def evaluate_internal_reference(context, request, number_name, expr_name, number
         )
     # we get the settings view
     try:
-        portal_state = getMultiAdapter((context, request), name=u"plone_portal_state")
+        portal_state = getMultiAdapter((context, request), name="plone_portal_state")
         settings_view = getMultiAdapter(
             (portal_state.portal(), request),
-            name=u"collectiveclassificationfolder-settings",
+            name="collectiveclassificationfolder-settings",
         )
     except ComponentLookupError:
         return "Error getting view..."
@@ -206,9 +192,7 @@ def evaluate_internal_reference(context, request, number_name, expr_name, number
 
 
 def increment_internal_reference(number_name):
-    settings_iface = (
-        "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
-    )
+    settings_iface = "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
     key = settings_iface.format(number_name)
     number = api.portal.get_registry_record(key, default=1)
     api.portal.set_registry_record(key, number + 1)

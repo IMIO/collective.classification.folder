@@ -48,7 +48,7 @@ A category
 
 The page title is
     [Arguments]  ${title}
-    Element text should be  css=h1.documentFirstHeading  ${title}
+    Element text should be  ${PAGE_TITLE}  ${title}
 
 The default reference is
     [Documentation]  Value proposed by the add form

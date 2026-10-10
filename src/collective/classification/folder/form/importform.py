@@ -13,7 +13,6 @@ from imio.helpers.security import check_zope_admin
 from plone import api
 from plone.z3cform.layout import FormWrapper
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from six import ensure_text
 from zope import schema
 from zope.annotation import IAnnotations
 from zope.component import getUtility
@@ -62,23 +61,21 @@ class GeneratedInt(schema.Int):
 class IImportSecondStepBase(Interface):
 
     replace_slash = GeneratedBool(
-        title=_ct(u"Replace slash in title"),
+        title=_ct("Replace slash in title"),
         default=True,
         required=False,
     )
 
     commit_every = GeneratedInt(
-        title=_(u"Commit every X created or updated elements"),
-        description=_(
-            u"If greater than 0, a transaction commit is done every X created or updated elements."
-        ),
+        title=_("Commit every X created or updated elements"),
+        description=_("If greater than 0, a transaction commit is done every X created or updated elements."),
         default=0,
         required=False,
     )
 
     treating_groups = GeneratedChoice(  # this overrided Choice field is adapted to folders (see tree importform)
-        title=_(u"Service in charge"),
-        description=_(u"Service that will be set on all imported folders"),
+        title=_("Service in charge"),
+        description=_("Service that will be set on all imported folders"),
         source=ServiceInChargeSourceBinder(),
         required=False,
     )
@@ -86,7 +83,7 @@ class IImportSecondStepBase(Interface):
     @invariant
     def validate_columns(obj):
         columns = [v for k, v in obj._Data_data___.items() if k.startswith("column_")]
-        if obj._Data_data___.get('treating_groups') is not None and u'treating_groups_title' in columns:
+        if obj._Data_data___.get("treating_groups") is not None and "treating_groups_title" in columns:
             raise Invalid(_("You can't select both a treating_groups and a column associated to treating groups title"))
         required = extract_required_columns(obj)
         return tree_utils.validate_csv_columns(obj, required)
@@ -113,12 +110,12 @@ class ImportFirstStepView(FormWrapper):
 
 
 class ImportFormSecondStep(baseform.ImportFormSecondStep):
-    _vocabulary = u"collective.classification.vocabularies:folders_import_keys"
+    _vocabulary = "collective.classification.vocabularies:folders_import_keys"
     base_schema = IImportSecondStepBase
 
     @property
     def label(self):
-        return _(u"Import folders")
+        return _("Import folders")
 
     def update(self):
         self.data = []
@@ -157,10 +154,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 
     def _reference_generator(self):
         if not hasattr(self, "_ref_number"):
-            number_key = (
-                "collective.classification.folder.browser.settings."
-                "IClassificationConfig.folder_number"
-            )
+            number_key = "collective.classification.folder.browser.settings." "IClassificationConfig.folder_number"
             self._ref_number = api.portal.get_registry_record(number_key, default=1)
         reference = utils.evaluate_internal_reference(
             self.context,
@@ -183,33 +177,34 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
 
     def _replace_newline(self, string, replace_slash=False):
         """Replaced newline by a space or deleted it, following character before and after"""
+
         def repl(mo):
-            if mo.group(0) in (u'\n', u' \n', u'\n '):
-                return u''
-            elif mo.group(1) == u' ' and mo.group(2) == u' ':
-                return u' '
-            elif mo.group(1) == u' ':
-                return u' {}'.format(mo.group(2))
-            elif mo.group(2) == u' ':
-                return u'{} '.format(mo.group(1))
+            if mo.group(0) in ("\n", " \n", "\n "):
+                return ""
+            elif mo.group(1) == " " and mo.group(2) == " ":
+                return " "
+            elif mo.group(1) == " ":
+                return " {}".format(mo.group(2))
+            elif mo.group(2) == " ":
+                return "{} ".format(mo.group(1))
             else:
-                return u'{} {}'.format(mo.group(1), mo.group(2))
+                return "{} {}".format(mo.group(1), mo.group(2))
 
         if replace_slash:
-            string = string.replace('/', '-')
-        str1 = re.sub('(^|.)\n+(.|$)', repl, string, re.UNICODE)
+            string = string.replace("/", "-")
+        str1 = re.sub("(^|.)\n+(.|$)", repl, string)
         # Need to call it a second time to resolve overlapping matches
-        return re.sub('(^|.)\n+(.|$)', repl, str1, re.UNICODE)
+        return re.sub("(^|.)\n+(.|$)", repl, str1)
 
     def _replace_newline_by_crlf(self, string):
         """Replaced newline by a cr lf for schema.Text field"""
-        return re.sub('(^|[^\r])\n( *)', '\\1\r\n', string, re.UNICODE)
+        return re.sub("(^|[^\r])\n( *)", "\\1\r\n", string)
 
     def _process_multikey_values(self, line_data):
         multi_values_keys = ("classification_categories",)
         for key in multi_values_keys:
             if key in line_data:
-                line_data[key] = [val.strip(' \n') for val in line_data[key].split(",")]
+                line_data[key] = [val.strip(" \n") for val in line_data[key].split(",")]
 
     def _process_boolean_values(self, line_data):
         boolean_values_keys = ("archived",)
@@ -228,9 +223,10 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if parent_identifier not in data:
             # Using dictionary avoid duplicated informations
             data[parent_identifier] = {}
-        if line_data.get('classification_informations'):
-            line_data['classification_informations'] = self._replace_newline_by_crlf(
-                line_data['classification_informations'])
+        if line_data.get("classification_informations"):
+            line_data["classification_informations"] = self._replace_newline_by_crlf(
+                line_data["classification_informations"]
+            )
         data[parent_identifier][identifier] = (title, line_data)
 
     def _process_without_ref(self, data, line_data, last_ref, last_title, replace_slash=False):
@@ -256,28 +252,24 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             "_ln": "_ln",
         }
 
-        folder_data = {
-            v: line_data.get(k) for k, v in folder_mapping.items() if line_data.get(k)
-        }
-        subfolder_data = {
-            v: line_data.get(k)
-            for k, v in subfolder_mapping.items()
-            if line_data.get(k)
-        }
-        if folder_data.get('classification_informations'):
-            folder_data['classification_informations'] = self._replace_newline_by_crlf(
-                folder_data['classification_informations'])
-        if subfolder_data.get('classification_informations'):
-            subfolder_data['classification_informations'] = self._replace_newline_by_crlf(
-                subfolder_data['classification_informations'])
+        folder_data = {v: line_data.get(k) for k, v in folder_mapping.items() if line_data.get(k)}
+        subfolder_data = {v: line_data.get(k) for k, v in subfolder_mapping.items() if line_data.get(k)}
+        if folder_data.get("classification_informations"):
+            folder_data["classification_informations"] = self._replace_newline_by_crlf(
+                folder_data["classification_informations"]
+            )
+        if subfolder_data.get("classification_informations"):
+            subfolder_data["classification_informations"] = self._replace_newline_by_crlf(
+                subfolder_data["classification_informations"]
+            )
 
         # if folder_title == 'ERREUR':
         #     folder_title = line_data.get('title')
         if folder_title is not None:
             folder_title = self._replace_newline(folder_title, replace_slash=replace_slash)
         # if there is a irn related to parent, we get it. Otherwise we generate it
-        if folder_data.get('internal_reference_no'):
-            last_ref = folder_data['internal_reference_no']
+        if folder_data.get("internal_reference_no"):
+            last_ref = folder_data["internal_reference_no"]
             last_title = folder_title
         elif folder_title is not None and folder_title != last_title:
             last_ref = self._reference_generator()
@@ -297,10 +289,10 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
             data[None][last_ref] = (folder_title, folder_data)
 
         # Handled the case when a line is defined for a folder and another for a folder and a subfolder
-        if subfolder_title is None and not subfolder_data.get('internal_reference_no'):
+        if subfolder_title is None and not subfolder_data.get("internal_reference_no"):
             return last_ref, last_title
 
-        subfolder_title = self._replace_newline(subfolder_title or u'-', replace_slash=replace_slash)
+        subfolder_title = self._replace_newline(subfolder_title or "-", replace_slash=replace_slash)
 
         # Inherit categories from folder if relevant
         key = "classification_categories"
@@ -313,8 +305,8 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         if last_ref not in data:
             data[last_ref] = {}
 
-        if subfolder_data.get('internal_reference_no'):
-            subfolder_ref = subfolder_data['internal_reference_no']
+        if subfolder_data.get("internal_reference_no"):
+            subfolder_ref = subfolder_data["internal_reference_no"]
         else:
             subfolder_ref = self._find_next_available_subreference(data, last_ref)
         data[last_ref][subfolder_ref] = (subfolder_title, subfolder_data)
@@ -327,19 +319,19 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         last_ref = None
         last_title = None
         for i, line in enumerate(csv_reader, start=(import_data.get("has_header", False) and 2 or 1)):
-            line_data = {v: ensure_text(line[k].strip(' \n'), encoding) for k, v in mapping.items()}
+            line_data = {v: line[k].strip(" \n") for k, v in mapping.items()}
             # line_data['_ln'] = i
-            if kwargs.get('treating_groups', None):
-                line_data['treating_groups'] = kwargs['treating_groups']
+            if kwargs.get("treating_groups", None):
+                line_data["treating_groups"] = kwargs["treating_groups"]
             if "parent_identifier" in line_data or "internal_reference_no" in line_data:
-                self._process_with_ref(data, line_data, replace_slash=kwargs.get('replace_slash', False))
+                self._process_with_ref(data, line_data, replace_slash=kwargs.get("replace_slash", False))
             else:
                 last_ref, last_title = self._process_without_ref(
                     data,
                     line_data,
                     last_ref,
                     last_title,
-                    replace_slash=kwargs.get('replace_slash', False),
+                    replace_slash=kwargs.get("replace_slash", False),
                 )
 
         return data
@@ -351,9 +343,11 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
     def _import_node(self, node):
         args = (None, node.pop("internal_reference_no"), node.pop("title"))
         raw_data = utils.importer(
-            self.context, *args, vocabulary=self.vocabulary,
+            self.context,
+            *args,
+            vocabulary=self.vocabulary,
             treating_groups_titles=self._get_treating_groups_titles(),
-            **node
+            **node,
         )
         if raw_data[1]["data"]:
             self._direct_operation(raw_data)
@@ -374,10 +368,10 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
     def _create_or_update(self, parent, dic):
         identifier = dic.get("internal_reference_no", None)
         if not identifier:
-            raise ValueError(u"Missing identifier {0}".format(identifier))
+            raise ValueError("Missing identifier {0}".format(identifier))
         elements = api.content.find(context=parent, internal_reference_no=identifier)
         if not elements:
-            typ = dic.pop('@type', parent == self.context and 'ClassificationFolder' or 'ClassificationSubfolder')
+            typ = dic.pop("@type", parent == self.context and "ClassificationFolder" or "ClassificationSubfolder")
             obj = api.content.create(parent, typ, **dic)
             self._commit_if_needed()
         else:
@@ -394,7 +388,7 @@ class ImportFormSecondStep(baseform.ImportFormSecondStep):
         return obj
 
     def _direct_operation(self, data):
-        method, items = data[0], data[1]['data']  # noqa
+        method, items = data[0], data[1]["data"]  # noqa
         for item in items:
             children = item.pop("__children__", [])
             obj = self._create_or_update(self.context, item)

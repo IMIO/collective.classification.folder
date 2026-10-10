@@ -1,44 +1,46 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="ClassificationSubfolder"
+    name="ClassificationFolder"
     meta_type="Dexterity FTI"
     i18n:domain="collective.classification.folder">
 
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">Classification Subfolder</property>
+      name="title">Classification Folder</property>
   <property
       i18n:translate=""
-      name="description">Equivalent to a paper folder</property>
+      name="description">Equivalent to a paper binder</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">ClassificationSubfolder</property>
-  <property name="icon_expr">string:${portal_url}/++resource++collective.classification.folder/ClassificationSubfolder.svg</property>
+  <property name="factory">ClassificationFolder</property>
+  <property name="icon_expr">string:${portal_url}/++resource++collective.classification.folder/ClassificationFolder.svg</property>
   <property name="link_target"></property>
 
   <!-- Hierarchy control -->
   <property name="global_allow">False</property>
   <property name="filter_content_types">True</property>
   <property name="allowed_content_types">
+    <element value="ClassificationSubfolder" />
     <element value="annex" />
   </property>
   <!-- Schema, class and security -->
-  <property name="add_permission">collective.classification.folder.AddClassificationSubfolder</property>
-  <property name="klass">collective.classification.folder.content.classification_subfolder.ClassificationSubfolder</property>
+  <property name="add_permission">collective.classification.folder.AddClassificationFolder</property>
+  <property name="klass">collective.classification.folder.content.classification_folder.ClassificationFolder</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">collective.classification.folder.content.classification_subfolder.IClassificationSubfolder</property>
+  <property name="schema">collective.classification.folder.content.classification_folder.IClassificationFolder</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
     <element value="plone.app.content.interfaces.INameFromTitle"/>
     <element value="plone.app.lockingbehavior.behaviors.ILocking"/>
-    <element value="collective.dexteritytextindexer.behavior.IDexterityTextIndexer" />
+    <element value="eea.faceted.navigable"/>
+    <element value="plone.app.dexterity.textindexer.behavior.IDexterityTextIndexer" />
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++ClassificationSubfolder</property>
+  <property name="add_view_expr">string:${folder_url}/++add++ClassificationFolder</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>

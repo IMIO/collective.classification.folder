@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from collective.classification.folder.content.classification_folders import (
-    IClassificationFolders,
-)  # NOQA E501
-from collective.classification.folder.testing import (
-    COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
-)  # noqa
+from collective.classification.folder.content.classification_folders import IClassificationFolders  # NOQA E501
+from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING  # noqa
 from eea.facetednavigation.interfaces import ICriteria
 from eea.facetednavigation.interfaces import IFacetedNavigable
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
@@ -44,7 +40,7 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
 
         self.assertTrue(
             IClassificationFolders.providedBy(obj),
-            u"IClassificationFolders not provided by {0}!".format(
+            "IClassificationFolders not provided by {0}!".format(
                 obj,
             ),
         )
@@ -59,7 +55,7 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
 
         self.assertTrue(
             IClassificationFolders.providedBy(obj),
-            u"IClassificationFolders not provided by {0}!".format(
+            "IClassificationFolders not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -67,9 +63,7 @@ class ClassificationFoldersIntegrationTest(unittest.TestCase):
     def test_ct_classification_folders_globally_addable(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="ClassificationFolders")
-        self.assertTrue(
-            fti.global_allow, u"{0} is not globally addable!".format(fti.id)
-        )
+        self.assertTrue(fti.global_allow, "{0} is not globally addable!".format(fti.id))
 
     def test_ct_classification_folders_filter_content_type_true(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
@@ -98,26 +92,26 @@ class TestClassificationFoldersModule(unittest.TestCase):
         """The container is a faceted table of its folders"""
         portal = self.layer["portal"]
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title=u"Folders")
+        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title="Folders")
         self.assertTrue(IFacetedNavigable.providedBy(folders))
         self.assertEqual("faceted-table-items", IFacetedLayout(folders).layout)
         criteria = {c.__name__: c for c in ICriteria(folders).values()}
         self.assertEqual(
             [
-                ("c0", u"resultsperpage", None),
-                ("c1", u"text", u"SearchableText"),
-                ("c2", u"sorting", None),
-                ("c3", u"criteria", None),
-                ("c4", u"path", u"path"),
-                ("c5", u"checkbox", u"portal_type"),
-                ("c6", u"autocomplete", u"classification_categories"),
+                ("c0", "resultsperpage", None),
+                ("c1", "text", "SearchableText"),
+                ("c2", "sorting", None),
+                ("c3", "criteria", None),
+                ("c4", "path", "path"),
+                ("c5", "checkbox", "portal_type"),
+                ("c6", "autocomplete", "classification_categories"),
             ],
             sorted((k, c.widget, c.get("index") or None) for k, c in criteria.items()),
         )
-        self.assertEqual(u"/folders", criteria["c4"].default)
-        self.assertEqual([u"ClassificationFolder", u"ClassificationSubfolder"], criteria["c5"].default)
-        self.assertEqual(u"ClassificationFolderSort", criteria["c2"].default)
-        self.assertEqual(u"classificationcategory-autocomplete-suggest", criteria["c6"].autocomplete_view)
+        self.assertEqual("/folders", criteria["c4"].default)
+        self.assertEqual(["ClassificationFolder", "ClassificationSubfolder"], criteria["c5"].default)
+        self.assertEqual("ClassificationFolderSort", criteria["c2"].default)
+        self.assertEqual("classificationcategory-autocomplete-suggest", criteria["c6"].autocomplete_view)
         # Plone 4 bug: enabling the faceted navigation leaves a redirect on the response (a REST call is redirected)
         self.assertEqual(302, self.layer["request"].response.getStatus())
         # the table is shown

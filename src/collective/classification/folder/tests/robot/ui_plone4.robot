@@ -12,6 +12,7 @@ Library  Remote  ${PLONE_URL}/RobotRemote
 ${MODAL}  css=div.overlay-ajax
 ${ERROR_PAGE_TEXT}  there seems to be an error
 ${NOT_FOUND_TEXT}  This page does not seem to exist
+${PAGE_TITLE}  css=h1.documentFirstHeading
 
 
 *** Keywords ***
@@ -86,3 +87,8 @@ The page is not found
 
 The edit link is not available
     Page should not contain element  css=#contentview-edit
+
+Click the configlet
+    [Documentation]  Link of the control panel overview to a configlet, by the end of its url
+    [Arguments]  ${url_end}
+    Click link  css=a[href$="${url_end}"]

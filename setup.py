@@ -16,7 +16,7 @@ long_description = "\n\n".join(
 
 setup(
     name="collective.classification.folder",
-    version="1.3.2.dev0",
+    version="2.0.0.dev0",
     description="Addon to manage classification folders",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
@@ -24,11 +24,13 @@ setup(
         "Environment :: Web Environment",
         "Framework :: Plone",
         "Framework :: Plone :: Addon",
-        "Framework :: Plone :: 4.3",
-        "Framework :: Plone :: 6.0",
+        "Framework :: Plone :: 6.2",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],
@@ -44,10 +46,10 @@ setup(
     },
     license="GPL version 2",
     packages=find_packages("src", exclude=["ez_setup"]),
-    namespace_packages=["collective", "collective.classification"],
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
+    python_requires=">=3.10",
     install_requires=[
         "setuptools",
         # -*- Extra requirements: -*-
@@ -56,7 +58,8 @@ setup(
         "plone.api>=1.8.4",
         "plone.restapi",
         "plone.app.dexterity",
-        # "plone.app.referenceablebehavior",  # not py3 compatible
+        "plone.app.z3cform",
+        "plone.base",
         "plone.app.relationfield",
         "plone.app.lockingbehavior",
         "plone.schema",
@@ -66,11 +69,8 @@ setup(
         "imio.annex",
         "imio.helpers>=1.0.1",
         "imio.prettylink",
-        "collective.dexteritytextindexer",
-        "collective.z3cform.select2",
         "dexterity.localrolesfield",
         "plone.app.contenttypes",
-        "plone.formwidget.autocomplete",
         "Unidecode",
     ],
     extras_require={

@@ -1,9 +1,10 @@
 #!/usr/bin/make
-# pyenv is a requirement, with 2.7, 3.7 and 3.10 python versions, and virtualenv installed in each version
-# plone parameter must be passed to create environment 'make setup plone=6.0' or after a make cleanall
+# pyenv is a requirement, with 3.13 python version, and virtualenv installed in it
+# plone parameter must be passed to create environment 'make setup plone=6.2' or after a make cleanall
+# The original Makefile can be found on https://github.com/IMIO/scripts-buildout
 
 SHELL=/bin/bash
-plones=4.3 6.0
+plones=6.2
 b_o=
 old_plone=$(shell [ -e .plone-version ] && cat .plone-version)
 
@@ -19,14 +20,8 @@ endif
 endif
 
 ifndef python
-ifeq ($(plone),4.3)
-  python=2.7
-endif
-ifeq ($(plone),5.2)
-  python=3.7
-endif
-ifeq ($(plone),6.0)
-  python=3.10
+ifeq ($(plone),6.2)
+  python=3.13
 endif
 endif
 
@@ -55,8 +50,14 @@ buildout: oneof-plone bin/buildout  ## Runs setup and buildout
 	rm -f .installed.cfg .mr.developer.cfg
 	bin/buildout -t 5 -c test-$(plone).cfg ${b_o}
 
-# Robot suites are excluded from GitHub Actions (bin/test -t \!robot).
+.PHONY: test
+test: oneof-plone bin/buildout  ## run bin/test without robot
+	# can be run by example with: make test opt='-t "settings"'
+	bin/test -t \!robot ${opt}
+
+# Robot suites are excluded from `make test` (bin/test -t \!robot) and from GitHub Actions.
 ZSERVER_PORT ?= 55011
+LISTENER_PORT ?= 55014
 
 .PHONY: robot
 robot: oneof-plone bin/buildout  ## run robot tests in headless firefox
@@ -67,11 +68,11 @@ robot: oneof-plone bin/buildout  ## run robot tests in headless firefox
 robot-server:  ## Starts robot server (layer=<layer name in testing.py>, default ACCEPTANCE)
 	# run a robot file against it with: bin/robot -v PLONE_MAJOR:$(firstword $(subst ., ,$(plone))) -v ZOPE_PORT:$(ZSERVER_PORT) src/collective/classification/folder/tests/robot/test_<feature>.robot
 	# --no-reload: the reload watchdog restarts the server when a template is read
-	env ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) bin/robot-server --no-reload -v collective.classification.folder.testing.$(or $(layer),ACCEPTANCE)
+	env ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) LISTENER_PORT=$(LISTENER_PORT) bin/robot-server --no-reload -v collective.classification.folder.testing.$(or $(layer),ACCEPTANCE)
 
 .PHONY: cleanall
 cleanall:  ## Cleans all installed buildout files
-	rm -fr bin include lib local share develop-eggs downloads eggs parts .installed.cfg .mr.developer.cfg .python-version .plone-version pyvenv.cfg
+	rm -fr bin include lib local share develop-eggs downloads eggs parts .installed.cfg .mr.developer.cfg .python-version pyvenv.cfg
 
 .PHONY: backup
 backup:  ## Backups db files

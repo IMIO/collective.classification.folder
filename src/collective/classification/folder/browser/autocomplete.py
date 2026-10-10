@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from collective.classification.tree.vocabularies import ClassificationTreeSource
-from eea.faceted.vocabularies.autocomplete import IAutocompleteSuggest
+from eea.facetednavigation.vocabularies.autocomplete import IAutocompleteSuggest
 from imio.helpers import EMPTY_STRING
 from imio.helpers import EMPTY_TITLE
 from plone import api
 from Products.Five import BrowserView
-from six import ensure_text
 from zope.interface import implementer
 
 import json
@@ -16,8 +15,9 @@ def parse_query(text):
     """Copied from plone.app.vocabularies.catalog.parse_query but cleaned."""
     for char in "?-+*()":
         text = text.replace(char, " ")
-    query = {"SearchableText": " AND ".join(x + "*" for x in text.split())}
-    return query
+    words = text.split()
+    # an empty SearchableText matches nothing since ZCatalog 4
+    return words and {"SearchableText": " AND ".join(x + "*" for x in words)} or {}
 
 
 @implementer(IAutocompleteSuggest)
@@ -28,11 +28,11 @@ class BaseSuggestView(BrowserView):
 
 
 class ClassificationCategorySuggest(BaseSuggestView):
-    label = u"Classification Category"
+    label = "Classification Category"
 
     def __call__(self):
         result = []
-        query = ensure_text(self.request.get("term"), "utf8").lower()
+        query = (self.request.get("term") or "").lower()
         if not query:
             return self._return_result(result)
         vocabulary = ClassificationTreeSource(self.context).vocabulary
@@ -43,7 +43,7 @@ class ClassificationCategorySuggest(BaseSuggestView):
 
 
 class FolderSuggest(BaseSuggestView):
-    label = u"Classification Folder"
+    label = "Classification Folder"
 
     def __call__(self):
         query = self.request.get("term")

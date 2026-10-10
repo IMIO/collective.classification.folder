@@ -4,7 +4,6 @@ from Acquisition import aq_parent
 from collective.classification.folder import utils
 from collective.classification.folder.content.classification_folder import IClassificationFolder
 from plone.dexterity.content import Container
-from six import ensure_text
 from zope.interface import implementer
 from zope.lifecycleevent import IObjectRemovedEvent
 from zope.schema.fieldproperty import FieldProperty
@@ -19,15 +18,15 @@ class ClassificationSubfolder(Container):
     """ """
 
     __ac_local_roles_block__ = True
-    treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
-    recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
+    treating_groups = FieldProperty(IClassificationFolder["treating_groups"])
+    recipient_groups = FieldProperty(IClassificationFolder["recipient_groups"])
 
     def cf_parent(self):
         """Returns ClassificationFolder"""
         return aq_parent(self)
 
     def get_full_title(self):
-        return u"{0} ⏩ {1}".format(ensure_text(self.cf_parent().Title(), "utf8"), ensure_text(self.Title(), "utf8"))
+        return "{0} ⏩ {1}".format(self.cf_parent().Title(), self.Title())
 
     def _increment_internal_reference(self):
         utils.increment_internal_reference("subfolder_number")

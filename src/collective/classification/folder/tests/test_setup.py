@@ -1,26 +1,19 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
-from collective.classification.folder.testing import PLONE_VERSION
+from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
-from collective.classification.folder.testing import (
-    COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
-)  # noqa: E501
+from plone.base.utils import get_installer
 
 import unittest
 
 
-class CommonSetup():  # noqa
+class CommonSetup:  # noqa
 
     def set_installer(self):
-        if PLONE_VERSION >= '5.1':
-            from Products.CMFPlone.utils import get_installer  # noqa
-            self.installer = get_installer(self.portal, self.layer["request"])
-            self.ipi = self.installer.is_product_installed
-        else:
-            self.installer = api.portal.get_tool('portal_quickinstaller')  # noqa
-            self.ipi = self.installer.isProductInstalled
+        self.installer = get_installer(self.portal, self.layer["request"])
+        self.ipi = self.installer.is_product_installed
 
 
 class TestSetup(unittest.TestCase, CommonSetup):
@@ -39,9 +32,7 @@ class TestSetup(unittest.TestCase, CommonSetup):
 
     def test_browserlayer(self):
         """Test that ICollectiveClassificationFolderLayer is registered."""
-        from collective.classification.folder.interfaces import (
-            ICollectiveClassificationFolderLayer,
-        )
+        from collective.classification.folder.interfaces import ICollectiveClassificationFolderLayer
         from plone.browserlayer import utils
 
         self.assertIn(ICollectiveClassificationFolderLayer, utils.registered_layers())
@@ -60,9 +51,7 @@ class TestSetup(unittest.TestCase, CommonSetup):
         self.assertEqual(indexes, {i: catalog._catalog.getIndex(i).meta_type for i in indexes})
         for column in ("classification_folders", "internal_reference_no", "treating_groups", "recipient_groups"):
             self.assertIn(column, catalog.schema())
-        self.assertTrue(
-            api.portal.get_registry_record("plone.app.querystring.field.ClassificationFolderSort.sortable")
-        )
+        self.assertTrue(api.portal.get_registry_record("plone.app.querystring.field.ClassificationFolderSort.sortable"))
 
     def test_controlpanel(self):
         """The configlet opens the settings view"""
@@ -70,7 +59,9 @@ class TestSetup(unittest.TestCase, CommonSetup):
         configlet = configlets["collectiveclassificationfolder.settings"]
         self.assertEqual("Products", configlet.category)
         self.assertEqual(("Plone Site Setup: Site",), configlet.permissions)
-        self.assertEqual("string:${portal_url}/@@collectiveclassificationfolder-settings", configlet.getActionExpression())
+        self.assertEqual(
+            "string:${portal_url}/@@collectiveclassificationfolder-settings", configlet.getActionExpression()
+        )
 
 
 class TestUninstall(unittest.TestCase, CommonSetup):
@@ -82,10 +73,7 @@ class TestUninstall(unittest.TestCase, CommonSetup):
         roles_before = api.user.get_roles(TEST_USER_ID)
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.set_installer()
-        if PLONE_VERSION >= '5.1':
-            self.installer.uninstall_product("collective.classification.folder")
-        else:
-            self.installer.uninstallProducts(["collective.classification.folder"])
+        self.installer.uninstall_product("collective.classification.folder")
         setRoles(self.portal, TEST_USER_ID, roles_before)
 
     def test_product_uninstalled(self):
@@ -94,11 +82,7 @@ class TestUninstall(unittest.TestCase, CommonSetup):
 
     def test_browserlayer_removed(self):
         """Test that ICollectiveClassificationFolderLayer is removed."""
-        from collective.classification.folder.interfaces import (
-            ICollectiveClassificationFolderLayer,
-        )
+        from collective.classification.folder.interfaces import ICollectiveClassificationFolderLayer
         from plone.browserlayer import utils
 
-        self.assertNotIn(
-            ICollectiveClassificationFolderLayer, utils.registered_layers()
-        )
+        self.assertNotIn(ICollectiveClassificationFolderLayer, utils.registered_layers())

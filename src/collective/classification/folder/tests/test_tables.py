@@ -17,25 +17,29 @@ class TestSubFoldersFacetedTableView(unittest.TestCase):
         """The table of the subfolders of a folder"""
         portal = self.layer["portal"]
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        api.group.create(groupname="service-a", title=u"Service A")
-        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title=u"Folders")
-        folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title=u"Budget")
+        api.group.create(groupname="service-a", title="Service A")
+        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title="Folders")
+        folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title="Budget")
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
             id="subfolder",
-            title=u"Budget 2024",
-            internal_reference_no=u"F0001-01",
-            treating_groups=u"service-a",
+            title="Budget 2024",
+            internal_reference_no="F0001-01",
+            treating_groups="service-a",
         )
         table = SubFoldersFacetedTableView(folder, self.layer["request"])
         table.update(Batch(api.content.find(context=folder, portal_type="ClassificationSubfolder"), 9999))
         self.assertEqual(
-            [u"pretty_link", u"internal_reference_no", u"classification_tree_identifiers",
-             u"classification_treating_group"],
+            [
+                "pretty_link",
+                "internal_reference_no",
+                "classification_tree_identifiers",
+                "classification_treating_group",
+            ],
             [c.__name__ for c in table.columns],
         )
         html = table.render()
-        for text in (u"http://nohost/plone/folders/folder/subfolder", u">Budget 2024<", u"F0001-01", u"Service A"):
+        for text in ("http://nohost/plone/folders/folder/subfolder", ">Budget 2024<", "F0001-01", "Service A"):
             self.assertIn(text, html)
-        self.assertNotIn(u"_blank", html)  # the subfolder opens in the same window
+        self.assertNotIn("_blank", html)  # the subfolder opens in the same window

@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-from collective.classification.folder.content.classification_folder import (
-    IClassificationFolder,
-)  # NOQA E501
 from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
+from collective.classification.folder.content.classification_folder import IClassificationFolder  # NOQA E501
 from collective.classification.folder.content.vocabularies import get_folders_tree
-from collective.classification.folder.testing import (
-    COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
-)  # noqa
+from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING  # noqa
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
 from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
@@ -61,7 +57,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
 
         self.assertTrue(
             IClassificationFolder.providedBy(obj),
-            u"IClassificationFolder not provided by {0}!".format(
+            "IClassificationFolder not provided by {0}!".format(
                 obj,
             ),
         )
@@ -76,7 +72,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
 
         self.assertTrue(
             IClassificationFolder.providedBy(obj),
-            u"IClassificationFolder not provided by {0}!".format(
+            "IClassificationFolder not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -84,7 +80,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
     def test_ct_classification_folder_globally_not_addable(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="ClassificationFolder")
-        self.assertFalse(fti.global_allow, u"{0} is globally addable!".format(fti.id))
+        self.assertFalse(fti.global_allow, "{0} is globally addable!".format(fti.id))
 
     def test_ct_classification_folder_filter_content_type_true(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
@@ -107,33 +103,31 @@ class ClassificationFolderIntegrationTest(unittest.TestCase):
     def test_searchable_text_indexation(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
 
-        category_container = api.content.create(
-            id="container", type="ClassificationContainer", container=self.portal
-        )
+        category_container = api.content.create(id="container", type="ClassificationContainer", container=self.portal)
         category = createObject("ClassificationCategory")
-        category.identifier = u"123456789"
-        category.title = u"Category_title_123"
+        category.identifier = "123456789"
+        category.title = "Category_title_123"
         category_container._add_element(category)
 
         classification_folder = api.content.create(
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_searchable",
-            title=u"title_123",
-            internal_reference_no=u"internal_reference_no_123",
+            title="title_123",
+            internal_reference_no="internal_reference_no_123",
             classification_categories=[category.UID()],
-            classification_informations=u"classification_informations_123",
+            classification_informations="classification_informations_123",
         )
         classification_folder.reindexObject(idxs=["SearchableText"])
 
         for text in (
-            u"title_123",
-            u"internal_reference_no_123",
-            u"123456789",
-            u"Category_title_123",
-            u"classification_informations_123",
+            "title_123",
+            "internal_reference_no_123",
+            "123456789",
+            "Category_title_123",
+            "classification_informations_123",
         ):
-            self.assertEquals(len(api.content.find(SearchableText=text)), 1)
+            self.assertEqual(len(api.content.find(SearchableText=text)), 1)
 
 
 class ClassificationFolderIntegrityTest(unittest.TestCase):
@@ -184,11 +178,9 @@ class ClassificationFolderIntegrityTest(unittest.TestCase):
         )
         document.reindexObject(idxs=["classification_folders"])
 
-        brains = api.content.find(
-            context=self.portal, classification_folders=classification_folder_uid
-        )
-        self.assertEquals(len(brains), 1)
-        self.assertEquals(api.content.get_uuid(document), brains[0].UID)
+        brains = api.content.find(context=self.portal, classification_folders=classification_folder_uid)
+        self.assertEqual(len(brains), 1)
+        self.assertEqual(api.content.get_uuid(document), brains[0].UID)
 
         with self.assertRaises(Redirect):
             api.content.delete(self.classification_folder)
@@ -215,8 +207,8 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             id="container", type="ClassificationContainer", container=self.portal
         )
         self.category = createObject("ClassificationCategory")
-        self.category.identifier = u"123456789"
-        self.category.title = u"Category title"
+        self.category.identifier = "123456789"
+        self.category.title = "Category title"
         self.category_container._add_element(self.category)
 
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
@@ -224,8 +216,8 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_1",
-            title=u"Folder 1",
-            internal_reference_no=u"unique",
+            title="Folder 1",
+            internal_reference_no="unique",
         )
         first_classification_folder.reindexObject()
 
@@ -238,58 +230,48 @@ class ClassificationFolderUniquenessTest(unittest.TestCase):
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_2",
-            title=u"Folder 2",
+            title="Folder 2",
             classification_categories=[self.category.UID()],
-            internal_reference_no=u"unique",
+            internal_reference_no="unique",
         )
-        errors = getValidationErrors(
-            IClassificationFolder, second_classification_folder
-        )
-        self.assertEquals(len(errors), 1)
+        errors = getValidationErrors(IClassificationFolder, second_classification_folder)
+        self.assertEqual(len(errors), 1)
 
     def test_classification_edit_acceptable(self):
         second_classification_folder = api.content.create(
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_2",
-            title=u"Folder 2",
-            treating_groups=u'Reviewers',
+            title="Folder 2",
+            treating_groups="Reviewers",
             classification_categories=[self.category.UID()],
-            internal_reference_no=u"future acceptable",
+            internal_reference_no="future acceptable",
         )
-        errors = getValidationErrors(
-            IClassificationFolder, second_classification_folder
-        )
-        self.assertEquals(len(errors), 0)
+        errors = getValidationErrors(IClassificationFolder, second_classification_folder)
+        self.assertEqual(len(errors), 0)
 
-        second_classification_folder.internal_reference_no = u"still acceptable"
-        errors = getValidationErrors(
-            IClassificationFolder, second_classification_folder
-        )
-        self.assertEquals(len(errors), 0)
+        second_classification_folder.internal_reference_no = "still acceptable"
+        errors = getValidationErrors(IClassificationFolder, second_classification_folder)
+        self.assertEqual(len(errors), 0)
 
     def test_classification_edit_unacceptable(self):
         second_classification_folder = api.content.create(
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_2",
-            treating_groups=u'Reviewers',
-            title=u"Folder 2",
+            treating_groups="Reviewers",
+            title="Folder 2",
             classification_categories=[self.category.UID()],
-            internal_reference_no=u"future unacceptable",
+            internal_reference_no="future unacceptable",
         )
         second_classification_folder.reindexObject()
 
-        errors = getValidationErrors(
-            IClassificationFolder, second_classification_folder
-        )
-        self.assertEquals(len(errors), 0)
+        errors = getValidationErrors(IClassificationFolder, second_classification_folder)
+        self.assertEqual(len(errors), 0)
 
-        second_classification_folder.internal_reference_no = u"unique"
-        errors = getValidationErrors(
-            IClassificationFolder, second_classification_folder
-        )
-        self.assertEquals(len(errors), 1)
+        second_classification_folder.internal_reference_no = "unique"
+        errors = getValidationErrors(IClassificationFolder, second_classification_folder)
+        self.assertEqual(len(errors), 1)
 
 
 class ClassificationFolderMovementTest(unittest.TestCase):
@@ -313,8 +295,8 @@ class ClassificationFolderMovementTest(unittest.TestCase):
             id="container", type="ClassificationContainer", container=self.portal
         )
         self.category = createObject("ClassificationCategory")
-        self.category.identifier = u"123456789"
-        self.category.title = u"Category title"
+        self.category.identifier = "123456789"
+        self.category.title = "Category title"
         self.category_container._add_element(self.category)
 
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
@@ -322,7 +304,7 @@ class ClassificationFolderMovementTest(unittest.TestCase):
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_1",
-            title=u"Folder1",
+            title="Folder1",
             classification_categories=[self.category.UID()],
         )
         self.first_classification_folder.reindexObject()
@@ -331,7 +313,7 @@ class ClassificationFolderMovementTest(unittest.TestCase):
             container=self.first_classification_folder,
             type="ClassificationSubfolder",
             id="classification_subfolder_1",
-            title=u"Subfolder1",
+            title="Subfolder1",
             classification_categories=[self.category.UID()],
         )
         self.first_classification_subfolder.reindexObject()
@@ -340,7 +322,7 @@ class ClassificationFolderMovementTest(unittest.TestCase):
             container=self.parent,
             type="ClassificationFolder",
             id="classification_folder_2",
-            title=u"Folder2",
+            title="Folder2",
             classification_categories=[self.category.UID()],
         )
         self.second_classification_folder.reindexObject()
@@ -411,17 +393,17 @@ class ClassificationFolderTestCase(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        api.group.create(groupname="service-a", title=u"Service A")
+        api.group.create(groupname="service-a", title="Service A")
         self.folders = api.content.create(
-            container=self.portal, type="ClassificationFolders", id="folders", title=u"Folders"
+            container=self.portal, type="ClassificationFolders", id="folders", title="Folders"
         )
         self.folder = api.content.create(
             container=self.folders,
             type="ClassificationFolder",
             id="folder",
-            title=u"Folder",
-            internal_reference_no=u"F0001",
-            treating_groups=u"service-a",
+            title="Folder",
+            internal_reference_no="F0001",
+            treating_groups="service-a",
         )
 
 
@@ -447,7 +429,7 @@ class TestClassificationFolderModule(ClassificationFolderTestCase):
         self.assertEqual("folder-listing-view", IFacetedLayout(self.folder).layout)
         # a subfolder increases its own counter
         subfolder = api.content.create(
-            container=self.folder, type="ClassificationSubfolder", id="subfolder", title=u"Subfolder"
+            container=self.folder, type="ClassificationSubfolder", id="subfolder", title="Subfolder"
         )
         self.assertEqual(2, api.portal.get_registry_record(REGISTRY_KEY.format("folder_number")))
         self.assertEqual(2, api.portal.get_registry_record(REGISTRY_KEY.format("subfolder_number")))
@@ -456,20 +438,20 @@ class TestClassificationFolderModule(ClassificationFolderTestCase):
     def test_on_modify(self):
         """The full titles of the folders are kept in a portal annotation"""
         uid = self.folder.UID()
-        self.assertEqual((u"Folder (F0001)", {}, u"Service A"), get_folders_tree()[uid])
-        self.folder.title = u"Folder renamed"
+        self.assertEqual(("Folder (F0001)", {}, "Service A"), get_folders_tree()[uid])
+        self.folder.title = "Folder renamed"
         notify(ObjectModifiedEvent(self.folder))
-        self.assertEqual((u"Folder renamed (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+        self.assertEqual(("Folder renamed (F0001)", {}, "Service A"), get_folders_tree()[uid])
         # adding a subfolder modifies the folder only as a container: nothing is updated
-        self.folder.title = u"Folder not updated"
+        self.folder.title = "Folder not updated"
         notify(ContainerModifiedEvent(self.folder))
-        self.assertEqual((u"Folder renamed (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+        self.assertEqual(("Folder renamed (F0001)", {}, "Service A"), get_folders_tree()[uid])
 
     def test_on_move(self):
         """The annotation follows the renamed and deleted folders"""
         uid = self.folder.UID()
         get_folders_tree()  # built
         api.content.rename(obj=self.folder, new_id="folder-renamed")
-        self.assertEqual((u"Folder (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+        self.assertEqual(("Folder (F0001)", {}, "Service A"), get_folders_tree()[uid])
         api.content.delete(self.folders["folder-renamed"])
         self.assertNotIn(uid, get_folders_tree())

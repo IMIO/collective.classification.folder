@@ -26,10 +26,10 @@ class TestSetuphandlers(unittest.TestCase):
         self.assertTrue(IFacetedNavigable.providedBy(folder))
         criteria = ICriteria(folder)
         self.assertEqual(
-            [(u"criteria", u"Current search"), (u"resultsperpage", u"Results per page"), (u"sorting", u"Sort on")],
+            [("criteria", "Current search"), ("resultsperpage", "Results per page"), ("sorting", "Sort on")],
             [(c.widget, c.title) for c in criteria.values()],
         )
-        self.assertEqual(u"created(reverse)", criteria.get("c1").default)
+        self.assertEqual("created(reverse)", criteria.get("c1").default)
         # a second call keeps the existing configuration
         setuphandlers.create_classification_folder_facet()
         self.assertEqual(3, len(ICriteria(self.portal["classification_folder_faceted_configuration"]).values()))
@@ -37,11 +37,11 @@ class TestSetuphandlers(unittest.TestCase):
     def test_set_registry(self):
         self.assertEqual(1, api.portal.get_registry_record(REGISTRY_KEY.format("folder_number")))
         self.assertEqual(
-            u"python:'F%04d'%int(number)", api.portal.get_registry_record(REGISTRY_KEY.format("folder_talexpression"))
+            "python:'F%04d'%int(number)", api.portal.get_registry_record(REGISTRY_KEY.format("folder_talexpression"))
         )
         self.assertEqual(1, api.portal.get_registry_record(REGISTRY_KEY.format("subfolder_number")))
         self.assertEqual(
-            u"python:'%s-xx'%(context.internal_reference_no)",
+            "python:'%s-xx'%(context.internal_reference_no)",
             api.portal.get_registry_record(REGISTRY_KEY.format("subfolder_talexpression")),
         )
         # a second call keeps the values set in the control panel

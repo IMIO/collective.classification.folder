@@ -20,18 +20,18 @@ class AutocompleteTestCase(unittest.TestCase):
         self.portal = self.layer["portal"]
         self.request = self.layer["request"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        tree = api.content.create(container=self.portal, type="ClassificationContainer", id="tree", title=u"Tree")
+        tree = api.content.create(container=self.portal, type="ClassificationContainer", id="tree", title="Tree")
         self.category_uids = []
-        for identifier, title in ((u"001", u"Administration"), (u"002", u"Finances")):
+        for identifier, title in (("001", "Administration"), ("002", "Finances")):
             category = createObject("ClassificationCategory")
             category.identifier = identifier
             category.title = title
             tree._add_element(category)
             self.category_uids.append(category.UID())
-        folders = api.content.create(container=self.portal, type="ClassificationFolders", id="folders", title=u"Folders")
-        self.folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title=u"Budget")
+        folders = api.content.create(container=self.portal, type="ClassificationFolders", id="folders", title="Folders")
+        self.folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title="Budget")
         self.subfolder = api.content.create(
-            container=self.folder, type="ClassificationSubfolder", id="subfolder", title=u"Budget 2024"
+            container=self.folder, type="ClassificationSubfolder", id="subfolder", title="Budget 2024"
         )
 
     def suggest(self, name, term):
@@ -45,49 +45,50 @@ class AutocompleteTestCase(unittest.TestCase):
 class TestAutocomplete(unittest.TestCase):
 
     def test_parse_query(self):
-        self.assertEqual({"SearchableText": "Budget* AND 2024*"}, parse_query(u"Budget 2024"))
-        self.assertEqual({"SearchableText": "a* AND b* AND c*"}, parse_query(u"a-b (c?)"))
-        self.assertEqual({"SearchableText": ""}, parse_query(u""))
+        self.assertEqual({"SearchableText": "Budget* AND 2024*"}, parse_query("Budget 2024"))
+        self.assertEqual({"SearchableText": "a* AND b* AND c*"}, parse_query("a-b (c?)"))
+        # an empty SearchableText matches nothing since ZCatalog 4 (ignored on Plone 4): no criterion
+        self.assertEqual({}, parse_query(""))
 
 
 class TestClassificationCategorySuggest(AutocompleteTestCase):
 
     def test___call__(self):
-        self.assertEqual([], self.suggest("@@classificationcategory-autocomplete-suggest", u""))
+        self.assertEqual([], self.suggest("@@classificationcategory-autocomplete-suggest", ""))
         self.assertEqual(
-            [{u"id": self.category_uids[1], u"text": u"002 - Finances"}],
-            self.suggest("@@classificationcategory-autocomplete-suggest", u"finan"),
+            [{"id": self.category_uids[1], "text": "002 - Finances"}],
+            self.suggest("@@classificationcategory-autocomplete-suggest", "finan"),
         )
         self.assertEqual(
             [self.category_uids[0], self.category_uids[1]],
-            [r[u"id"] for r in self.suggest("@@classificationcategory-autocomplete-suggest", u"00")],
+            [r["id"] for r in self.suggest("@@classificationcategory-autocomplete-suggest", "00")],
         )
         # the "no value" choice, to find the folders without category
         self.assertEqual(
-            [{u"id": EMPTY_STRING, u"text": u"No value"}],
-            self.suggest("@@classificationcategory-autocomplete-suggest", u"no val"),
+            [{"id": EMPTY_STRING, "text": "No value"}],
+            self.suggest("@@classificationcategory-autocomplete-suggest", "no val"),
         )
 
 
 class TestFolderSuggest(AutocompleteTestCase):
 
     def test___call__(self):
-        self.assertEqual([], self.suggest("@@folder-autocomplete-suggest", u""))
+        self.assertEqual([], self.suggest("@@folder-autocomplete-suggest", ""))
         # Plone 4 bug: the view reads the get_full_title metadata, which only imio.dms.mail adds to the catalog
-        self.assertRaises(AttributeError, self.suggest, "@@folder-autocomplete-suggest", u"budg")
+        self.assertRaises(AttributeError, self.suggest, "@@folder-autocomplete-suggest", "budg")
         api.portal.get_tool("portal_catalog").addColumn("get_full_title")
         self.folder.reindexObject()
         self.subfolder.reindexObject()
         self.assertEqual(
             [
-                {u"id": self.folder.UID(), u"text": u"Budget"},
-                {u"id": self.subfolder.UID(), u"text": u"Budget ⏩ Budget 2024"},
+                {"id": self.folder.UID(), "text": "Budget"},
+                {"id": self.subfolder.UID(), "text": "Budget ⏩ Budget 2024"},
             ],
-            self.suggest("@@folder-autocomplete-suggest", u"budg"),
+            self.suggest("@@folder-autocomplete-suggest", "budg"),
         )
         self.assertEqual(
-            [self.subfolder.UID()], [r[u"id"] for r in self.suggest("@@folder-autocomplete-suggest", u"2024")]
+            [self.subfolder.UID()], [r["id"] for r in self.suggest("@@folder-autocomplete-suggest", "2024")]
         )
         self.assertEqual(
-            [{u"id": EMPTY_STRING, u"text": u"No value"}], self.suggest("@@folder-autocomplete-suggest", u"no val")
+            [{"id": EMPTY_STRING, "text": "No value"}], self.suggest("@@folder-autocomplete-suggest", "no val")
         )

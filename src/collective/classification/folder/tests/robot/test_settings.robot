@@ -8,7 +8,7 @@ Test Teardown  Close the browser
 *** Test Cases ***
 Change the settings in the control panel
     Go to  ${PLONE_URL}/@@overview-controlpanel
-    Click link  css=a[href$="@@collectiveclassificationfolder-settings"]
+    Click the configlet  @@collectiveclassificationfolder-settings
     Location should contain  ${PLONE_URL}/@@collectiveclassificationfolder-settings
     Input text  css=#form-widgets-folder_number  12
     Input text  css=#form-widgets-folder_talexpression  python:'D-%s' % number

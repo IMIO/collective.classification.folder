@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from collective.classification.folder.content.classification_subfolder import (
-    IClassificationSubfolder,
-)  # NOQA E501
-from collective.classification.folder.testing import (
-    COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
-)  # noqa
+from collective.classification.folder.content.classification_subfolder import IClassificationSubfolder  # NOQA E501
+from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING  # noqa
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -48,7 +44,7 @@ class ClassificationSubfolderIntegrationTest(unittest.TestCase):
 
         self.assertTrue(
             IClassificationSubfolder.providedBy(obj),
-            u"IClassificationSubfolder not provided by {0}!".format(
+            "IClassificationSubfolder not provided by {0}!".format(
                 obj,
             ),
         )
@@ -63,7 +59,7 @@ class ClassificationSubfolderIntegrationTest(unittest.TestCase):
 
         self.assertTrue(
             IClassificationSubfolder.providedBy(obj),
-            u"IClassificationSubfolder not provided by {0}!".format(
+            "IClassificationSubfolder not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -71,7 +67,7 @@ class ClassificationSubfolderIntegrationTest(unittest.TestCase):
     def test_ct_classification_subfolder_globally_not_addable(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="ClassificationSubfolder")
-        self.assertFalse(fti.global_allow, u"{0} is globally addable!".format(fti.id))
+        self.assertFalse(fti.global_allow, "{0} is globally addable!".format(fti.id))
 
 
 class TestClassificationSubfolder(unittest.TestCase):
@@ -81,14 +77,14 @@ class TestClassificationSubfolder(unittest.TestCase):
     def setUp(self):
         portal = self.layer["portal"]
         setRoles(portal, TEST_USER_ID, ["Manager"])
-        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title=u"Folders")
-        self.folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title=u"Tâche")
+        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title="Folders")
+        self.folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title="Tâche")
         self.subfolder = api.content.create(
-            container=self.folder, type="ClassificationSubfolder", id="subfolder", title=u"Sous-tâche"
+            container=self.folder, type="ClassificationSubfolder", id="subfolder", title="Sous-tâche"
         )
 
     def test_cf_parent(self):
         self.assertEqual(self.folder, self.subfolder.cf_parent())
 
     def test_get_full_title(self):
-        self.assertEqual(u"Tâche ⏩ Sous-tâche", self.subfolder.get_full_title())
+        self.assertEqual("Tâche ⏩ Sous-tâche", self.subfolder.get_full_title())

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from AccessControl import Unauthorized
 from collective.classification.folder.behaviors.classification_folder import classification_folders_indexer
 from collective.classification.folder.behaviors.classification_folder import IClassificationFolderMarker
 from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
@@ -21,10 +22,11 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        # we avoid Anonymous having View permission
-        self.portal.manage_permission(
-            "View", ("Contributor", "Editor", "Manager", "Reader", "Site Administrator"), acquire=0
-        )
+        # we avoid Anonymous having View permission (the catalog filters on Access contents information)
+        for permission in ("View", "Access contents information"):
+            self.portal.manage_permission(
+                permission, ("Contributor", "Editor", "Manager", "Reader", "Site Administrator"), acquire=0
+            )
         # we configure localroles
         roles_config = {
             "treating_groups": {None: {"": {"roles": ["Contributor", "Editor"]}}},
@@ -36,8 +38,8 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
 
         user1 = api.user.create(email="user1@test.com", username="user1")
         user2 = api.user.create(email="user2@test.com", username="user2")
-        api.group.create(groupname="group1", title=u"Group 1")
-        api.group.create(groupname="group2", title=u"Group 2")
+        api.group.create(groupname="group1", title="Group 1")
+        api.group.create(groupname="group2", title="Group 2")
         api.group.add_user(groupname="group1", user=user1)
         api.group.add_user(groupname="group2", user=user2)
 
@@ -45,14 +47,14 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
             container=self.portal,
             type="ClassificationFolders",
             id="folders",
-            title=u"Folders",
+            title="Folders",
         )
 
         self.folder1 = api.content.create(
             container=self.folders,
             type="ClassificationFolder",
             id="folder1",
-            title=u"Folder 1",
+            title="Folder 1",
             treating_groups="group1",
         )
         self.folder1_uid = api.content.get_uuid(self.folder1)
@@ -61,8 +63,8 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
             container=self.folder1,
             type="ClassificationSubfolder",
             id="folder2",
-            title=u"Folder 2",
-            treating_groups=u"group2",
+            title="Folder 2",
+            treating_groups="group2",
         )
         self.folder2_uid = api.content.get_uuid(self.folder2)
 
@@ -70,7 +72,7 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
             container=self.portal,
             type="testingtype",
             id="tt1",
-            title=u"Testing type 1",
+            title="Testing type 1",
         )
 
     def test_behavior_classification_folder(self):
@@ -85,14 +87,14 @@ class ClassificationFolderIntegrationTest(unittest.TestCase, ImioTestHelpers):
 
     def test_classification_folders_indexer(self):
         setRoles(self.portal, TEST_USER_ID, ["Member"])
-        self.assertIsNone(api.content.get(UID=self.folder1_uid))
-        self.assertIsNone(api.content.get(UID=self.folder2_uid))
+        self.assertRaises(Unauthorized, api.content.get, UID=self.folder1_uid)
+        self.assertRaises(Unauthorized, api.content.get, UID=self.folder2_uid)
         self.change_user("user1")
         self.assertEqual(api.content.get(UID=self.folder1_uid).UID(), self.folder1_uid)
-        self.assertIsNone(api.content.get(UID=self.folder2_uid))
+        self.assertRaises(Unauthorized, api.content.get, UID=self.folder2_uid)
         self.change_user("user2")
         self.assertEqual(api.content.get(UID=self.folder2_uid).UID(), self.folder2_uid)
-        self.assertIsNone(api.content.get(UID=self.folder1_uid))
+        self.assertRaises(Unauthorized, api.content.get, UID=self.folder1_uid)
         indexer = classification_folders_indexer(self.tt1)
         self.assertEqual(indexer(), ["__empty_string__"])
         self.tt1.classification_folders = [self.folder1_uid]

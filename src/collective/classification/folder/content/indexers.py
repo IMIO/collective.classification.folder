@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from Acquisition._Acquisition import aq_parent  # noqa
+from Acquisition import aq_parent
 from collective.classification.folder.content.classification_folder import IClassificationFolder
 from collective.classification.folder.content.classification_subfolder import IClassificationSubfolder
-from collective.dexteritytextindexer.interfaces import IDynamicTextIndexExtender
 from imio.helpers import EMPTY_STRING
+from plone.app.dexterity.textindexer.interfaces import IDynamicTextIndexExtender
+from plone.base.utils import base_hasattr
 from plone.indexer.decorator import indexer
-from Products.CMFPlone.utils import base_hasattr
 from zope.component import adapter
 from zope.interface import implementer
 
@@ -31,7 +31,7 @@ def classification_folder_sort(folder):
     if folder.portal_type == "ClassificationSubfolder":
         elements.append(aq_parent(folder).title)
     elements.append(folder.title)
-    return u"|".join(elements)
+    return "|".join(elements)
 
 
 @implementer(IDynamicTextIndexExtender)
@@ -44,4 +44,4 @@ class ClassificationSubfolderSearchableText(object):
         parent = aq_parent(self.context)
         if parent:
             return parent.Title()
-        return u""
+        return ""

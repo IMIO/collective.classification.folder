@@ -23,41 +23,41 @@ class TestSettingsView(unittest.TestCase):
         """The control panel shows the 4 settings to a manager only"""
         html = self.portal.restrictedTraverse("@@collectiveclassificationfolder-settings")()
         for label in (
-            u"Number of next folder",
-            u"Folder internal reference default value expression",
-            u"Number of next subfolder",
-            u"Subfolder internal reference default value expression",
+            "Number of next folder",
+            "Folder internal reference default value expression",
+            "Number of next subfolder",
+            "Subfolder internal reference default value expression",
         ):
             self.assertIn(label, html)
-        self.assertIn(u"python:'F%04d'%int(number)", html)
+        self.assertIn("python:'F%04d'%int(number)", html)
         login(self.portal, MEMBER_ID)
         self.assertRaises(Unauthorized, self.portal.restrictedTraverse, "@@collectiveclassificationfolder-settings")
 
     def test_evaluate_tal_expression(self):
         view = self.portal.restrictedTraverse("@@collectiveclassificationfolder-settings")
-        folders = api.content.create(container=self.portal, type="ClassificationFolders", id="folders", title=u"Folders")
+        folders = api.content.create(container=self.portal, type="ClassificationFolders", id="folders", title="Folders")
         self.assertEqual(
-            "F0003", view.evaluate_tal_expression(u"python:'F%04d'%int(number)", folders, self.request, self.portal, 3)
+            "F0003", view.evaluate_tal_expression("python:'F%04d'%int(number)", folders, self.request, self.portal, 3)
         )
         # the variables of the expression
         self.assertEqual(
             "folders-3-plone",
             view.evaluate_tal_expression(
-                u"python:'%s-%s-%s' % (context.id, number, portal.id)", folders, self.request, self.portal, 3
+                "python:'%s-%s-%s' % (context.id, number, portal.id)", folders, self.request, self.portal, 3
             ),
         )
         self.assertEqual(
-            "Folders", view.evaluate_tal_expression(u"context/Title", folders, self.request, self.portal, 3)
+            "Folders", view.evaluate_tal_expression("context/Title", folders, self.request, self.portal, 3)
         )
         self.assertTrue(
-            view.evaluate_tal_expression(u"python:date.year() > 2000", folders, self.request, self.portal, 3)
+            view.evaluate_tal_expression("python:date.year() > 2000", folders, self.request, self.portal, 3)
         )
         self.assertEqual(
-            "extra", view.evaluate_tal_expression(u"python:extra", folders, self.request, self.portal, 3, extra="extra")
+            "extra", view.evaluate_tal_expression("python:extra", folders, self.request, self.portal, 3, extra="extra")
         )
         # an error is returned as the value
         self.assertTrue(
-            view.evaluate_tal_expression(u"python:unknown", folders, self.request, self.portal, 3).startswith(
+            view.evaluate_tal_expression("python:unknown", folders, self.request, self.portal, 3).startswith(
                 "Error in expression: "
             )
         )

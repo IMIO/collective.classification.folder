@@ -32,54 +32,54 @@ class FacetedTestCase(unittest.TestCase):
         self.portal = self.layer["portal"]
         self.request = self.layer["request"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        api.group.create(groupname="service-a", title=u"Service A")
-        api.group.create(groupname="service-b", title=u"Service B")
-        tree = api.content.create(container=self.portal, type="ClassificationContainer", id="tree", title=u"Tree")
+        api.group.create(groupname="service-a", title="Service A")
+        api.group.create(groupname="service-b", title="Service B")
+        tree = api.content.create(container=self.portal, type="ClassificationContainer", id="tree", title="Tree")
         category = createObject("ClassificationCategory")
-        category.identifier = u"001"
-        category.title = u"Administration"
+        category.identifier = "001"
+        category.title = "Administration"
         tree._add_element(category)
         self.category_uid = category.UID()
         self.folders = api.content.create(
-            container=self.portal, type="ClassificationFolders", id="folders", title=u"Folders"
+            container=self.portal, type="ClassificationFolders", id="folders", title="Folders"
         )
         self.folder = api.content.create(
             container=self.folders,
             type="ClassificationFolder",
             id="folder",
-            title=u"Budget",
-            internal_reference_no=u"F0001",
+            title="Budget",
+            internal_reference_no="F0001",
             classification_categories=[self.category_uid],
-            treating_groups=u"service-a",
-            recipient_groups=[u"service-b"],
-            classification_informations=u"Yearly budget",
+            treating_groups="service-a",
+            recipient_groups=["service-b"],
+            classification_informations="Yearly budget",
         )
         self.subfolder = api.content.create(
             container=self.folder,
             type="ClassificationSubfolder",
             id="subfolder",
-            title=u"Budget 2024",
-            internal_reference_no=u"F0001-01",
-            treating_groups=u"service-b",
+            title="Budget 2024",
+            internal_reference_no="F0001-01",
+            treating_groups="service-b",
             archived=True,
         )
         group = api.content.create(
-            container=self.portal["annexes_types"], type="ContentCategoryGroup", id="annexes", title=u"Annexes"
+            container=self.portal["annexes_types"], type="ContentCategoryGroup", id="annexes", title="Annexes"
         )
         api.content.create(
             container=group,
             type="ContentCategory",
             id="annex",
-            title=u"Annex",
-            icon=NamedBlobImage(ICON, filename=u"annex.png"),
+            title="Annex",
+            icon=NamedBlobImage(ICON, filename="annex.png"),
         )
-        self.annex = self.add_annex(self.folder, "annex", u"report.txt")
-        self.subannex = self.add_annex(self.subfolder, "subannex", u"invoice.txt")
+        self.annex = self.add_annex(self.folder, "annex", "report.txt")
+        self.subannex = self.add_annex(self.subfolder, "subannex", "invoice.txt")
         self.item = api.content.create(
             container=self.portal,
             type="testingtype",
             id="item",
-            title=u"Mail",
+            title="Mail",
             classification_folders=[self.subfolder.UID()],
         )
 
@@ -130,10 +130,10 @@ class TestCriteria(FacetedTestCase):
         """The criteria of the folders come from the configuration folder, restricted to the folder"""
         criteria = ICriteria(self.subfolder)
         self.assertEqual(
-            [u"criteria", u"resultsperpage", u"sorting", u"multiselect"], [c.widget for c in criteria.values()]
+            ["criteria", "resultsperpage", "sorting", "multiselect"], [c.widget for c in criteria.values()]
         )
         restrict = criteria.get("restrictfolder")
-        self.assertEqual(u"classification_folders", restrict.index)
+        self.assertEqual("classification_folders", restrict.index)
         self.assertEqual([self.subfolder.UID(), "p:{0}".format(self.subfolder.UID())], restrict.default)
         self.assertTrue(restrict.hidden)
         self.assertEqual(
@@ -153,17 +153,17 @@ class TestFoldersFacetedTableView(FacetedTestCase):
         table = self.table(self.folders, brains)
         self.assertEqual(
             [
-                u"pretty_link",
-                u"internal_reference_no",
-                u"classification_tree_identifiers",
-                u"classification_treating_group",
-                u"ModificationDate",
-                u"CreationDate",
+                "pretty_link",
+                "internal_reference_no",
+                "classification_tree_identifiers",
+                "classification_treating_group",
+                "ModificationDate",
+                "CreationDate",
             ],
             [c.__name__ for c in table.columns],
         )
         html = table.render()
-        for text in (u"Budget", u"Budget ⏩ Budget 2024", u"F0001-01", u"001 - Administration", u"Service B"):
+        for text in ("Budget", "Budget ⏩ Budget 2024", "F0001-01", "001 - Administration", "Service B"):
             self.assertIn(text, html)
 
 
@@ -173,17 +173,23 @@ class TestFolderFacetedTableView(FacetedTestCase):
         """The table of a folder: what is classified in it"""
         table = self.table(self.folder, self.folder_contents(self.folder))
         self.assertEqual(
-            [u"pretty_link", u"subfolder_classification_folders", u"state_filesize", u"ModificationDate",
-             u"CreationDate", u"actions"],
+            [
+                "pretty_link",
+                "subfolder_classification_folders",
+                "state_filesize",
+                "ModificationDate",
+                "CreationDate",
+                "actions",
+            ],
             [c.__name__ for c in table.columns],
         )
         html = table.render()
-        for text in (u"Annex", u"report.txt", u"Mail", u"Budget 2024", u"10 B"):
+        for text in ("Annex", "report.txt", "Mail", "Budget 2024", "10 B"):
             self.assertIn(text, html)
         # a subfolder doesn't show the subfolder column
         table = self.table(self.subfolder, self.folder_contents(self.subfolder))
         self.assertEqual(
-            [u"pretty_link", u"state_filesize", u"ModificationDate", u"CreationDate", u"actions"],
+            ["pretty_link", "state_filesize", "ModificationDate", "CreationDate", "actions"],
             [c.__name__ for c in table.columns],
         )
 
@@ -194,46 +200,57 @@ class TestFolderListingView(FacetedTestCase):
         return folder.restrictedTraverse("@@folder-listing-view")
 
     def test_categories_vocabulary(self):
-        self.assertEqual(u"001 - Administration", self.view(self.folder).categories_vocabulary().getTerm(
-            self.category_uid).title)
+        self.assertEqual(
+            "001 - Administration", self.view(self.folder).categories_vocabulary().getTerm(self.category_uid).title
+        )
 
     def test_service_in_charge_vocabulary(self):
-        self.assertIn(u"service-a", [t.value for t in self.view(self.folder).service_in_charge_vocabulary])
+        self.assertIn("service-a", [t.value for t in self.view(self.folder).service_in_charge_vocabulary])
 
     def test_service_in_copy_vocabulary(self):
-        self.assertIn(u"service-b", [t.value for t in self.view(self.folder).service_in_copy_vocabulary])
+        self.assertIn("service-b", [t.value for t in self.view(self.folder).service_in_copy_vocabulary])
 
     def test_get_service_in_charge(self):
         view = self.view(self.folder)
-        self.assertEqual(u"Service A", view.get_service_in_charge(u"service-a"))
+        self.assertEqual("Service A", view.get_service_in_charge("service-a"))
         self.assertIsNone(view.get_service_in_charge(None))
-        self.assertIsNone(view.get_service_in_charge(u"unknown"))
+        self.assertIsNone(view.get_service_in_charge("unknown"))
 
     def test_get_service_in_copy(self):
         view = self.view(self.folder)
-        self.assertEqual(u"Service B", view.get_service_in_copy(u"service-b"))
+        self.assertEqual("Service B", view.get_service_in_copy("service-b"))
         self.assertIsNone(view.get_service_in_copy(None))
-        self.assertIsNone(view.get_service_in_copy(u"unknown"))
+        self.assertIsNone(view.get_service_in_copy("unknown"))
 
     def test_get_subfolder_table(self):
         html = self.view(self.folder).get_subfolder_table()
-        for text in (u"Budget 2024", u"F0001-01", u"Service B"):
+        for text in ("Budget 2024", "F0001-01", "Service B"):
             self.assertIn(text, html)
-        self.assertNotIn(u"Holidays", html)
+        self.assertNotIn("Holidays", html)
 
     def test___call__(self):
         """The view of a folder, as shown by the faceted navigation: its fields, its subfolders, its content"""
         html = self.folder.restrictedTraverse("@@faceted_query")()
-        for text in (u"F0001", u"001 - Administration", u"Service A", u"Service B", u"Yearly budget",
-                     u'id="classification_subfolders"', u"Budget 2024", u"report.txt", u"Mail", u"Total: 20 B"):
+        for text in (
+            "F0001",
+            "001 - Administration",
+            "Service A",
+            "Service B",
+            "Yearly budget",
+            'id="classification_subfolders"',
+            "Budget 2024",
+            "report.txt",
+            "Mail",
+            "Total: 20 B",
+        ):
             self.assertIn(text, html)
-        self.assertNotIn(u'id="classification_folder_details"', html)
+        self.assertNotIn('id="classification_folder_details"', html)
         # a subfolder shows the details of its folder
         html = self.subfolder.restrictedTraverse("@@faceted_query")()
-        for text in (u"F0001-01", u'id="classification_folder_details"', u"Yearly budget", u"invoice.txt", u"Mail"):
+        for text in ("F0001-01", 'id="classification_folder_details"', "Yearly budget", "invoice.txt", "Mail"):
             self.assertIn(text, html)
-        self.assertNotIn(u"report.txt", html)
-        self.assertNotIn(u'id="classification_subfolders"', html)
+        self.assertNotIn("report.txt", html)
+        self.assertNotIn('id="classification_subfolders"', html)
 
 
 class TestFolderTitleColumn(FacetedTestCase):
@@ -241,16 +258,16 @@ class TestFolderTitleColumn(FacetedTestCase):
     def test_getPrettyLink(self):
         column = self.column(self.folder, "pretty_link", self.folder_contents(self.folder))
         link = column.getPrettyLink(self.annex)
-        self.assertIn(u"http://nohost/plone/folders/folder/annex", link)
-        self.assertIn(u'<div class="discreet type-text-widget annex-filename">report.txt</div>', link)
-        self.assertIn(u"_blank", link)
+        self.assertIn("http://nohost/plone/folders/folder/annex", link)
+        self.assertIn('<div class="discreet type-text-widget annex-filename">report.txt</div>', link)
+        self.assertIn("_blank", link)
         link = column.getPrettyLink(self.subfolder)
-        self.assertIn(u">Budget ⏩ Budget 2024<", link)
+        self.assertIn(">Budget ⏩ Budget 2024<", link)
 
     def test_contentValue(self):
         column = self.column(self.folders, "pretty_link", [])
         self.assertIsNone(column.contentValue(self.folder))
-        self.assertEqual(u"Budget ⏩ Budget 2024", column.contentValue(self.subfolder))
+        self.assertEqual("Budget ⏩ Budget 2024", column.contentValue(self.subfolder))
 
 
 class TestClassificationFolderTitleColumn(FacetedTestCase):
@@ -258,10 +275,10 @@ class TestClassificationFolderTitleColumn(FacetedTestCase):
     def test_renderCell(self):
         """In a dashboard of folders and subfolders: the folder"""
         column = self.column(self.folders, "classification_folder_title", [])
-        self.assertIn(u">Budget<", column.renderCell(self.brain(self.folder)))
+        self.assertIn(">Budget<", column.renderCell(self.brain(self.folder)))
         cell = column.renderCell(self.brain(self.subfolder))
-        self.assertIn(u">Budget<", cell)
-        self.assertIn(u"http://nohost/plone/folders/folder'", cell.replace(u'"', u"'"))
+        self.assertIn(">Budget<", cell)
+        self.assertIn("http://nohost/plone/folders/folder'", cell.replace('"', "'"))
 
 
 class TestClassificationSubfolderTitleColumn(FacetedTestCase):
@@ -269,17 +286,17 @@ class TestClassificationSubfolderTitleColumn(FacetedTestCase):
     def test_getPrettyLink(self):
         column = self.column(self.folders, "classification_subfolder_title", [])
         self.assertEqual("-", column.getPrettyLink(self.folder))
-        self.assertIn(u">Budget 2024<", column.getPrettyLink(self.subfolder))
+        self.assertIn(">Budget 2024<", column.getPrettyLink(self.subfolder))
 
 
 class TestClassificationFolderIdColumn(FacetedTestCase):
 
     def test_renderCell(self):
         column = self.column(self.folders, "internal_reference_no", [])
-        self.assertEqual(u"F0001-01", column.renderCell(self.brain(self.subfolder)))
+        self.assertEqual("F0001-01", column.renderCell(self.brain(self.subfolder)))
         self.folder.internal_reference_no = None
         self.folder.reindexObject()
-        self.assertEqual(u"-", column.renderCell(self.brain(self.folder)))
+        self.assertEqual("-", column.renderCell(self.brain(self.folder)))
 
 
 class TestClassificationTreatingGroupColumn(FacetedTestCase):
@@ -287,8 +304,8 @@ class TestClassificationTreatingGroupColumn(FacetedTestCase):
     def test_renderCell(self):
         """The title of the service in charge"""
         column = self.column(self.folders, "classification_treating_group", [])
-        self.assertEqual(u"Service A", column.renderCell(self.brain(self.folder)))
-        self.assertEqual(u"Service B", column.renderCell(self.brain(self.subfolder)))
+        self.assertEqual("Service A", column.renderCell(self.brain(self.folder)))
+        self.assertEqual("Service B", column.renderCell(self.brain(self.subfolder)))
 
 
 class TestClassificationTreeIdentifiersColumn(FacetedTestCase):
@@ -296,8 +313,8 @@ class TestClassificationTreeIdentifiersColumn(FacetedTestCase):
     def test_renderCell(self):
         """The titles of the categories"""
         column = self.column(self.folders, "classification_tree_identifiers", [])
-        self.assertEqual(u"001 - Administration", column.renderCell(self.brain(self.folder)))
-        self.assertEqual(u"-", column.renderCell(self.brain(self.subfolder)))
+        self.assertEqual("001 - Administration", column.renderCell(self.brain(self.folder)))
+        self.assertEqual("-", column.renderCell(self.brain(self.subfolder)))
 
 
 class TestClassificationFolderArchivedColumn(FacetedTestCase):
@@ -326,16 +343,26 @@ class TestClassificationFoldersColumn(FacetedTestCase):
         column = ClassificationFoldersColumn(self.folders, self.request, self.table(self.folders, []))
         column.__name__ = column.attrName
         cell = column.renderCell(self.brain(self.item))
-        self.assertEqual(1, cell.count(u"<a "))
-        self.assertIn(u"http://nohost/plone/folders/folder/subfolder", cell)
-        self.assertIn(u">Budget ⏩ Budget 2024<", cell)
-        self.assertNotIn(u"p:" + self.folder.UID(), cell)  # the parent folder, indexed for the faceted view, is not shown
+        self.assertEqual(1, cell.count("<a "))
+        self.assertIn("http://nohost/plone/folders/folder/subfolder", cell)
+        self.assertIn(">Budget ⏩ Budget 2024<", cell)
+        self.assertNotIn(
+            "p:" + self.folder.UID(), cell
+        )  # the parent folder, indexed for the faceted view, is not shown
         self.item.classification_folders = [self.folder.UID(), self.subfolder.UID()]
         self.item.reindexObject()
-        self.assertEqual(2, column.renderCell(self.brain(self.item)).count(u"<a "))
+        self.assertEqual(2, column.renderCell(self.brain(self.item)).count("<a "))
         self.item.classification_folders = []
         self.item.reindexObject()
-        self.assertEqual(u"-", column.renderCell(self.brain(self.item)))
+        self.assertEqual("-", column.renderCell(self.brain(self.item)))
+
+    def test__render_link(self):
+        """A folder the user can't access gives no link (not its raw UID)"""
+        column = ClassificationFoldersColumn(self.folders, self.request, self.table(self.folders, []))
+        self.assertIn(">Budget ⏩ Budget 2024<", column._render_link(self.subfolder.UID()))
+        self.subfolder.manage_permission("Access contents information", [], acquire=False)
+        self.subfolder.manage_permission("View", [], acquire=False)
+        self.assertIsNone(column._render_link(self.subfolder.UID()))
 
 
 class TestSubfolderClassificationFoldersColumn(FacetedTestCase):
@@ -344,13 +371,13 @@ class TestSubfolderClassificationFoldersColumn(FacetedTestCase):
         """In the table of a folder: the subfolder in which an element is classified"""
         column = self.column(self.folder, "subfolder_classification_folders", self.folder_contents(self.folder))
         self.assertIsNone(column._get_title(self.folder))
-        self.assertEqual(u"Budget 2024", column._get_title(self.subfolder))
-        self.assertEqual(u"Budget 2024", column.renderCell(self.brain(self.subannex)).split(u">")[1].split(u"<")[0])
-        self.assertEqual(u"-", column.renderCell(self.brain(self.annex)))
+        self.assertEqual("Budget 2024", column._get_title(self.subfolder))
+        self.assertEqual("Budget 2024", column.renderCell(self.brain(self.subannex)).split(">")[1].split("<")[0])
+        self.assertEqual("-", column.renderCell(self.brain(self.annex)))
         # a subfolder of another folder is shown with its full title
-        other = api.content.create(container=self.folders, type="ClassificationFolder", id="other", title=u"Other")
+        other = api.content.create(container=self.folders, type="ClassificationFolder", id="other", title="Other")
         column = self.column(other, "subfolder_classification_folders", [])
-        self.assertEqual(u"Budget ⏩ Budget 2024", column._get_title(self.subfolder))
+        self.assertEqual("Budget ⏩ Budget 2024", column._get_title(self.subfolder))
 
 
 class TestCombinedReviewstateSizeColumn(FacetedTestCase):
@@ -358,12 +385,12 @@ class TestCombinedReviewstateSizeColumn(FacetedTestCase):
     def test_renderHeadCell(self):
         """The total size of the annexes of the page"""
         column = self.column(self.folder, "state_filesize", self.folder_contents(self.folder))
-        self.assertIn(u"<p>(Total: 20 B)</p>", column.renderHeadCell())
+        self.assertIn("<p>(Total: 20 B)</p>", column.renderHeadCell())
 
     def test_renderCell(self):
         """The size of an annex, the state of other elements"""
         column = self.column(self.folder, "state_filesize", self.folder_contents(self.folder))
-        self.assertEqual(u"10 B", column.renderCell(self.brain(self.annex)))
-        self.assertEqual(u"Private", column.renderCell(self.brain(self.item)))
+        self.assertEqual("10 B", column.renderCell(self.brain(self.annex)))
+        self.assertEqual("Private", column.renderCell(self.brain(self.item)))
         # Plone 4 bug: an element without workflow (review_state Missing.Value) breaks the column
         self.assertRaises(TypeError, column.renderCell, self.brain(self.subfolder))
