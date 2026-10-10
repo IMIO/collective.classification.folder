@@ -304,3 +304,29 @@ class TestUtils(unittest.TestCase):
             },
         )
         self.assertEqual(expected_result, result)
+
+    def test_element_importer(self):
+        element = utils.element_importer(
+            self.folders, u"F1", u"Folder 1", {"classification_categories": [u"001"]}, None, self._tree_vocabulary, {}
+        )
+        # a new folder of the container: (exists, data to post)
+        self.assertEqual(
+            [
+                (
+                    False,
+                    {
+                        "@type": "ClassificationFolder",
+                        "internal_reference_no": u"F1",
+                        "title": u"Folder 1",
+                        "classification_informations": None,
+                        "classification_categories": [self._get_uid(u"001")],
+                        "archived": False,
+                    },
+                )
+            ],
+            element,
+        )
+        # Plone 4 bug: an element without category breaks the import
+        self.assertRaises(
+            TypeError, utils.element_importer, self.folders, u"F1", u"Folder 1", {}, None, self._tree_vocabulary, {}
+        )

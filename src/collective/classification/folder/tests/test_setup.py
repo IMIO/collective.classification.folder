@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
-from collective.classification.folder import PLONE_VERSION
+from collective.classification.folder.testing import PLONE_VERSION
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -45,6 +45,32 @@ class TestSetup(unittest.TestCase, CommonSetup):
         from plone.browserlayer import utils
 
         self.assertIn(ICollectiveClassificationFolderLayer, utils.registered_layers())
+
+    def test_catalog(self):
+        """Indexes and metadata columns of the profile"""
+        catalog = api.portal.get_tool("portal_catalog")
+        indexes = {
+            "ClassificationFolderSort": "FieldIndex",
+            "classification_folders": "KeywordIndex",
+            "internal_reference_no": "FieldIndex",
+            "treating_groups": "KeywordIndex",
+            "recipient_groups": "KeywordIndex",
+            "yesno_value": "FieldIndex",
+        }
+        self.assertEqual(indexes, {i: catalog._catalog.getIndex(i).meta_type for i in indexes})
+        for column in ("classification_folders", "internal_reference_no", "treating_groups", "recipient_groups"):
+            self.assertIn(column, catalog.schema())
+        self.assertTrue(
+            api.portal.get_registry_record("plone.app.querystring.field.ClassificationFolderSort.sortable")
+        )
+
+    def test_controlpanel(self):
+        """The configlet opens the settings view"""
+        configlets = {a.getId(): a for a in api.portal.get_tool("portal_controlpanel").listActions()}
+        configlet = configlets["collectiveclassificationfolder.settings"]
+        self.assertEqual("Products", configlet.category)
+        self.assertEqual(("Plone Site Setup: Site",), configlet.permissions)
+        self.assertEqual("string:${portal_url}/@@collectiveclassificationfolder-settings", configlet.getActionExpression())
 
 
 class TestUninstall(unittest.TestCase, CommonSetup):

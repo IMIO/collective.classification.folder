@@ -2,6 +2,10 @@
 
 from collective.classification.folder.content.vocabularies import ClassificationFolderSource
 from collective.classification.folder.content.vocabularies import full_title_categories
+from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
+from collective.classification.folder.content.vocabularies import services_in_copy_vocabulary
+from collective.classification.folder.interfaces import IServiceInCharge
+from collective.classification.folder.interfaces import IServiceInCopy
 from collective.classification.folder.testing import COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
 from dexterity.localroles.utils import add_fti_configuration
 from plone import api
@@ -9,8 +13,13 @@ from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from zope.component import createObject
+from zope.component import getGlobalSiteManager
+from zope.component import getUtility
 from zope.event import notify
+from zope.interface import Interface
 from zope.lifecycleevent import ObjectModifiedEvent
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleVocabulary
 
 import unittest
 
@@ -281,3 +290,75 @@ class ClassificationFolderSourceClassificationsTest(unittest.TestCase):
         self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1 [Reviewers]", u"Folder 2"])
         titles = [term.title for term in source.search("Folder First")]
         self.assertEqual(titles, [u"Folder 1", u"Folder 1 ⏩ Folder 1-1 [Reviewers]"])
+
+
+class Services(object):
+    """Services of an application, as imio.dms.mail adapts IServiceInCharge and IServiceInCopy"""
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self):
+        return SimpleVocabulary([SimpleVocabulary.createTerm(u"service-a", u"service-a", u"Service A")])
+
+
+class TestVocabularies(unittest.TestCase):
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+        api.group.create(groupname="service-a", title=u"Service A")
+
+    def register_services(self, interface):
+        gsm = getGlobalSiteManager()
+        gsm.registerAdapter(Services, (Interface,), interface)
+        self.addCleanup(gsm.unregisterAdapter, Services, (Interface,), interface)
+
+    def test_services_in_charge_vocabulary(self):
+        # the groups of the site by default
+        terms = [(t.value, t.title) for t in services_in_charge_vocabulary(self.portal)]
+        self.assertIn((u"service-a", u"Service A"), terms)
+        self.assertIn((u"Reviewers", u"Reviewers"), terms)
+        # the services of an application
+        self.register_services(IServiceInCharge)
+        self.assertEqual([u"service-a"], [t.value for t in services_in_charge_vocabulary(self.portal)])
+        # Plone 4 bug: the named vocabulary is the vocabulary built when the ZCML is loaded (no site, no group)
+        # instead of a factory (zcml "factory" instead of "component")
+        vocabulary = getUtility(IVocabularyFactory, "collective.classification.folder.vocabularies:services_in_charge")
+        self.assertEqual([], list(vocabulary))
+        self.assertRaises(TypeError, vocabulary, self.portal)
+
+    def test_services_in_copy_vocabulary(self):
+        terms = [(t.value, t.title) for t in services_in_copy_vocabulary(self.portal)]
+        self.assertIn((u"service-a", u"Service A"), terms)
+        self.register_services(IServiceInCopy)
+        self.assertEqual([u"service-a"], [t.value for t in services_in_copy_vocabulary(self.portal)])
+        # Plone 4 bug: same as services_in_charge, and registered with services_in_charge_vocabulary
+        vocabulary = getUtility(IVocabularyFactory, "collective.classification.folder.vocabularies:services_in_copy")
+        self.assertEqual([], list(vocabulary))
+        self.assertRaises(TypeError, vocabulary, self.portal)
+
+    def test_import_keys_vocabulary_factory(self):
+        factory = getUtility(IVocabularyFactory, "collective.classification.vocabularies:folders_import_keys")
+        terms = [(t.value, t.title) for t in factory(self.portal)]
+        self.assertEqual(17, len(terms))
+        for term in (
+            (u"treating_groups_title", u"Treating groups title"),
+            (u"internal_reference_no", u"Identifier"),
+            (u"folder_title", u"Folder Name"),
+            (u"subfolder_archived", u"Archived subfolder"),
+        ):
+            self.assertIn(term, terms)
+
+
+class TestClassificationFolderPortalTypesVocabulary(unittest.TestCase):
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def test___call__(self):
+        factory = getUtility(IVocabularyFactory, "collective.classification.folder.vocabularies:folder_portal_types")
+        self.assertEqual(
+            [(u"ClassificationFolder", u"Classification Folder"), (u"ClassificationSubfolder", u"Classification Subfolder")],
+            [(t.value, t.title) for t in factory(self.layer["portal"])],
+        )

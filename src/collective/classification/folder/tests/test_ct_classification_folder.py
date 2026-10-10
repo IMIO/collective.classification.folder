@@ -2,9 +2,14 @@
 from collective.classification.folder.content.classification_folder import (
     IClassificationFolder,
 )  # NOQA E501
+from collective.classification.folder.browser.faceted import IClassificationFacetedNavigable
+from collective.classification.folder.content.vocabularies import get_folders_tree
 from collective.classification.folder.testing import (
     COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING,
 )  # noqa
+from eea.facetednavigation.layout.interfaces import IFacetedLayout
+from eea.facetednavigation.settings.interfaces import IDisableSmartFacets
+from eea.facetednavigation.settings.interfaces import IHidePloneRightColumn
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
@@ -13,6 +18,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from zExceptions import Redirect
 from zope.component import createObject
 from zope.component import queryUtility
+from zope.container.contained import ContainerModifiedEvent
 from zope.event import notify
 from zope.lifecycleevent import ObjectCopiedEvent
 from zope.lifecycleevent import ObjectModifiedEvent
@@ -392,3 +398,78 @@ class ClassificationFolderMovementTest(unittest.TestCase):
         copied_subfolder_indexes = self.get_index_data(copied_subfolder)
         self.assertEqual(copied_subfolder_indexes["ClassificationFolderSort"], "Folder2|Subfolder1")
         self.assertIn("folder2", copied_subfolder_indexes["SearchableText"])
+
+
+REGISTRY_KEY = "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
+
+
+class ClassificationFolderTestCase(unittest.TestCase):
+    """A folders container with a folder in charge of a service"""
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        api.group.create(groupname="service-a", title=u"Service A")
+        self.folders = api.content.create(
+            container=self.portal, type="ClassificationFolders", id="folders", title=u"Folders"
+        )
+        self.folder = api.content.create(
+            container=self.folders,
+            type="ClassificationFolder",
+            id="folder",
+            title=u"Folder",
+            internal_reference_no=u"F0001",
+            treating_groups=u"service-a",
+        )
+
+
+class TestClassificationFolder(ClassificationFolderTestCase):
+
+    def test_cf_parent(self):
+        self.assertIsNone(self.folder.cf_parent())
+
+    def test__increment_internal_reference(self):
+        number = api.portal.get_registry_record(REGISTRY_KEY.format("folder_number"))
+        self.folder._increment_internal_reference()
+        self.assertEqual(number + 1, api.portal.get_registry_record(REGISTRY_KEY.format("folder_number")))
+        self.assertEqual(1, api.portal.get_registry_record(REGISTRY_KEY.format("subfolder_number")))
+
+
+class TestClassificationFolderModule(ClassificationFolderTestCase):
+
+    def test_on_create(self):
+        """The folder is a faceted listing of its content; the counter of the default reference is increased"""
+        self.assertEqual(2, api.portal.get_registry_record(REGISTRY_KEY.format("folder_number")))
+        for interface in (IClassificationFacetedNavigable, IDisableSmartFacets, IHidePloneRightColumn):
+            self.assertTrue(interface.providedBy(self.folder), interface)
+        self.assertEqual("folder-listing-view", IFacetedLayout(self.folder).layout)
+        # a subfolder increases its own counter
+        subfolder = api.content.create(
+            container=self.folder, type="ClassificationSubfolder", id="subfolder", title=u"Subfolder"
+        )
+        self.assertEqual(2, api.portal.get_registry_record(REGISTRY_KEY.format("folder_number")))
+        self.assertEqual(2, api.portal.get_registry_record(REGISTRY_KEY.format("subfolder_number")))
+        self.assertEqual("folder-listing-view", IFacetedLayout(subfolder).layout)
+
+    def test_on_modify(self):
+        """The full titles of the folders are kept in a portal annotation"""
+        uid = self.folder.UID()
+        self.assertEqual((u"Folder (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+        self.folder.title = u"Folder renamed"
+        notify(ObjectModifiedEvent(self.folder))
+        self.assertEqual((u"Folder renamed (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+        # adding a subfolder modifies the folder only as a container: nothing is updated
+        self.folder.title = u"Folder not updated"
+        notify(ContainerModifiedEvent(self.folder))
+        self.assertEqual((u"Folder renamed (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+
+    def test_on_move(self):
+        """The annotation follows the renamed and deleted folders"""
+        uid = self.folder.UID()
+        get_folders_tree()  # built
+        api.content.rename(obj=self.folder, new_id="folder-renamed")
+        self.assertEqual((u"Folder (F0001)", {}, u"Service A"), get_folders_tree()[uid])
+        api.content.delete(self.folders["folder-renamed"])
+        self.assertNotIn(uid, get_folders_tree())

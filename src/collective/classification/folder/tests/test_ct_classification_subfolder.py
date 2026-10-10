@@ -72,3 +72,23 @@ class ClassificationSubfolderIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="ClassificationSubfolder")
         self.assertFalse(fti.global_allow, u"{0} is globally addable!".format(fti.id))
+
+
+class TestClassificationSubfolder(unittest.TestCase):
+
+    layer = COLLECTIVE_CLASSIFICATION_FOLDER_INTEGRATION_TESTING
+
+    def setUp(self):
+        portal = self.layer["portal"]
+        setRoles(portal, TEST_USER_ID, ["Manager"])
+        folders = api.content.create(container=portal, type="ClassificationFolders", id="folders", title=u"Folders")
+        self.folder = api.content.create(container=folders, type="ClassificationFolder", id="folder", title=u"Tâche")
+        self.subfolder = api.content.create(
+            container=self.folder, type="ClassificationSubfolder", id="subfolder", title=u"Sous-tâche"
+        )
+
+    def test_cf_parent(self):
+        self.assertEqual(self.folder, self.subfolder.cf_parent())
+
+    def test_get_full_title(self):
+        self.assertEqual(u"Tâche ⏩ Sous-tâche", self.subfolder.get_full_title())

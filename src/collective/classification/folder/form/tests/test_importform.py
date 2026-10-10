@@ -6,14 +6,19 @@ from collective.classification.folder.form import importform
 from operator import itemgetter
 from persistent.dict import PersistentDict
 from plone import api
+from plone.app.testing import login
+from plone.app.testing import SITE_OWNER_NAME
 from plone.namedfile import NamedBlobFile
+from six import BytesIO
 from six import StringIO
 from zope.annotation import IAnnotations
 from zope.component import createObject
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
+from ZPublisher.HTTPRequest import FileUpload
 
 import csv
+import transaction
 import unittest
 
 
@@ -713,3 +718,210 @@ class TestImportForm(unittest.TestCase):
             },
         }
         self.assertEqual(expected_result, result)
+
+    def test_updateFieldsFromSchemata(self):
+        """The commit option is reserved to the Zope administrator"""
+        request = self.layer["request"]
+        first_step(self.folders, request, [u"Folder;Subfolder", u"Budget;Budget 2024"])
+        testing.new_request(request)
+        form = importform.ImportFormSecondStep(self.folders, request)
+        form.update()
+        self.assertEqual(["column_0", "column_1", "replace_slash", "treating_groups"], sorted(form.fields.keys()))
+        login(self.layer["app"], SITE_OWNER_NAME)
+        form = importform.ImportFormSecondStep(self.folders, request)
+        form.update()
+        self.assertIn("commit_every", form.fields.keys())
+
+    def test__commit_if_needed(self):
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        transaction.get().note(u"not committed")
+        form._commit_if_needed()  # no option: no commit
+        self.assertIn(u"not committed", transaction.get().description)
+        form._commit_every = 2
+        form._commit_if_needed()
+        self.assertEqual(1, form._processed_count)
+        self.assertIn(u"not committed", transaction.get().description)
+        form._commit_if_needed()
+        self.assertEqual(2, form._processed_count)
+        self.assertNotIn(u"not committed", transaction.get().description)
+
+    def test_handleApply(self):
+        """The 2 steps of the import, as a user"""
+        request = self.layer["request"]
+        first_step(
+            self.folders,
+            request,
+            [u"Folder;Subfolder;Category", u"Budget;;001", u"Budget;Budget 2024;001.1", u"Staff/HR;;002"],
+        )
+        testing.new_request(request)
+        html = self.folders.restrictedTraverse("@@import-process")()
+        self.assertIn(u"Column Folder", html)
+        self.assertIn(u"Sample data : 'Budget', 'Budget'", html)
+        testing.new_request(
+            request,
+            {
+                "form.widgets.column_0": [u"folder_title"],
+                "form.widgets.column_0-empty-marker": u"1",
+                "form.widgets.column_1": [u"subfolder_title"],
+                "form.widgets.column_1-empty-marker": u"1",
+                "form.widgets.column_2": [u"folder_categories"],
+                "form.widgets.column_2-empty-marker": u"1",
+                "form.widgets.replace_slash": [u"selected"],
+                "form.widgets.replace_slash-empty-marker": u"1",
+                "form.buttons.import": u"Import",
+            },
+        )
+        html = self.folders.restrictedTraverse("@@import-process")()
+        self.assertIn(u'id="progress"', html)
+        self.assertEqual([u"Budget", u"Staff-HR"], sorted(f.title for f in self.folders.values()))
+        budget = self.folders["budget"]
+        self.assertEqual(u"F0001", budget.internal_reference_no)
+        self.assertEqual([u"Budget 2024"], [f.title for f in budget.values()])
+        self.assertEqual(u"F0001-01", budget["budget-2024"].internal_reference_no)
+        self.assertEqual(u"F0002", self.folders["staff-hr"].internal_reference_no)
+
+
+def csv_upload(lines):
+    """A CSV file posted by the browser"""
+    data = BytesIO(u"\n".join(lines).encode("utf8"))
+    return FileUpload(
+        type("obj", (object,), {"file": data, "filename": "folders.csv", "headers": "text/csv", "name": "folders.csv"})()
+    )
+
+
+def first_step(context, request, lines, separator=u";"):
+    """Submits the first step of the import (file with a header)"""
+    testing.new_request(
+        request,
+        {
+            "form.widgets.source": csv_upload(lines),
+            "form.widgets.separator": [separator],
+            "form.widgets.separator-empty-marker": u"1",
+            "form.widgets.has_header": [u"selected"],
+            "form.widgets.has_header-empty-marker": u"1",
+            "form.buttons.continue": u"Continue",
+        },
+    )
+    return context.restrictedTraverse("@@import")()
+
+
+def second_step(context, request, columns, **values):
+    """Submits the second step of the import with the columns mapping"""
+    form = {"form.buttons.import": u"Import", "form.widgets.replace_slash-empty-marker": u"1"}
+    form.update(values)
+    for i, column in enumerate(columns):
+        form["form.widgets.column_{0}".format(i)] = column and [column] or []
+        form["form.widgets.column_{0}-empty-marker".format(i)] = u"1"
+    testing.new_request(request, form)
+    return context.restrictedTraverse("@@import-process")()
+
+
+class ImportTestCase(unittest.TestCase):
+
+    layer = testing.COLLECTIVE_CLASSIFICATION_FOLDER_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
+        self.tree = api.content.create(title="Tree", type="ClassificationContainer", container=self.portal)
+        category = createObject("ClassificationCategory")
+        category.identifier = u"001"
+        category.title = u"Administration"
+        self.tree._add_element(category)
+        self.folders = api.content.create(
+            title="Folders", type="ClassificationFolders", container=self.portal
+        )
+        api.group.create("service-a", "Service A")
+
+    def tearDown(self):
+        api.content.delete(self.folders)
+        api.content.delete(self.tree)
+
+
+class TestImportFormFirstStep(ImportTestCase):
+
+    def test_handleApply(self):
+        first_step(self.folders, self.request, [u"Folder;Subfolder", u"Budget;Budget 2024"])
+        data = IAnnotations(self.folders)[importform.ANNOTATION_KEY]
+        self.assertEqual((u";", True), (data["separator"], data["has_header"]))
+        self.assertEqual(b"Folder;Subfolder\nBudget;Budget 2024", data["source"].data)
+        self.assertEqual(self.folders.absolute_url() + "/@@import-process", self.request.response.getHeader("location"))
+
+
+class TestIImportFirstStep(unittest.TestCase):
+
+    layer = testing.COLLECTIVE_CLASSIFICATION_FOLDER_FUNCTIONAL_TESTING
+
+    def test_validate_csv_data(self):
+        """The file is refused when it has less than 2 columns"""
+        portal = self.layer["portal"]
+        request = self.layer["request"]
+        folders = api.content.create(title="Folders", type="ClassificationFolders", container=portal)
+        html = first_step(folders, request, [u"Folder", u"Budget"])
+        self.assertIn(u"CSV file must contains at least 2 columns", html)
+        self.assertNotIn(importform.ANNOTATION_KEY, IAnnotations(folders))
+        html = first_step(folders, request, [u"Folder;Subfolder", u"Budget"])
+        self.assertIn(u"Lines 2 does not contains the same number of element", html)
+
+
+class TestIImportSecondStepBase(ImportTestCase):
+
+    def test_validate_columns(self):
+        first_step(
+            self.folders, self.request, [u"Folder;Subfolder;Category;Service", u"Budget;Budget 2024;001;Service A"]
+        )
+        # Plone 4 bug: a required column not selected breaks the form (KeyError in validate_data) instead of
+        # showing "The following required columns are missing: folder_title"
+        self.assertRaises(
+            KeyError, second_step, self.folders, self.request, [u"", u"subfolder_title", u"folder_categories", u""]
+        )
+        # a service for all the folders, or a service by line
+        html = second_step(
+            self.folders,
+            self.request,
+            [u"folder_title", u"subfolder_title", u"folder_categories", u"treating_groups_title"],
+            **{"form.widgets.treating_groups": [u"service-a"]}
+        )
+        self.assertIn(u"select both a treating_groups and a column associated to treating groups title", html)
+        self.assertEqual(0, len(self.folders))
+        html = second_step(
+            self.folders, self.request, [u"folder_title", u"subfolder_title", u"folder_categories", u"treating_groups_title"]
+        )
+        self.assertNotIn(u"errormessage", html)
+        self.assertEqual([u"service-a"], [f.treating_groups for f in self.folders.values()])
+        # Plone 4 bug: with a parent identifier column, the column "identifier" is required but cannot be selected
+        # (the column of the identifier is "internal_reference_no"): the form breaks
+        first_step(self.folders, self.request, [u"Parent;Code;Name;Category", u";F1;Staff;001"])
+        self.assertRaises(
+            KeyError,
+            second_step,
+            self.folders,
+            self.request,
+            [u"parent_identifier", u"internal_reference_no", u"title", u"classification_categories"],
+        )
+
+    def test_validate_data(self):
+        first_step(
+            self.folders, self.request, [u"Folder;Subfolder;Category", u"Budget;Budget 2024;001", u";Budget 2025;001"]
+        )
+        html = second_step(self.folders, self.request, [u"folder_title", u"subfolder_title", u"folder_categories"])
+        self.assertIn(u"Lines 3 have missing required value(s)", html)
+        self.assertEqual(0, len(self.folders))
+
+
+class TestImportSecondStepView(ImportTestCase):
+
+    def test_data(self):
+        view = self.folders.restrictedTraverse("@@import-process")
+        self.assertEqual([], view.data)
+
+    def test_finished(self):
+        """The page of the finished import goes back to the container"""
+        first_step(self.folders, self.request, [u"Folder;Subfolder;Category", u"Budget;Budget 2024;001"])
+        testing.new_request(self.request)
+        view = self.folders.restrictedTraverse("@@import-process")
+        view()
+        self.assertFalse(view.finished)
+        html = second_step(self.folders, self.request, [u"folder_title", u"subfolder_title", u"folder_categories"])
+        self.assertIn(u'data-url="{0}"'.format(self.folders.absolute_url()), html)
+        self.assertIn(u"This import may take a while", html)
