@@ -35,7 +35,8 @@
   <property name="behaviors" purge="false">
     <element value="plone.app.content.interfaces.INameFromTitle"/>
     <element value="plone.app.lockingbehavior.behaviors.ILocking"/>
-    <element value="collective.dexteritytextindexer.behavior.IDexterityTextIndexer" />
+    <element value="eea.faceted.navigable"/>
+    <element value="plone.app.dexterity.textindexer.behavior.IDexterityTextIndexer" />
   </property>
 
   <!-- View information -->

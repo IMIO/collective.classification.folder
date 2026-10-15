@@ -12,7 +12,7 @@ class IClassificationFolders(model.Schema):
     """Marker interface and Dexterity Python Schema for ClassificationFolders"""
 
     title = schema.TextLine(
-        title=_(u"Title"),
+        title=_("Title"),
         # description=_(u"Name of the folders container"),
     )
 
@@ -29,6 +29,6 @@ def on_create(obj, event):
 
     faceted_exportimport = obj.unrestrictedTraverse("@@faceted_exportimport")
     xml = obj.unrestrictedTraverse("classification-folders-faceted.xml")()
-    faceted_exportimport._import_xml(import_file=xml)
+    faceted_exportimport._import_xml(import_file=xml.encode("utf-8"))
 
     IFacetedLayout(obj).update_layout("faceted-table-items")

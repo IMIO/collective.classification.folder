@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from ZPublisher.HTTPRequest import HTTPRequest
 from plone.restapi.deserializer import json_body
 from plone.restapi.services.content import add
+from ZPublisher.HTTPRequest import HTTPRequest
 
 import json
 
 
 def create_request(base_request, body):
-    request = HTTPRequest(
-        base_request.stdin, base_request._orig_env, base_request.response
-    )
+    request = HTTPRequest(base_request.stdin, base_request._orig_env, base_request.response)
     for attr in base_request.__dict__.keys():
         setattr(request, attr, getattr(base_request, attr))
     request.set("BODY", body)

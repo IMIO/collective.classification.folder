@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from collective.classification.folder import utils
-from collective.classification.folder.content.classification_folder import (
-    IClassificationFolder,
-)
-from collective.classification.folder.content.classification_folders import (
-    IClassificationFolders,
-)
+from collective.classification.folder.content.classification_folder import IClassificationFolder
+from collective.classification.folder.content.classification_folders import IClassificationFolders
 from z3c.form.interfaces import IAddForm
 from z3c.form.interfaces import IFormLayer
 from z3c.form.interfaces import IValue
@@ -35,7 +31,7 @@ class FolderDataProvider(BaseDataProvider):
                 self.request,
                 "folder_number",
                 "folder_talexpression",
-            ).decode("utf8")
+            )
         else:
             return
 
@@ -57,8 +53,8 @@ class SubfolderDataProvider(BaseDataProvider):
                 self.request,
                 "subfolder_number",
                 "subfolder_talexpression",
-            ).decode("utf8")
+            )
         elif self.field.__name__ == "description":  # here on annex, need to return empty string not None
-            return self.widget.value
+            return ""
         else:
             return
