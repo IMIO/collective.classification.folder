@@ -36,7 +36,7 @@ setup(
     ],
     keywords="Python Plone CMS",
     author="Martin Peeters",
-    author_email="support@imio.be",
+    author_email="support-docs@imio.be",
     url="https://github.com/imio/collective.classification.folder",
     project_urls={
         "PyPI": "https://pypi.python.org/pypi/collective.classification.folder",
