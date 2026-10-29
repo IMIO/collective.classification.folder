@@ -16,15 +16,11 @@ class TestUtils(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer["portal"]
-        self.folder = api.content.create(
-            id="folder", type="Folder", container=self.portal
-        )
-        container = api.content.create(
-            title="Container", type="ClassificationContainer", container=self.folder
-        )
+        self.folder = api.content.create(id="folder", type="Folder", container=self.portal)
+        container = api.content.create(title="Container", type="ClassificationContainer", container=self.folder)
         structure = (
-            (u"001", u"First", ((u"001.1", u"first 1"), (u"001.2", u"second 1"))),
-            (u"002", u"Second", ((u"002.1", u"first"),)),
+            ("001", "First", (("001.1", "first 1"), ("001.2", "second 1"))),
+            ("002", "Second", (("002.1", "first"),)),
         )
         for id, title, subelements in structure:
             category = self._create_category(id, title)
@@ -33,9 +29,7 @@ class TestUtils(unittest.TestCase):
                 for id, title in subelements:
                     subcategory = self._create_category(id, title)
                     category._add_element(subcategory)
-        self.folders = api.content.create(
-            title="Folders", type="ClassificationFolders", container=self.folder
-        )
+        self.folders = api.content.create(title="Folders", type="ClassificationFolders", container=self.folder)
 
     def tearDown(self):
         api.content.delete(self.folder)
@@ -62,9 +56,9 @@ class TestUtils(unittest.TestCase):
         result = utils.importer(
             self.folders,
             None,
-            u"F1",
-            u"Folder 1",
-            data={"classification_categories": [u"001"]},
+            "F1",
+            "Folder 1",
+            data={"classification_categories": ["001"]},
             _children=[],
         )
         expected_result = (
@@ -73,10 +67,10 @@ class TestUtils(unittest.TestCase):
                 "data": [
                     {
                         "@type": "ClassificationFolder",
-                        "internal_reference_no": u"F1",
+                        "internal_reference_no": "F1",
                         "classification_informations": None,
-                        "title": u"Folder 1",
-                        "classification_categories": [self._get_uid(u"001")],
+                        "title": "Folder 1",
+                        "classification_categories": [self._get_uid("001")],
                         "archived": False,
                     }
                 ]
@@ -90,7 +84,7 @@ class TestUtils(unittest.TestCase):
             type="ClassificationFolder",
             internal_reference_no="F1",
             title="Folder 1",
-            classification_categories=[self._get_uid(u"001")],
+            classification_categories=[self._get_uid("001")],
         )
         self.assertEqual(1, len(self.folders))
 
@@ -98,9 +92,9 @@ class TestUtils(unittest.TestCase):
         result = utils.importer(
             self.folders,
             None,
-            u"F1",
-            u"Folder 1",
-            data={"classification_categories": [u"001"]},
+            "F1",
+            "Folder 1",
+            data={"classification_categories": ["001"]},
             _children=[],
         )
         expected_result = ("PATCH", {"data": []})
@@ -109,9 +103,9 @@ class TestUtils(unittest.TestCase):
         result = utils.importer(
             self.folders,
             None,
-            u"F1",
-            u"Folder 1 updated",
-            data={"classification_categories": [u"001.1"]},
+            "F1",
+            "Folder 1 updated",
+            data={"classification_categories": ["001.1"]},
             _children=[],
         )
         expected_result = (
@@ -119,9 +113,9 @@ class TestUtils(unittest.TestCase):
             {
                 "data": [
                     {
-                        "internal_reference_no": u"F1",
+                        "internal_reference_no": "F1",
                         "title": "Folder 1 updated",
-                        "classification_categories": [self._get_uid(u"001.1")],
+                        "classification_categories": [self._get_uid("001.1")],
                     }
                 ]
             },
@@ -133,20 +127,20 @@ class TestUtils(unittest.TestCase):
         result = utils.importer(
             self.folders,
             None,
-            u"F1",
-            u"Folder 1",
-            data={"classification_categories": [u"001"], "archived": False},
+            "F1",
+            "Folder 1",
+            data={"classification_categories": ["001"], "archived": False},
             _children=[
                 {
-                    "internal_reference_no": u"F1.1",
-                    "title": u"Folder 1.1",
-                    "data": {"classification_categories": [u"001.1"], "archived": True},
+                    "internal_reference_no": "F1.1",
+                    "title": "Folder 1.1",
+                    "data": {"classification_categories": ["001.1"], "archived": True},
                 },
                 {
-                    "internal_reference_no": u"F1.2",
-                    "title": u"Folder 1.2",
+                    "internal_reference_no": "F1.2",
+                    "title": "Folder 1.2",
                     "data": {
-                        "classification_categories": [u"001.2"],
+                        "classification_categories": ["001.2"],
                         "archived": False,
                     },
                 },
@@ -158,26 +152,26 @@ class TestUtils(unittest.TestCase):
                 "data": [
                     {
                         "@type": "ClassificationFolder",
-                        "internal_reference_no": u"F1",
+                        "internal_reference_no": "F1",
                         "classification_informations": None,
-                        "title": u"Folder 1",
-                        "classification_categories": [self._get_uid(u"001")],
+                        "title": "Folder 1",
+                        "classification_categories": [self._get_uid("001")],
                         "archived": False,
                         "__children__": [
                             {
                                 "@type": "ClassificationSubfolder",
-                                "internal_reference_no": u"F1.1",
+                                "internal_reference_no": "F1.1",
                                 "classification_informations": None,
-                                "title": u"Folder 1.1",
-                                "classification_categories": [self._get_uid(u"001.1")],
+                                "title": "Folder 1.1",
+                                "classification_categories": [self._get_uid("001.1")],
                                 "archived": True,
                             },
                             {
                                 "@type": "ClassificationSubfolder",
-                                "internal_reference_no": u"F1.2",
+                                "internal_reference_no": "F1.2",
                                 "classification_informations": None,
-                                "title": u"Folder 1.2",
-                                "classification_categories": [self._get_uid(u"001.2")],
+                                "title": "Folder 1.2",
+                                "classification_categories": [self._get_uid("001.2")],
                                 "archived": False,
                             },
                         ],
@@ -193,32 +187,32 @@ class TestUtils(unittest.TestCase):
             type="ClassificationFolder",
             internal_reference_no="F1",
             title="Folder 1",
-            classification_categories=[self._get_uid(u"001")],
+            classification_categories=[self._get_uid("001")],
         )
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
             internal_reference_no="F1.1",
             title="Folder 1.1",
-            classification_categories=[self._get_uid(u"001.1")],
+            classification_categories=[self._get_uid("001.1")],
         )
         self.assertEqual(1, len(self.folders))
         result = utils.importer(
             self.folders,
             None,
-            u"F1",
-            u"Folder 1",
-            data={"classification_categories": [u"001"]},
+            "F1",
+            "Folder 1",
+            data={"classification_categories": ["001"]},
             _children=[
                 {
-                    "internal_reference_no": u"F1.1",
-                    "title": u"Folder 1.1",
-                    "data": {"classification_categories": [u"001.1"]},
+                    "internal_reference_no": "F1.1",
+                    "title": "Folder 1.1",
+                    "data": {"classification_categories": ["001.1"]},
                 },
                 {
-                    "internal_reference_no": u"F1.2",
-                    "title": u"Folder 1.2",
-                    "data": {"classification_categories": [u"001.2"]},
+                    "internal_reference_no": "F1.2",
+                    "title": "Folder 1.2",
+                    "data": {"classification_categories": ["001.2"]},
                 },
             ],
         )
@@ -227,14 +221,14 @@ class TestUtils(unittest.TestCase):
             {
                 "data": [
                     {
-                        "internal_reference_no": u"F1",
+                        "internal_reference_no": "F1",
                         "__children__": [
                             {
                                 "@type": "ClassificationSubfolder",
-                                "internal_reference_no": u"F1.2",
+                                "internal_reference_no": "F1.2",
                                 "classification_informations": None,
-                                "title": u"Folder 1.2",
-                                "classification_categories": [self._get_uid(u"001.2")],
+                                "title": "Folder 1.2",
+                                "classification_categories": [self._get_uid("001.2")],
                                 "archived": False,
                             },
                         ],
@@ -250,39 +244,39 @@ class TestUtils(unittest.TestCase):
             type="ClassificationFolder",
             internal_reference_no="F1",
             title="Folder 1",
-            classification_categories=[self._get_uid(u"001")],
+            classification_categories=[self._get_uid("001")],
         )
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
             internal_reference_no="F1.1",
             title="Folder 1.1",
-            classification_categories=[self._get_uid(u"001.1")],
+            classification_categories=[self._get_uid("001.1")],
         )
         api.content.create(
             container=folder,
             type="ClassificationSubfolder",
             internal_reference_no="F1.2",
             title="Folder 1.2",
-            classification_categories=[self._get_uid(u"001.2")],
+            classification_categories=[self._get_uid("001.2")],
         )
         self.assertEqual(1, len(self.folders))
         result = utils.importer(
             self.folders,
             None,
-            u"F1",
-            u"Folder 1",
-            data={"classification_categories": [u"001"]},
+            "F1",
+            "Folder 1",
+            data={"classification_categories": ["001"]},
             _children=[
                 {
-                    "internal_reference_no": u"F1.1",
-                    "title": u"Folder 1.1",
-                    "data": {"classification_categories": [u"001.1"]},
+                    "internal_reference_no": "F1.1",
+                    "title": "Folder 1.1",
+                    "data": {"classification_categories": ["001.1"]},
                 },
                 {
-                    "internal_reference_no": u"F1.2",
-                    "title": u"Folder 1.2 updated",
-                    "data": {"classification_categories": [u"001.1"]},
+                    "internal_reference_no": "F1.2",
+                    "title": "Folder 1.2 updated",
+                    "data": {"classification_categories": ["001.1"]},
                 },
             ],
         )
@@ -291,12 +285,12 @@ class TestUtils(unittest.TestCase):
             {
                 "data": [
                     {
-                        "internal_reference_no": u"F1",
+                        "internal_reference_no": "F1",
                         "__children__": [
                             {
-                                "internal_reference_no": u"F1.2",
-                                "title": u"Folder 1.2 updated",
-                                "classification_categories": [self._get_uid(u"001.1")],
+                                "internal_reference_no": "F1.2",
+                                "title": "Folder 1.2 updated",
+                                "classification_categories": [self._get_uid("001.1")],
                             },
                         ],
                     }
@@ -304,3 +298,29 @@ class TestUtils(unittest.TestCase):
             },
         )
         self.assertEqual(expected_result, result)
+
+    def test_element_importer(self):
+        element = utils.element_importer(
+            self.folders, "F1", "Folder 1", {"classification_categories": ["001"]}, None, self._tree_vocabulary, {}
+        )
+        # a new folder of the container: (exists, data to post)
+        self.assertEqual(
+            [
+                (
+                    False,
+                    {
+                        "@type": "ClassificationFolder",
+                        "internal_reference_no": "F1",
+                        "title": "Folder 1",
+                        "classification_informations": None,
+                        "classification_categories": [self._get_uid("001")],
+                        "archived": False,
+                    },
+                )
+            ],
+            element,
+        )
+        # Plone 4 bug: an element without category breaks the import
+        self.assertRaises(
+            TypeError, utils.element_importer, self.folders, "F1", "Folder 1", {}, None, self._tree_vocabulary, {}
+        )

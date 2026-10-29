@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from collective.classification.folder import _tr as _
-from Products.CMFPlone.interfaces import INonInstallable
+from eea.facetednavigation.interfaces import IPossibleFacetedNavigable
 from plone import api
+from plone.base.interfaces import INonInstallable
 from plone.registry import field
 from plone.registry import Record
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from zope.interface import alsoProvides
 from zope.interface import implementer
 
 
@@ -19,9 +21,8 @@ def create_classification_folder_facet():
     folder = api.content.create(
         container=portal,
         id=folder_id,
-        title=_(u"Classification folder faceted configuration"),
+        title=_("Classification folder faceted configuration"),
         type="Folder",
-
     )
     folder.exclude_from_nav = True
     folder.reindexObject()
@@ -30,11 +31,12 @@ def create_classification_folder_facet():
     response_status = folder.REQUEST.RESPONSE.getStatus()
     response_location = folder.REQUEST.RESPONSE.getHeader("location")
 
+    alsoProvides(folder, IPossibleFacetedNavigable)  # eea 16: no more on every container
     faceted_subtyper = folder.unrestrictedTraverse("@@faceted_subtyper")
     faceted_subtyper.enable()
     faceted_exportimport = folder.unrestrictedTraverse("@@faceted_exportimport")
     xml = folder.unrestrictedTraverse("classification-folder-faceted.xml")()
-    faceted_exportimport._import_xml(import_file=xml)
+    faceted_exportimport._import_xml(import_file=xml.encode("utf-8"))
 
     folder.REQUEST.RESPONSE.status = response_status
     folder.REQUEST.RESPONSE.setHeader("location", response_location or "")
@@ -42,48 +44,46 @@ def create_classification_folder_facet():
 
 def set_registry():
     registry = getUtility(IRegistry)
-    settings_iface = (
-        "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
-    )
+    settings_iface = "collective.classification.folder.browser.settings.IClassificationConfig.{0}"
 
     key = settings_iface.format("folder_number")
     if not registry.get(key):
-        registry_field = field.Int(title=u"folder_number")
+        registry_field = field.Int(title="folder_number")
         registry_record = Record(registry_field)
         registry_record.value = 1
         registry.records[key] = registry_record
 
     key = settings_iface.format("folder_talexpression")
     if not registry.get(key):
-        registry_field = field.TextLine(title=u"folder_talexpression")
+        registry_field = field.TextLine(title="folder_talexpression")
         registry_record = Record(registry_field)
-        registry_record.value = u"python:'F%04d'%int(number)"
+        registry_record.value = "python:'F%04d'%int(number)"
         registry.records[key] = registry_record
 
     key = settings_iface.format("subfolder_number")
     if not registry.get(key):
-        registry_field = field.Int(title=u"subfolder_number")
+        registry_field = field.Int(title="subfolder_number")
         registry_record = Record(registry_field)
         registry_record.value = 1
         registry.records[key] = registry_record
 
     key = settings_iface.format("subfolder_talexpression")
     if not registry.get(key):
-        registry_field = field.TextLine(title=u"subfolder_talexpression")
+        registry_field = field.TextLine(title="subfolder_talexpression")
         registry_record = Record(registry_field)
-        registry_record.value = u"python:'%s-xx'%(context.internal_reference_no)"
+        registry_record.value = "python:'%s-xx'%(context.internal_reference_no)"
         registry.records[key] = registry_record
 
 
 def create_annexes_config():
     portal = api.portal.get()
-    if 'annexes_types' not in portal:
-        folder = api.content.create(
+    if "annexes_types" not in portal:
+        api.content.create(
             container=portal,
-            id='annexes_types',
-            title=_(u"Annexes Types"),
+            id="annexes_types",
+            title=_("Annexes Types"),
             type="ContentCategoryConfiguration",
-            exclude_from_nav=True
+            exclude_from_nav=True,
         )
 
 

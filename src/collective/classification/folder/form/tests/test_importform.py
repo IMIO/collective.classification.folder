@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
 
-from StringIO import StringIO
 from collective.classification.folder import testing
 from collective.classification.folder.content.vocabularies import services_in_charge_vocabulary
 from collective.classification.folder.form import importform
+from io import BytesIO
+from io import StringIO
 from operator import itemgetter
 from persistent.dict import PersistentDict
 from plone import api
+from plone.app.testing import login
+from plone.app.testing import SITE_OWNER_NAME
 from plone.namedfile import NamedBlobFile
 from zope.annotation import IAnnotations
 from zope.component import createObject
 from zope.component import getUtility
-from zope.component.interfaces import Invalid
 from zope.schema.interfaces import IVocabularyFactory
+from ZPublisher.HTTPRequest import FileUpload
 
 import csv
-import json
+import transaction
 import unittest
 
 
@@ -25,15 +28,11 @@ class TestImportForm(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer["portal"]
-        self.folder = api.content.create(
-            id="folder", type="Folder", container=self.portal
-        )
-        container = api.content.create(
-            title="Container", type="ClassificationContainer", container=self.folder
-        )
+        self.folder = api.content.create(id="folder", type="Folder", container=self.portal)
+        container = api.content.create(title="Container", type="ClassificationContainer", container=self.folder)
         structure = (
-            (u"001", u"First", ((u"001.1", u"first 1"), (u"001.2", u"second 1"))),
-            (u"002", u"Second", ((u"002.1", u"first"),)),
+            ("001", "First", (("001.1", "first 1"), ("001.2", "second 1"))),
+            ("002", "Second", (("002.1", "first"),)),
         )
         for id, title, subelements in structure:
             category = self._create_category(id, title)
@@ -42,10 +41,8 @@ class TestImportForm(unittest.TestCase):
                 for id, title in subelements:
                     subcategory = self._create_category(id, title)
                     category._add_element(subcategory)
-        self.folders = api.content.create(
-            title="Folders", type="ClassificationFolders", container=self.folder
-        )
-        api.group.create('group_1', 'My new group 1')
+        self.folders = api.content.create(title="Folders", type="ClassificationFolders", container=self.folder)
+        api.group.create("group_1", "My new group 1")
 
     def tearDown(self):
         api.content.delete(self.folder)
@@ -106,12 +103,12 @@ class TestImportForm(unittest.TestCase):
         form.data = []
         annotations = IAnnotations(self.folders)
         annotation = annotations[importform.ANNOTATION_KEY] = PersistentDict()
-        annotation["separator"] = u";"
+        annotation["separator"] = ";"
         annotation["has_header"] = False
         annotation["source"] = NamedBlobFile(
             data=self._csv.read(),
-            contentType=u"text/csv",
-            filename=u"test.csv",
+            contentType="text/csv",
+            filename="test.csv",
         )
         data = {
             "treating_groups": None,
@@ -136,53 +133,53 @@ class TestImportForm(unittest.TestCase):
         form = importform.ImportFormSecondStep(self.folders, {})
         data = {
             None: {
-                u"F1": (u"Folder 1", {"classification_categories": [u"001"]}),
-                u"F2": (u"Folder 2", {"classification_categories": [u"002"]}),
+                "F1": ("Folder 1", {"classification_categories": ["001"]}),
+                "F2": ("Folder 2", {"classification_categories": ["002"]}),
             },
-            u"F1": {
-                u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"]}),
-                u"F1.2": (u"Folder 1.2", {"classification_categories": [u"001.2"]}),
+            "F1": {
+                "F1.1": ("Folder 1.1", {"classification_categories": ["001.1"]}),
+                "F1.2": ("Folder 1.2", {"classification_categories": ["001.2"]}),
             },
-            u"F2": {
-                u"F2.1A": (u"Folder 2.1 A", {"classification_categories": [u"002.1"]}),
-                u"F2.1B": (u"Folder 2.1 B", {"classification_categories": [u"002.1"]}),
+            "F2": {
+                "F2.1A": ("Folder 2.1 A", {"classification_categories": ["002.1"]}),
+                "F2.1B": ("Folder 2.1 B", {"classification_categories": ["002.1"]}),
             },
         }
         expected_results = [
             {
-                "internal_reference_no": u"F1",
-                "title": u"Folder 1",
-                "data": {"classification_categories": [u"001"]},
+                "internal_reference_no": "F1",
+                "title": "Folder 1",
+                "data": {"classification_categories": ["001"]},
                 "_children": [
                     {
-                        "internal_reference_no": u"F1.1",
-                        "title": u"Folder 1.1",
-                        "data": {"classification_categories": [u"001.1"]},
+                        "internal_reference_no": "F1.1",
+                        "title": "Folder 1.1",
+                        "data": {"classification_categories": ["001.1"]},
                         "_children": [],
                     },
                     {
-                        "internal_reference_no": u"F1.2",
-                        "title": u"Folder 1.2",
-                        "data": {"classification_categories": [u"001.2"]},
+                        "internal_reference_no": "F1.2",
+                        "title": "Folder 1.2",
+                        "data": {"classification_categories": ["001.2"]},
                         "_children": [],
                     },
                 ],
             },
             {
-                "internal_reference_no": u"F2",
-                "title": u"Folder 2",
-                "data": {"classification_categories": [u"002"]},
+                "internal_reference_no": "F2",
+                "title": "Folder 2",
+                "data": {"classification_categories": ["002"]},
                 "_children": [
                     {
-                        "internal_reference_no": u"F2.1A",
-                        "title": u"Folder 2.1 A",
-                        "data": {"classification_categories": [u"002.1"]},
+                        "internal_reference_no": "F2.1A",
+                        "title": "Folder 2.1 A",
+                        "data": {"classification_categories": ["002.1"]},
                         "_children": [],
                     },
                     {
-                        "internal_reference_no": u"F2.1B",
-                        "title": u"Folder 2.1 B",
-                        "data": {"classification_categories": [u"002.1"]},
+                        "internal_reference_no": "F2.1B",
+                        "title": "Folder 2.1 B",
+                        "data": {"classification_categories": ["002.1"]},
                         "_children": [],
                     },
                 ],
@@ -196,42 +193,42 @@ class TestImportForm(unittest.TestCase):
         form = importform.ImportFormSecondStep(self.folders, {})
         data = {
             None: {
-                u"F1": (
-                    u"Folder 1",
-                    {"classification_categories": [u"001"], "archived": False},
+                "F1": (
+                    "Folder 1",
+                    {"classification_categories": ["001"], "archived": False},
                 ),
             },
-            u"F1": {
-                u"F1.1": (
-                    u"Folder 1.1",
-                    {"classification_categories": [u"001.1"], "archived": True},
+            "F1": {
+                "F1.1": (
+                    "Folder 1.1",
+                    {"classification_categories": ["001.1"], "archived": True},
                 ),
-                u"F1.2": (
-                    u"Folder 1.2",
-                    {"classification_categories": [u"001.2"], "archived": False},
+                "F1.2": (
+                    "Folder 1.2",
+                    {"classification_categories": ["001.2"], "archived": False},
                 ),
             },
         }
         expected_results = [
             {
-                "internal_reference_no": u"F1",
-                "title": u"Folder 1",
-                "data": {"classification_categories": [u"001"], "archived": False},
+                "internal_reference_no": "F1",
+                "title": "Folder 1",
+                "data": {"classification_categories": ["001"], "archived": False},
                 "_children": [
                     {
-                        "internal_reference_no": u"F1.1",
-                        "title": u"Folder 1.1",
+                        "internal_reference_no": "F1.1",
+                        "title": "Folder 1.1",
                         "data": {
-                            "classification_categories": [u"001.1"],
+                            "classification_categories": ["001.1"],
                             "archived": True,
                         },
                         "_children": [],
                     },
                     {
-                        "internal_reference_no": u"F1.2",
-                        "title": u"Folder 1.2",
+                        "internal_reference_no": "F1.2",
+                        "title": "Folder 1.2",
                         "data": {
-                            "classification_categories": [u"001.2"],
+                            "classification_categories": ["001.2"],
                             "archived": False,
                         },
                         "_children": [],
@@ -253,23 +250,25 @@ class TestImportForm(unittest.TestCase):
             "column_5": "title",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups='Administrators')
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups="Administrators")
         expected_result = {
             None: {
-                u"F1": (u"Folder 1", {"classification_categories": [u"001"], 'treating_groups': 'Administrators'}),
-                u"F2": (u"Folder 2", {"classification_categories": [u"002"], 'treating_groups': 'Administrators'}),
+                "F1": ("Folder 1", {"classification_categories": ["001"], "treating_groups": "Administrators"}),
+                "F2": ("Folder 2", {"classification_categories": ["002"], "treating_groups": "Administrators"}),
             },
-            u"F1": {
-                u"F1.1": (u"Folder 1.1", {"classification_categories": [u"001.1"],
-                                          'treating_groups': 'Administrators'}),
-                u"F1.2": (u"Folder 1.2", {"classification_categories": [u"001.2"],
-                                          'treating_groups': 'Administrators'}),
+            "F1": {
+                "F1.1": ("Folder 1.1", {"classification_categories": ["001.1"], "treating_groups": "Administrators"}),
+                "F1.2": ("Folder 1.2", {"classification_categories": ["001.2"], "treating_groups": "Administrators"}),
             },
-            u"F2": {
-                u"F2.1A": (u"Folder 2.1 A", {"classification_categories": [u"002.1"],
-                                             'treating_groups': 'Administrators'}),
-                u"F2.1B": (u"Folder 2.1 B", {"classification_categories": [u"002.1"],
-                                             'treating_groups': 'Administrators'}),
+            "F2": {
+                "F2.1A": (
+                    "Folder 2.1 A",
+                    {"classification_categories": ["002.1"], "treating_groups": "Administrators"},
+                ),
+                "F2.1B": (
+                    "Folder 2.1 B",
+                    {"classification_categories": ["002.1"], "treating_groups": "Administrators"},
+                ),
             },
         }
         self.assertEqual(expected_result, result)
@@ -296,9 +295,9 @@ class TestImportForm(unittest.TestCase):
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None, replace_slash=True)
         expected_result = {
-            None: {u"F1": (u"Folder 1", {"classification_categories": [u"001"]})},
-            u"F1": {
-                u"F1.1": (u"Folder 1-1", {"classification_categories": [u"001.1"]}),
+            None: {"F1": ("Folder 1", {"classification_categories": ["001"]})},
+            "F1": {
+                "F1.1": ("Folder 1-1", {"classification_categories": ["001.1"]}),
             },
         }
         self.assertEqual(expected_result, result)
@@ -327,19 +326,19 @@ class TestImportForm(unittest.TestCase):
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
-                u"F1": (
-                    u"Folder 1",
-                    {"classification_categories": [u"001"], "archived": True},
+                "F1": (
+                    "Folder 1",
+                    {"classification_categories": ["001"], "archived": True},
                 )
             },
-            u"F1": {
-                u"F1.1": (
-                    u"Folder 1.1",
-                    {"classification_categories": [u"001.1", u"001.2"], "archived": False},
+            "F1": {
+                "F1.1": (
+                    "Folder 1.1",
+                    {"classification_categories": ["001.1", "001.2"], "archived": False},
                 ),
-                u"F1.2": (
-                    u"Folder 1.2",
-                    {"classification_categories": [u"001.2"], "archived": True},
+                "F1.2": (
+                    "Folder 1.2",
+                    {"classification_categories": ["001.2"], "archived": True},
                 ),
             },
         }
@@ -365,26 +364,26 @@ class TestImportForm(unittest.TestCase):
             "column_3": "subfolder_archived",
         }
         mapping = {int(k.replace("column_", "")): v for k, v in data.items()}
-        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups='Administrators')
+        result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups="Administrators")
         expected_result = {
             None: {
                 "F0001": (
-                    u"Folder 1",
-                    {'treating_groups': 'Administrators'},
+                    "Folder 1",
+                    {"treating_groups": "Administrators"},
                 )
             },
             "F0001": {
                 "F0001-01": (
-                    u"Folder 1.1",
-                    {"archived": True, 'treating_groups': 'Administrators'},
+                    "Folder 1.1",
+                    {"archived": True, "treating_groups": "Administrators"},
                 ),
                 "F0001-02": (
-                    u"Folder 1.2",
-                    {'treating_groups': 'Administrators'},
+                    "Folder 1.2",
+                    {"treating_groups": "Administrators"},
                 ),
                 "F0001-03": (
-                    u"Folder 1.3",
-                    {"archived": True, 'treating_groups': 'Administrators'},
+                    "Folder 1.3",
+                    {"archived": True, "treating_groups": "Administrators"},
                 ),
             },
         }
@@ -402,18 +401,18 @@ class TestImportForm(unittest.TestCase):
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
-                "F0001": (u"Folder 1", {}),
-                "F0002": (u"Folder 2", {}),
+                "F0001": ("Folder 1", {}),
+                "F0002": ("Folder 2", {}),
             },
             "F0001": {
-                "F0001-01": (u"Subfolder 1.1", {}),
-                "F0001-02": (u"Subfolder 1.2", {}),
-                "F0001-03": (u"Subfolder 1.3", {}),
+                "F0001-01": ("Subfolder 1.1", {}),
+                "F0001-02": ("Subfolder 1.2", {}),
+                "F0001-03": ("Subfolder 1.3", {}),
             },
             "F0002": {
-                "F0002-01": (u"Subfolder 2.1", {}),
-                "F0002-02": (u"Subfolder 2.2", {}),
-                "F0002-03": (u"Subfolder 2.3", {}),
+                "F0002-01": ("Subfolder 2.1", {}),
+                "F0002-02": ("Subfolder 2.2", {}),
+                "F0002-03": ("Subfolder 2.3", {}),
             },
         }
         self.assertEqual(expected_result, result)
@@ -432,35 +431,35 @@ class TestImportForm(unittest.TestCase):
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
-                "F0001": (u"Folder 1", {"classification_categories": [u"001"]}),
-                "F0002": (u"Folder 2", {"classification_categories": [u"002"]}),
+                "F0001": ("Folder 1", {"classification_categories": ["001"]}),
+                "F0002": ("Folder 2", {"classification_categories": ["002"]}),
             },
             "F0001": {
                 "F0001-01": (
-                    u"Subfolder 1.1",
-                    {"classification_categories": [u"001", u"001.1"]},
+                    "Subfolder 1.1",
+                    {"classification_categories": ["001", "001.1"]},
                 ),
                 "F0001-02": (
-                    u"Subfolder 1.2",
-                    {"classification_categories": [u"001.2"]},
+                    "Subfolder 1.2",
+                    {"classification_categories": ["001.2"]},
                 ),
                 "F0001-03": (
-                    u"Subfolder 1.3",
-                    {"classification_categories": [u"001"]},
+                    "Subfolder 1.3",
+                    {"classification_categories": ["001"]},
                 ),
             },
             "F0002": {
                 "F0002-01": (
-                    u"Subfolder 2.1",
-                    {"classification_categories": [u"002.1"]},
+                    "Subfolder 2.1",
+                    {"classification_categories": ["002.1"]},
                 ),
                 "F0002-02": (
-                    u"Subfolder 2.2",
-                    {"classification_categories": [u"002.1"]},
+                    "Subfolder 2.2",
+                    {"classification_categories": ["002.1"]},
                 ),
                 "F0002-03": (
-                    u"Subfolder 2.3",
-                    {"classification_categories": [u"002"]},
+                    "Subfolder 2.3",
+                    {"classification_categories": ["002"]},
                 ),
             },
         }
@@ -468,22 +467,22 @@ class TestImportForm(unittest.TestCase):
 
     def test_replace_newline(self):
         form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
-        self.assertEquals(form._replace_newline(u' \n '), u' ')
-        self.assertEquals(form._replace_newline(u'\n'), u'')
-        self.assertEquals(form._replace_newline(u'\n A'), u'A')
-        self.assertEquals(form._replace_newline(u'B \n'), u'B')
-        self.assertEquals(form._replace_newline(u' \n\n '), u' ')
-        self.assertEquals(form._replace_newline(u'.\n '), u'. ')
-        self.assertEquals(form._replace_newline(u' \nL'), u' L')
-        self.assertEquals(form._replace_newline(u'x\nL'), u'x L')
-        self.assertEquals(form._replace_newline(u'x\nLe\nf'), u'x Le f')
-        self.assertEquals(form._replace_newline(u' \n.\n '), u' . ')
+        self.assertEqual(form._replace_newline(" \n "), " ")
+        self.assertEqual(form._replace_newline("\n"), "")
+        self.assertEqual(form._replace_newline("\n A"), "A")
+        self.assertEqual(form._replace_newline("B \n"), "B")
+        self.assertEqual(form._replace_newline(" \n\n "), " ")
+        self.assertEqual(form._replace_newline(".\n "), ". ")
+        self.assertEqual(form._replace_newline(" \nL"), " L")
+        self.assertEqual(form._replace_newline("x\nL"), "x L")
+        self.assertEqual(form._replace_newline("x\nLe\nf"), "x Le f")
+        self.assertEqual(form._replace_newline(" \n.\n "), " . ")
 
     def test_replace_newline_by_crlf(self):
         form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
-        self.assertEquals(form._replace_newline_by_crlf(u'\n A'), u'\r\nA')
-        self.assertEquals(form._replace_newline_by_crlf(u'B\n'), u'B\r\n')
-        self.assertEquals(form._replace_newline_by_crlf(u'B\r\nA'), u'B\r\nA')
+        self.assertEqual(form._replace_newline_by_crlf("\n A"), "\r\nA")
+        self.assertEqual(form._replace_newline_by_crlf("B\n"), "B\r\n")
+        self.assertEqual(form._replace_newline_by_crlf("B\r\nA"), "B\r\nA")
 
     def test_process_csv_informations_values(self):
         """Test _process_csv with csv data with classification_informations"""
@@ -509,22 +508,22 @@ class TestImportForm(unittest.TestCase):
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None)
         expected_result = {
             None: {
-                u"F1": (
-                    u"Folder 1",
-                    {"classification_categories": [u"001"],
-                     "classification_informations": u'This is more informations.'},
+                "F1": (
+                    "Folder 1",
+                    {"classification_categories": ["001"], "classification_informations": "This is more informations."},
                 )
             },
-            u"F1": {
-                u"F1.1": (
-                    u"Folder 1.1",
-                    {"classification_categories": [u"001.1", u"001.2"],
-                     "classification_informations": u'Also\r\nbut with another line'},
+            "F1": {
+                "F1.1": (
+                    "Folder 1.1",
+                    {
+                        "classification_categories": ["001.1", "001.2"],
+                        "classification_informations": "Also\r\nbut with another line",
+                    },
                 ),
-                u"F1.2": (
-                    u"Folder 1.2",
-                    {"classification_categories": [u"001.2"],
-                     "classification_informations": u''},
+                "F1.2": (
+                    "Folder 1.2",
+                    {"classification_categories": ["001.2"], "classification_informations": ""},
                 ),
             },
         }
@@ -555,21 +554,21 @@ class TestImportForm(unittest.TestCase):
         expected_result = {
             None: {
                 "F0001": (
-                    u"Folder 1",
-                    {'classification_informations': u'Room A'},
+                    "Folder 1",
+                    {"classification_informations": "Room A"},
                 )
             },
             "F0001": {
                 "F0001-01": (
-                    u"Folder 1.1",
-                    {'classification_informations': u'This is more informations.'},
+                    "Folder 1.1",
+                    {"classification_informations": "This is more informations."},
                 ),
                 "F0001-02": (
-                    u"Folder 1.2",
-                    {'classification_informations': u'Yet\r\nAnother line\r\nAnd a third'},
+                    "Folder 1.2",
+                    {"classification_informations": "Yet\r\nAnother line\r\nAnd a third"},
                 ),
                 "F0001-03": (
-                    u"Folder 1.3",
+                    "Folder 1.3",
                     {},
                 ),
             },
@@ -602,26 +601,31 @@ class TestImportForm(unittest.TestCase):
         result = form._process_csv(reader, mapping, "utf-8", {}, treating_groups=None, replace_slash=True)
         expected_result = {
             None: {
-                "1": (u"Folder 1", {u'internal_reference_no': u'1'}),
-                "2": (u"Folder 2-a", {u'internal_reference_no': u'2'}),
+                "1": ("Folder 1", {"internal_reference_no": "1"}),
+                "2": ("Folder 2-a", {"internal_reference_no": "2"}),
             },
             "1": {
-                "11": (u"Subfolder 1.1", {u'internal_reference_no': u'11'}),
-                "12": (u"Subfolder 1.2", {u'internal_reference_no': u'12'}),
+                "11": ("Subfolder 1.1", {"internal_reference_no": "11"}),
+                "12": ("Subfolder 1.2", {"internal_reference_no": "12"}),
             },
             "2": {
-                "21": (u"Subfolder 2-a.1", {u'internal_reference_no': u'21'}),
-                "22": (u"Subfolder 2-a.2", {u'internal_reference_no': u'22'}),
+                "21": ("Subfolder 2-a.1", {"internal_reference_no": "21"}),
+                "22": ("Subfolder 2-a.2", {"internal_reference_no": "22"}),
             },
         }
         self.assertEqual(expected_result, result)
 
     def test_process_csv_complex_treating_groups_title(self):
         """Test _process_csv with csv data with treating_groups_title column"""
-        groups = [(t.value, t.title) for t in services_in_charge_vocabulary()
-                  if t.value not in ('AuthenticatedUsers', 'Site Administrators')]
-        self.assertListEqual(groups, [('Administrators', 'Administrators'), ('Reviewers', 'Reviewers'),
-                                      ('group_1', 'My new group 1')])
+        groups = [
+            (t.value, t.title)
+            for t in services_in_charge_vocabulary()
+            if t.value not in ("AuthenticatedUsers", "Site Administrators")
+        ]
+        # Plone 6: plone.app.vocabularies.Groups is sorted by title
+        self.assertListEqual(
+            groups, [("Administrators", "Administrators"), ("group_1", "My new group 1"), ("Reviewers", "Reviewers")]
+        )
         form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
         _csv = StringIO()
         lines = [
@@ -644,28 +648,26 @@ class TestImportForm(unittest.TestCase):
         expected_result = {
             None: {
                 "F0001": (
-                    u"Folder 1",
-                    {'treating_groups_title': u'My new group 1',
-                     'classification_categories': [u'001']},
+                    "Folder 1",
+                    {"treating_groups_title": "My new group 1", "classification_categories": ["001"]},
                 )
             },
             "F0001": {
                 "F0001-01": (
-                    u"Folder 1.1",
-                    {'treating_groups_title': u'My new group 1',
-                     'classification_categories': [u'001.1']},
+                    "Folder 1.1",
+                    {"treating_groups_title": "My new group 1", "classification_categories": ["001.1"]},
                 ),
                 "F0001-02": (
-                    u"Folder 1.2",
-                    {'treating_groups_title': u'Reviewers',
-                     'classification_categories': [u'001.2']},
+                    "Folder 1.2",
+                    {"treating_groups_title": "Reviewers", "classification_categories": ["001.2"]},
                 ),
             },
         }
         self.assertEqual(expected_result, result)
         # import nodes
-        form.vocabulary = getUtility(IVocabularyFactory,
-                                     "collective.classification.vocabularies:tree_id_mapping")(self.folders)
+        form.vocabulary = getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree_id_mapping")(
+            self.folders
+        )
         form.data = []
         form._import_node(form._process_data(result)[0])
         # now direct_operation is done
@@ -682,9 +684,9 @@ class TestImportForm(unittest.TestCase):
         # result[None]['F0001'] = (u"Folder 1", {'treating_groups_title': u'Unknown group title',
         #                                        'classification_categories': [u'001']})
         # self.assertRaises(Invalid, form._import_node, form._process_data(result)[0])
-        self.assertIn('folder-1', self.folders)
-        self.assertIn('folder-1.1', self.folders['folder-1'])
-        self.assertIn('folder-1.2', self.folders['folder-1'])
+        self.assertIn("folder-1", self.folders)
+        self.assertIn("folder-1.1", self.folders["folder-1"])
+        self.assertIn("folder-1.2", self.folders["folder-1"])
 
     def test_process_csv_replace_slash(self):
         """Test _process_csv with csv data that contains slashes"""
@@ -707,11 +709,220 @@ class TestImportForm(unittest.TestCase):
         result = form._process_csv(reader, mapping, "utf-8", {}, replace_slash=True)
         expected_result = {
             None: {
-                "F0001": (u"Folder 1-a", {}),
+                "F0001": ("Folder 1-a", {}),
             },
             "F0001": {
-                "F0001-01": (u"Subfolder 1-a.1 -- cor", {}),
-                "F0001-02": (u"Subfolder 1-a.2", {}),
+                "F0001-01": ("Subfolder 1-a.1 -- cor", {}),
+                "F0001-02": ("Subfolder 1-a.2", {}),
             },
         }
         self.assertEqual(expected_result, result)
+
+    def test_updateFieldsFromSchemata(self):
+        """The commit option is reserved to the Zope administrator"""
+        request = self.layer["request"]
+        first_step(self.folders, request, ["Folder;Subfolder", "Budget;Budget 2024"])
+        testing.new_request(request)
+        form = importform.ImportFormSecondStep(self.folders, request)
+        form.update()
+        self.assertEqual(["column_0", "column_1", "replace_slash", "treating_groups"], sorted(form.fields.keys()))
+        login(self.layer["app"], SITE_OWNER_NAME)
+        form = importform.ImportFormSecondStep(self.folders, request)
+        form.update()
+        self.assertIn("commit_every", form.fields.keys())
+
+    def test__commit_if_needed(self):
+        form = importform.ImportFormSecondStep(self.folders, self.layer["request"])
+        transaction.get().note("not committed")
+        form._commit_if_needed()  # no option: no commit
+        self.assertIn("not committed", transaction.get().description)
+        form._commit_every = 2
+        form._commit_if_needed()
+        self.assertEqual(1, form._processed_count)
+        self.assertIn("not committed", transaction.get().description)
+        form._commit_if_needed()
+        self.assertEqual(2, form._processed_count)
+        self.assertNotIn("not committed", transaction.get().description)
+
+    def test_handleApply(self):
+        """The 2 steps of the import, as a user"""
+        request = self.layer["request"]
+        first_step(
+            self.folders,
+            request,
+            ["Folder;Subfolder;Category", "Budget;;001", "Budget;Budget 2024;001.1", "Staff/HR;;002"],
+        )
+        testing.new_request(request)
+        html = self.folders.restrictedTraverse("@@import-process")()
+        self.assertIn("Column Folder", html)
+        self.assertIn("Sample data : 'Budget', 'Budget'", html)
+        testing.new_request(
+            request,
+            {
+                "form.widgets.column_0": ["folder_title"],
+                "form.widgets.column_0-empty-marker": "1",
+                "form.widgets.column_1": ["subfolder_title"],
+                "form.widgets.column_1-empty-marker": "1",
+                "form.widgets.column_2": ["folder_categories"],
+                "form.widgets.column_2-empty-marker": "1",
+                "form.widgets.replace_slash": ["selected"],
+                "form.widgets.replace_slash-empty-marker": "1",
+                "form.buttons.import": "Import",
+            },
+        )
+        html = self.folders.restrictedTraverse("@@import-process")()
+        self.assertIn('id="progress"', html)
+        self.assertEqual(["Budget", "Staff-HR"], sorted(f.title for f in self.folders.values()))
+        budget = self.folders["budget"]
+        self.assertEqual("F0001", budget.internal_reference_no)
+        self.assertEqual(["Budget 2024"], [f.title for f in budget.values()])
+        self.assertEqual("F0001-01", budget["budget-2024"].internal_reference_no)
+        self.assertEqual("F0002", self.folders["staff-hr"].internal_reference_no)
+
+
+def csv_upload(lines):
+    """A CSV file posted by the browser"""
+    data = BytesIO("\n".join(lines).encode("utf8"))
+    return FileUpload(
+        type(
+            "obj", (object,), {"file": data, "filename": "folders.csv", "headers": "text/csv", "name": "folders.csv"}
+        )()
+    )
+
+
+def first_step(context, request, lines, separator=";"):
+    """Submits the first step of the import (file with a header)"""
+    testing.new_request(
+        request,
+        {
+            "form.widgets.source": csv_upload(lines),
+            "form.widgets.separator": [separator],
+            "form.widgets.separator-empty-marker": "1",
+            "form.widgets.has_header": ["selected"],
+            "form.widgets.has_header-empty-marker": "1",
+            "form.buttons.continue": "Continue",
+        },
+    )
+    return context.restrictedTraverse("@@import")()
+
+
+def second_step(context, request, columns, **values):
+    """Submits the second step of the import with the columns mapping"""
+    form = {"form.buttons.import": "Import", "form.widgets.replace_slash-empty-marker": "1"}
+    form.update(values)
+    for i, column in enumerate(columns):
+        form["form.widgets.column_{0}".format(i)] = column and [column] or []
+        form["form.widgets.column_{0}-empty-marker".format(i)] = "1"
+    testing.new_request(request, form)
+    return context.restrictedTraverse("@@import-process")()
+
+
+class ImportTestCase(unittest.TestCase):
+
+    layer = testing.COLLECTIVE_CLASSIFICATION_FOLDER_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
+        self.tree = api.content.create(title="Tree", type="ClassificationContainer", container=self.portal)
+        category = createObject("ClassificationCategory")
+        category.identifier = "001"
+        category.title = "Administration"
+        self.tree._add_element(category)
+        self.folders = api.content.create(title="Folders", type="ClassificationFolders", container=self.portal)
+        api.group.create("service-a", "Service A")
+
+    def tearDown(self):
+        api.content.delete(self.folders)
+        api.content.delete(self.tree)
+
+
+class TestImportFormFirstStep(ImportTestCase):
+
+    def test_handleApply(self):
+        first_step(self.folders, self.request, ["Folder;Subfolder", "Budget;Budget 2024"])
+        data = IAnnotations(self.folders)[importform.ANNOTATION_KEY]
+        self.assertEqual((";", True), (data["separator"], data["has_header"]))
+        self.assertEqual(b"Folder;Subfolder\nBudget;Budget 2024", data["source"].data)
+        self.assertEqual(self.folders.absolute_url() + "/@@import-process", self.request.response.getHeader("location"))
+
+
+class TestIImportFirstStep(unittest.TestCase):
+
+    layer = testing.COLLECTIVE_CLASSIFICATION_FOLDER_FUNCTIONAL_TESTING
+
+    def test_validate_csv_data(self):
+        """The file is refused when it has less than 2 columns"""
+        portal = self.layer["portal"]
+        request = self.layer["request"]
+        folders = api.content.create(title="Folders", type="ClassificationFolders", container=portal)
+        html = first_step(folders, request, ["Folder", "Budget"])
+        self.assertIn("CSV file must contains at least 2 columns", html)
+        self.assertNotIn(importform.ANNOTATION_KEY, IAnnotations(folders))
+        html = first_step(folders, request, ["Folder;Subfolder", "Budget"])
+        self.assertIn("Lines 2 does not contains the same number of element", html)
+
+
+class TestIImportSecondStepBase(ImportTestCase):
+
+    def test_validate_columns(self):
+        first_step(
+            self.folders, self.request, ["Folder;Subfolder;Category;Service", "Budget;Budget 2024;001;Service A"]
+        )
+        # Plone 4 bug: a required column not selected breaks the form (KeyError in validate_data) instead of
+        # showing "The following required columns are missing: folder_title"
+        self.assertRaises(
+            KeyError, second_step, self.folders, self.request, ["", "subfolder_title", "folder_categories", ""]
+        )
+        # a service for all the folders, or a service by line
+        html = second_step(
+            self.folders,
+            self.request,
+            ["folder_title", "subfolder_title", "folder_categories", "treating_groups_title"],
+            **{"form.widgets.treating_groups": ["service-a"]},
+        )
+        self.assertIn("select both a treating_groups and a column associated to treating groups title", html)
+        self.assertEqual(0, len(self.folders))
+        html = second_step(
+            self.folders,
+            self.request,
+            ["folder_title", "subfolder_title", "folder_categories", "treating_groups_title"],
+        )
+        self.assertNotIn("errormessage", html)
+        self.assertEqual(["service-a"], [f.treating_groups for f in self.folders.values()])
+        # Plone 4 bug: with a parent identifier column, the column "identifier" is required but cannot be selected
+        # (the column of the identifier is "internal_reference_no"): the form breaks
+        first_step(self.folders, self.request, ["Parent;Code;Name;Category", ";F1;Staff;001"])
+        self.assertRaises(
+            KeyError,
+            second_step,
+            self.folders,
+            self.request,
+            ["parent_identifier", "internal_reference_no", "title", "classification_categories"],
+        )
+
+    def test_validate_data(self):
+        first_step(
+            self.folders, self.request, ["Folder;Subfolder;Category", "Budget;Budget 2024;001", ";Budget 2025;001"]
+        )
+        html = second_step(self.folders, self.request, ["folder_title", "subfolder_title", "folder_categories"])
+        self.assertIn("Lines 3 have missing required value(s)", html)
+        self.assertEqual(0, len(self.folders))
+
+
+class TestImportSecondStepView(ImportTestCase):
+
+    def test_data(self):
+        view = self.folders.restrictedTraverse("@@import-process")
+        self.assertEqual([], view.data)
+
+    def test_finished(self):
+        """The page of the finished import goes back to the container"""
+        first_step(self.folders, self.request, ["Folder;Subfolder;Category", "Budget;Budget 2024;001"])
+        testing.new_request(self.request)
+        view = self.folders.restrictedTraverse("@@import-process")
+        view()
+        self.assertFalse(view.finished)
+        html = second_step(self.folders, self.request, ["folder_title", "subfolder_title", "folder_categories"])
+        self.assertIn('data-url="{0}"'.format(self.folders.absolute_url()), html)
+        self.assertIn("This import may take a while", html)

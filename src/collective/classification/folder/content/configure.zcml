@@ -65,13 +65,13 @@
 
     <utility
         provides="zope.schema.interfaces.IVocabularyFactory"
-        factory=".vocabularies.services_in_charge_vocabulary"
+        component=".vocabularies.services_in_charge_vocabulary"
         name="collective.classification.folder.vocabularies:services_in_charge"
         />
 
     <utility
         provides="zope.schema.interfaces.IVocabularyFactory"
-        factory=".vocabularies.services_in_charge_vocabulary"
+        component=".vocabularies.services_in_copy_vocabulary"
         name="collective.classification.folder.vocabularies:services_in_copy"
         />
 

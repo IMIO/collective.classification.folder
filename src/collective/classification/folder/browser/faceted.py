@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from AccessControl import Unauthorized
 from Acquisition import aq_parent
 from collective.classification.folder import _
 from collective.classification.folder.browser.tables import SubFoldersFacetedTableView
@@ -19,10 +20,10 @@ from imio.annex.content.annex import IAnnex
 from imio.prettylink.interfaces import IPrettyLink
 from persistent.list import PersistentList
 from plone import api
+from plone.base.utils import base_hasattr
+from plone.base.utils import safe_text
 from plone.batching import Batch
 from plone.indexer import indexer
-from Products.CMFPlone.utils import base_hasattr
-from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from zope.component import getUtility
 from zope.i18n import translate
@@ -63,7 +64,7 @@ class Criteria(eeaCriteria):
         self.criteria = PersistentList()
 
         for crit in self._criteria():
-            if crit.index != u"classification_folders":
+            if crit.index != "classification_folders":
                 self.criteria.append(crit)
 
         default = [
@@ -72,22 +73,22 @@ class Criteria(eeaCriteria):
         ]
         select_criterion = Criterion(
             **{
-                "_cid_": u"restrictfolder",
-                "widget": u"multiselect",
-                "title": u"Classification folder",
-                "index": u"classification_folders",
-                "vocabulary": u"",
-                "catalog": u"portal_catalog",
-                "hidealloption": u"False",
-                "position": u"right",
-                "section": u"default",
-                "hidden": u"True",
-                "custom_css": u"",
-                "count": u"False",
-                "sortcountable": u"False",
-                "hidezerocount": u"False",
-                "sortreversed": u"False",
-                "operator": u"or",
+                "_cid_": "restrictfolder",
+                "widget": "multiselect",
+                "title": "Classification folder",
+                "index": "classification_folders",
+                "vocabulary": "",
+                "catalog": "portal_catalog",
+                "hidealloption": "False",
+                "position": "right",
+                "section": "default",
+                "hidden": "True",
+                "custom_css": "",
+                "count": "False",
+                "sortcountable": "False",
+                "hidezerocount": "False",
+                "sortreversed": "False",
+                "operator": "or",
                 "multiple": True,
                 "default": default,
             }
@@ -101,12 +102,12 @@ class FoldersFacetedTableView(FacetedTableView):
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
         return [
-            u"pretty_link",
-            u"internal_reference_no",
-            u"classification_tree_identifiers",
-            u"classification_treating_group",
-            u"ModificationDate",
-            u"CreationDate",
+            "pretty_link",
+            "internal_reference_no",
+            "classification_tree_identifiers",
+            "classification_treating_group",
+            "ModificationDate",
+            "CreationDate",
         ]
 
 
@@ -115,30 +116,28 @@ class FolderFacetedTableView(FacetedTableView):
 
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
-        if self.context.portal_type == 'ClassificationSubfolder':
+        if self.context.portal_type == "ClassificationSubfolder":
             return [
-                u"pretty_link",
-                u"state_filesize",
-                u"ModificationDate",
-                u"CreationDate",
-                u"actions",
+                "pretty_link",
+                "state_filesize",
+                "ModificationDate",
+                "CreationDate",
+                "actions",
             ]
         else:
             return [
-                u"pretty_link",
-                u"subfolder_classification_folders",
-                u"state_filesize",
-                u"ModificationDate",
-                u"CreationDate",
-                u"actions",
+                "pretty_link",
+                "subfolder_classification_folders",
+                "state_filesize",
+                "ModificationDate",
+                "CreationDate",
+                "actions",
             ]
 
 
 class FolderListingView(BrowserView):
     def categories_vocabulary(self):
-        return getUtility(
-            IVocabularyFactory, "collective.classification.vocabularies:tree"
-        )(self.context)
+        return getUtility(IVocabularyFactory, "collective.classification.vocabularies:tree")(self.context)
 
     @property
     def service_in_charge_vocabulary(self):
@@ -191,16 +190,16 @@ class FolderTitleColumn(PrettyLinkColumn):
         pl = IPrettyLink(obj)
         for k, v in self.params.items():
             setattr(pl, k, v)
-        infos = u''
-        if obj.portal_type == 'annex':
+        infos = ""
+        if obj.portal_type == "annex":
             pl.showContentIcon = False
-            infos += u'<p class="discreet"></p>'
+            infos += '<p class="discreet"></p>'
             # display description if any
-            # description = safe_unicode(obj.Description() or u'').replace('\n', '<br/>')
+            # description = safe_text(obj.Description() or u'').replace('\n', '<br/>')
             # if description:
             #     infos += u'<p class="discreet">{0}</p>'.format(description)
             # display filename
-            infos += u'<div class="discreet type-text-widget annex-filename">{0}</div>'.format(obj.file.filename)
+            infos += '<div class="discreet type-text-widget annex-filename">{0}</div>'.format(obj.file.filename)
 
         pl.contentValue = self.contentValue(obj)
         return pl.getLink() + infos
@@ -214,7 +213,7 @@ class FolderTitleColumn(PrettyLinkColumn):
 class ClassificationFolderTitleColumn(PrettyLinkColumn):
     """Prettylink title column for ClassificationFolder"""
 
-    header = _('Classification Folder')
+    header = _("Classification Folder")
     params = {
         "showIcons": True,
         "display_tag_title": False,
@@ -222,7 +221,7 @@ class ClassificationFolderTitleColumn(PrettyLinkColumn):
 
     def renderCell(self, item):
         obj = self._getObject(item)
-        if obj.portal_type == 'ClassificationSubfolder':
+        if obj.portal_type == "ClassificationSubfolder":
             obj = obj.cf_parent()
         return self.getPrettyLink(obj)
 
@@ -230,33 +229,33 @@ class ClassificationFolderTitleColumn(PrettyLinkColumn):
 class ClassificationSubfolderTitleColumn(PrettyLinkColumn):
     """Title column for ClassificationFolder"""
 
-    header = _('Classification Subfolder')
+    header = _("Classification Subfolder")
     params = {
         "showIcons": True,
         "display_tag_title": False,
     }
 
     def getPrettyLink(self, obj):
-        if obj.portal_type == 'ClassificationFolder':
-            return '-'
+        if obj.portal_type == "ClassificationFolder":
+            return "-"
         return super(ClassificationSubfolderTitleColumn, self).getPrettyLink(obj)
 
 
 class ClassificationFolderIdColumn(BaseColumn):
-    header = _(u"Classification identifier")
+    header = _("Classification identifier")
     sort_index = "internal_reference_no"
 
     def renderCell(self, item):
         value = self.getValue(item)
         if not value:
-            value = u"-"
-        value = safe_unicode(value)
+            value = "-"
+        value = safe_text(value)
         return value
 
 
 class ClassificationTreatingGroupColumn(VocabularyColumn):
-    header = _(u"Service in charge")
-    attrName = u"treating_groups"
+    header = _("Service in charge")
+    attrName = "treating_groups"
 
     @property
     def _cached_vocab_instance(self):
@@ -267,44 +266,44 @@ class ClassificationTreatingGroupColumn(VocabularyColumn):
 
 
 class ClassificationTreeIdentifiersColumn(VocabularyColumn):
-    header = _(u"Classification categories")
-    attrName = u"classification_categories"
-    vocabulary = u"collective.classification.vocabularies:tree"
+    header = _("Classification categories")
+    attrName = "classification_categories"
+    vocabulary = "collective.classification.vocabularies:tree"
 
 
 class ClassificationFolderArchivedColumn(ColorColumn):
-    attrName = u'archived'
-    i18n_domain = 'collective.classification.folder'
+    attrName = "archived"
+    i18n_domain = "collective.classification.folder"
     sort_index = -1  # not sortable
     the_object = True
-    header = u'&nbsp;'
-    msgid_prefix = u'archived_'
+    header = "&nbsp;"
+    msgid_prefix = "archived_"
 
     def getValue(self, item):
         obj = self._getObject(item)
-        if obj.portal_type == 'ClassificationSubfolder':
+        if obj.portal_type == "ClassificationSubfolder":
             obj = obj.aq_parent
-        return obj.archived and '1' or '0'
+        return obj.archived and "1" or "0"
 
 
 class ClassificationSubfolderArchivedColumn(ColorColumn):
-    attrName = u'archived'
-    i18n_domain = 'collective.classification.folder'
+    attrName = "archived"
+    i18n_domain = "collective.classification.folder"
     sort_index = -1  # not sortable
     the_object = True
-    header = u'&nbsp;'
-    msgid_prefix = u'archived_'
+    header = "&nbsp;"
+    msgid_prefix = "archived_"
 
     def getValue(self, item):
         obj = self._getObject(item)
-        if obj.portal_type == 'ClassificationFolder':
-            return ''
-        return obj.archived and '1' or '0'
+        if obj.portal_type == "ClassificationFolder":
+            return ""
+        return obj.archived and "1" or "0"
 
 
 class ClassificationFoldersColumn(VocabularyColumn):
-    header = _(u"Classification folders")
-    attrName = u"classification_folders"
+    header = _("Classification folders")
+    attrName = "classification_folders"
 
     @property
     def _cached_vocab_instance(self):
@@ -314,15 +313,18 @@ class ClassificationFoldersColumn(VocabularyColumn):
         return self._cached_vocab_instance_value
 
     def _render_link(self, value):
-        obj = api.content.get(UID=value)
+        try:
+            obj = api.content.get(UID=value)
+        except Unauthorized:  # Plone 6: raised instead of returning None
+            return
         if not obj:
             return
         title = self._get_title(obj)
         if not title:
             return
-        return u"<a href='{url}' target='_blank'>{obj}</a>".format(
+        return "<a href='{url}' target='_blank'>{obj}</a>".format(
             url=obj.absolute_url(),
-            obj=safe_unicode(title),
+            obj=safe_text(title),
         )
 
     def _get_title(self, obj):
@@ -342,7 +344,7 @@ class ClassificationFoldersColumn(VocabularyColumn):
     def renderCell(self, item):
         value = self.getValue(item)
         if not value or value in self.ignored_values:
-            return u"-"
+            return "-"
 
         # caching when several same values in same column
         if self.use_caching:
@@ -351,7 +353,7 @@ class ClassificationFoldersColumn(VocabularyColumn):
                 return res
 
         # make sure we have an iterable
-        if not hasattr(value, "__iter__"):
+        if isinstance(value, str):
             value = [value]
         res = []
         for v in value:
@@ -360,21 +362,21 @@ class ClassificationFoldersColumn(VocabularyColumn):
             try:
                 link = self._render_link(v)
                 if link:
-                    res.append(safe_unicode(link))
+                    res.append(safe_text(link))
             except Exception:
                 # in case an error occured during link creation
-                res.append(safe_unicode(v))
+                res.append(safe_text(v))
         res = ", ".join(res)
         if not res:
-            return u"-"
+            return "-"
         if self.use_caching:
             self._store_cached_result(value, res)
         return res
 
 
 class SubfolderClassificationFoldersColumn(ClassificationFoldersColumn):
-    header = _(u"Classification Subfolder")
-    sort_index = 'classification_folders'
+    header = _("Classification Subfolder")
+    sort_index = "classification_folders"
 
     def _get_title(self, obj):
         """Extract title from object"""
@@ -396,31 +398,36 @@ class CombinedReviewstateSizeColumn(BaseColumn):
     Subclasses overriding renderCell must escape user-supplied content manually.
     """
 
-    header = _(u'State or Filesize')
-    i18n_domain = 'plone'
+    header = _("State or Filesize")
+    i18n_domain = "plone"
     sort_index = -1  # not sortable
     escape = False
 
     def __init__(self, context, request, table):
         super(CombinedReviewstateSizeColumn, self).__init__(context, request, table)
-        self.wtool = api.portal.get_tool('portal_workflow')
+        self.wtool = api.portal.get_tool("portal_workflow")
 
     def renderHeadCell(self):
         """ """
         header = super(CombinedReviewstateSizeColumn, self).renderHeadCell()
         [self._getObject(v) for v in self.table.values]
-        total = sum([v.aq_parent.categorized_elements.get(k, {}).get('filesize', 0)
-                     for k, v in self.table._v_cached_objects.items() if v.portal_type == 'annex'])
-        header += u"<p>(Total: {0})</p>".format(utils.render_filesize(total))
+        total = sum(
+            [
+                v.aq_parent.categorized_elements.get(k, {}).get("filesize", 0)
+                for k, v in self.table._v_cached_objects.items()
+                if v.portal_type == "annex"
+            ]
+        )
+        header += "<p>(Total: {0})</p>".format(utils.render_filesize(total))
         return header
 
     def renderCell(self, item):
-        if item.portal_type == 'annex':
+        if item.portal_type == "annex":
             obj = self._getObject(item)
-            value = obj.aq_parent.categorized_elements.get(item.UID, {}).get('filesize', None)
+            value = obj.aq_parent.categorized_elements.get(item.UID, {}).get("filesize", None)
             if value is None:
-                return ''
+                return ""
             return utils.render_filesize(value)
         else:
             state_title = self.wtool.getTitleForStateOnType(item.review_state, item.portal_type)
-            return translate(safe_unicode(state_title), domain=self.i18n_domain, context=self.request)
+            return translate(safe_text(state_title), domain=self.i18n_domain, context=self.request)

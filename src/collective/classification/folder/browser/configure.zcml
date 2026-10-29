@@ -5,14 +5,7 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="collective.classification.folder">
 
-  <include package="plone.app.controlpanel" file="permissions.zcml" />
-
-  <browser:page
-      name="autocomplete-search"
-      for=".widget.IFolderAutocompleteWidget"
-      permission="zope2.View"
-      class=".widget.FolderAutocompleteSearch"
-      />
+  <include package="Products.CMFPlone.controlpanel" file="permissions.zcml" />
 
   <browser:page
       for="eea.facetednavigation.interfaces.IPossibleFacetedNavigable"
@@ -199,7 +192,7 @@
 
   <browser:view
     for="*"
-    provides="eea.faceted.vocabularies.autocomplete.IAutocompleteSuggest"
+    provides="eea.facetednavigation.vocabularies.autocomplete.IAutocompleteSuggest"
     name="folder-autocomplete-suggest"
     class=".autocomplete.FolderSuggest"
     permission="zope2.View"
@@ -207,7 +200,7 @@
 
   <browser:view
     for="*"
-    provides="eea.faceted.vocabularies.autocomplete.IAutocompleteSuggest"
+    provides="eea.facetednavigation.vocabularies.autocomplete.IAutocompleteSuggest"
     name="classificationcategory-autocomplete-suggest"
     class=".autocomplete.ClassificationCategorySuggest"
     permission="zope2.View"

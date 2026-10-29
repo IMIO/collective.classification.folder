@@ -12,33 +12,23 @@ from zope import schema
 class IClassificationConfig(model.Schema):
 
     folder_number = schema.Int(
-        title=_(u"Number of next folder"),
-        description=_(
-            u"This value is used as 'number' variable in linked tal expression"
-        ),
+        title=_("Number of next folder"),
+        description=_("This value is used as 'number' variable in linked tal expression"),
     )
 
     folder_talexpression = schema.TextLine(
-        title=_(u"Folder internal reference default value expression"),
-        description=_(
-            u"Tal expression where you can use portal, number, context, request, "
-            "date as variable"
-        ),
+        title=_("Folder internal reference default value expression"),
+        description=_("Tal expression where you can use portal, number, context, request, " "date as variable"),
     )
 
     subfolder_number = schema.Int(
-        title=_(u"Number of next subfolder"),
-        description=_(
-            u"This value is used as 'number' variable in linked tal expression"
-        ),
+        title=_("Number of next subfolder"),
+        description=_("This value is used as 'number' variable in linked tal expression"),
     )
 
     subfolder_talexpression = schema.TextLine(
-        title=_(u"Subfolder internal reference default value expression"),
-        description=_(
-            u"Tal expression where you can use portal, number, context, request, "
-            "date as variable"
-        ),
+        title=_("Subfolder internal reference default value expression"),
+        description=_("Tal expression where you can use portal, number, context, request, " "date as variable"),
     )
 
 
@@ -48,15 +38,13 @@ class SettingsEditForm(controlpanel.RegistryEditForm):
     """
 
     schema = IClassificationConfig
-    label = _(u"Classification Config")
+    label = _("Classification Config")
 
 
 class SettingsView(controlpanel.ControlPanelFormWrapper):
     form = SettingsEditForm
 
-    def evaluate_tal_expression(
-        self, expression, context, request, portal, number, **kwargs
-    ):
+    def evaluate_tal_expression(self, expression, context, request, portal, number, **kwargs):
         """evaluate the expression, considering portal and number in context"""
         data = {
             "tool": self,

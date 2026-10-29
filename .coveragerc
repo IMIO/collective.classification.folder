@@ -1,6 +1,5 @@
 [report]
 include =
-    src/collective/*
+    src/collective/classification/folder/*
 omit =
     */test*
-    */upgrades/*
