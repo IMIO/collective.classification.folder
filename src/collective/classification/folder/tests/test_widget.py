@@ -92,3 +92,13 @@ class TestFolderAjaxSelectWidget(WidgetTestCase):
         self.assertIn(">Holidays<", items[1])
         self.assertIn("_blank", items[1])
         self.assertIn(items[1], self.item())
+
+    def test_render_display(self):
+        """The display has no select2 pattern: mockup would initialise it on the span"""
+        self.item.classification_folders = [self.folder.UID()]
+        view = self.item.restrictedTraverse("@@view")
+        view.update()
+        html = view.w["IClassificationFolder.classification_folders"].render()
+        self.assertIn('id="form-widgets-IClassificationFolder-classification_folders"', html)
+        self.assertIn(">Staff<", html)
+        self.assertNotIn("pat-select2", html)

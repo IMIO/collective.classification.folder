@@ -13,6 +13,8 @@ Changelog
   [chris-adam]
 - Fixed the `services_in_charge` / `services_in_copy` named vocabularies.
   [chris-adam]
+- Removed the select2 pattern class from the folders widget display (mockup "query function not defined" error).
+  [chris-adam]
 
 
 1.3.1 (2026-08-14)
