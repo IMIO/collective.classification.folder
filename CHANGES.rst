@@ -1,10 +1,20 @@
 Changelog
 =========
 
-1.3.2 (unreleased)
+2.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Migrated to Plone 6.2 (Python 3 only, Plone 4 support dropped), based on the work started by @anuyens, @fngaha
+  and @sgeulette on `plone6`.
+  [anuyens, fngaha, sgeulette, chris-adam]
+- Replaced the autocomplete and select2 widgets with the Plone select2 widgets (`AjaxSelect`).
+  [chris-adam]
+- Single `default` profile, upgrade steps removed.
+  [chris-adam]
+- Fixed the `services_in_charge` / `services_in_copy` named vocabularies.
+  [chris-adam]
+- Removed the select2 pattern class from the folders widget display (mockup "query function not defined" error).
+  [chris-adam]
 
 
 1.3.1 (2026-08-14)

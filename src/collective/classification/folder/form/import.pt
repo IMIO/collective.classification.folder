@@ -6,16 +6,13 @@
 <head>
   <metal:block fill-slot="style_slot">
     <link rel="stylesheet" type="text/css" media="screen"
-          href="/++resource++collective.classification.folder/progressbar.css">
+          tal:attributes="href string:${context/portal_url}/++resource++collective.classification.folder/progressbar.css">
   </metal:block>
 </head>
 <body>
 
-<metal:slot metal:fill-slot="header" i18n:domain="cmf_default">
-  <h1 tal:content="view/label">View Title</h1>
-</metal:slot>
-
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
+  <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
   <div id="layout-contents" tal:condition="not: view/finished">
     <span tal:replace="structure view/contents" />
   </div>
@@ -31,7 +28,8 @@
                           data-json python:data[1];"></span>
     </tal:while>
   </div>
-  <script type="text/javascript" src="/++resource++collective.classification.folder/progressbar.min.js"></script>
+  <script type="text/javascript"
+          tal:attributes="src string:${context/portal_url}/++resource++collective.classification.folder/progressbar.min.js"></script>
   <script type="text/javascript">
     jQuery(document).ready(function($) {
       var bar = new ProgressBar.Line("#progress", {
@@ -74,7 +72,7 @@
       var ajax_call = function(self) {
         $.ajax(
           {
-            url: "@import",
+            url: $("#import").data("url") + "/@import",  // no <base> tag on Plone 6
             contentType: "application/json",
             data: JSON.stringify($(self).data("json")),
             type: $(self).data("method"),

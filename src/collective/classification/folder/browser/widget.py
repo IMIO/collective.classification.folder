@@ -1,106 +1,63 @@
 # -*- coding: utf-8 -*-
 from imio.helpers.content import uuidToObject
 from imio.prettylink.adapters import PrettyLinkAdapter
+from plone.app.z3cform.widgets.select import AjaxSelectWidget
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.formwidget.autocomplete.interfaces import IAutocompleteWidget
-from plone.formwidget.autocomplete.widget import AutocompleteMultiSelectionWidget
-from plone.formwidget.autocomplete.widget import AutocompleteSearch
+from z3c.form.interfaces import DISPLAY_MODE
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.widget import FieldWidget
 from zope.interface import implementer
 
 
-class IFolderAutocompleteWidget(IAutocompleteWidget):
-    """Marker interface for the folder autocomplete widget"""
+class SourceAjaxSelectWidget(AjaxSelectWidget):
+    """Select2 widget on a source, showing term titles (not tokens) as values"""
+
+    def get_vocabulary(self):
+        # plone.app.z3cform only looks up named vocabularies
+        if getattr(self, "_source", None) is None:
+            self._source = self.field.bind(self.context).value_type.vocabulary
+        return self._source
+
+    def get_pattern_options(self):
+        options = super(SourceAjaxSelectWidget, self).get_pattern_options()
+        if self.value:
+            vocabulary = self.get_vocabulary()
+            options["initialValues"] = {}
+            for token in self.value.split(self.separator):
+                try:
+                    options["initialValues"][token] = vocabulary.getTermByToken(token).title
+                except LookupError:
+                    options["initialValues"][token] = token
+        return options
 
 
-class FolderAutocompleteSearch(AutocompleteSearch):
-    def __call__(self):
+class FolderAjaxSelectWidget(SourceAjaxSelectWidget):
+    """Folders select2 widget, displaying pretty links"""
 
-        # We want to check that the user was indeed allowed to access the
-        # form for this widget. We can only this now, since security isn't
-        # applied yet during traversal.
-        self.validate_access()
+    display_template = ViewPageTemplateFile("templates/display.pt")
 
-        query = self.request.get("q", None)
-        if not query:
-            return ""
-
-        # Update the widget before accessing the source.
-        # The source was only bound without security applied
-        # during traversal before.
-        self.context.update()
-        source = self.context.bound_source
-        # TODO: use limit?
-
-        if query:
-            categories = (
-                self.request.get("categories").split("|")
-                if self.request.get("categories")
-                else None
-            )
-            terms = set(source.search(query, categories_filter=categories))
-        else:
-            terms = set()
-
-        return "\n".join(
-            [
-                "%s|%s" % (t.token, t.title or t.token)
-                for t in sorted(terms, key=lambda t: t.title)
-            ]
-        )
-
-
-@implementer(IFolderAutocompleteWidget)
-class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
-
-    maxResults = 50
-    js_template = """\
-    (function($) {
-        $().ready(function() {
-            $('#%(id)s-input-fields').data('klass','%(klass)s').data('title','%(title)s').data('input_type','%(input_type)s').data('multiple', %(multiple)s);
-            $('#%(id)s-buttons-search').remove();
-            $('#%(id)s-widgets-query').autocomplete('%(url)s', {
-                autoFill: %(autoFill)s,
-                minChars: %(minChars)d,
-                max: %(maxResults)d,
-                mustMatch: %(mustMatch)s,
-                matchContains: %(matchContains)s,
-                formatItem: %(formatItem)s,
-                formatResult: %(formatResult)s,
-                parse: %(parseFunction)s,
-                extraParams: {'categories':
-                    function() {
-                        return $("input[name='form.widgets.IClassificationFolder.classification_categories:list']")
-                            .map(function() {
-                                return this.value;
-                            }).get().join("|");
-                    }
-                }
-            }).result(%(js_callback)s);
-            %(js_extra)s
-        });
-    })(jQuery);
-    """
-
-    display_template = ViewPageTemplateFile('templates/display.pt')
+    def render(self):
+        if self.mode == DISPLAY_MODE:
+            return self.display_template(self)
+        return super(FolderAjaxSelectWidget, self).render()
 
     def pl_items(self):
         """Inspired from z3c.form.widget displayValue method"""
         items = []
-        for token in self.value:
-            # Ignore no value entries. They are in the request only.
-            if token == self.noValueToken:
+        for token in (self.value or "").split(self.separator):
+            if not token:
                 continue
             folder = uuidToObject(token, unrestricted=True)
             if not folder:
                 items.append(token)
                 continue
-            adapted = PrettyLinkAdapter(folder, showLockedIcon=False, target='_blank', showIcons=True,
-                                        showContentIcon=True)
-            if folder.portal_type == 'ClassificationSubfolder':
-                cf_adapted = PrettyLinkAdapter(folder.cf_parent(), showLockedIcon=False, target='_blank',
-                                               showIcons=True, showContentIcon=True)
+            adapted = PrettyLinkAdapter(
+                folder, showLockedIcon=False, target="_blank", showIcons=True, showContentIcon=True
+            )
+            if folder.portal_type == "ClassificationSubfolder":
+                cf_adapted = PrettyLinkAdapter(
+                    folder.cf_parent(), showLockedIcon=False, target="_blank", showIcons=True, showContentIcon=True
+                )
                 items.append(cf_adapted.getLink() + adapted.getLink())
             else:
                 items.append(adapted.getLink())
@@ -108,5 +65,10 @@ class FolderAutocompleteMultiSelectionWidget(AutocompleteMultiSelectionWidget):
 
 
 @implementer(IFieldWidget)
-def FolderAutocompleteMultiFieldWidget(field, request):
-    return FieldWidget(field, FolderAutocompleteMultiSelectionWidget(request))
+def SourceAjaxSelectFieldWidget(field, request):
+    return FieldWidget(field, SourceAjaxSelectWidget(request))
+
+
+@implementer(IFieldWidget)
+def FolderAjaxSelectFieldWidget(field, request):
+    return FieldWidget(field, FolderAjaxSelectWidget(request))

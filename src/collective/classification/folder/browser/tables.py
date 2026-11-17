@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from collective.classification.folder import _
-from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from collective.eeafaceted.z3ctable.browser.views import FacetedTableView
+from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn
 from collective.eeafaceted.z3ctable.interfaces import IFacetedTable
 from zope.interface import implementer
 
@@ -18,10 +17,10 @@ class SubFoldersFacetedTableView(FacetedTableView):
     def _getViewFields(self):
         """Returns fields we want to show in the table."""
         return [
-            u"pretty_link",
-            u"internal_reference_no",
-            u"classification_tree_identifiers",
-            u"classification_treating_group",
+            "pretty_link",
+            "internal_reference_no",
+            "classification_tree_identifiers",
+            "classification_treating_group",
         ]
 
 

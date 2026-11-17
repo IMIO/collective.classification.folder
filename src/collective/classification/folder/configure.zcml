@@ -7,7 +7,7 @@
 
   <i18n:registerTranslations directory="locales" />
 
-  <include package="plone.formwidget.autocomplete" />
+  <include package="Products.CMFCore" file="permissions.zcml" />
   <include package="collective.classification.tree" />
   <include package="eea.facetednavigation" />
   <include package="collective.eeafaceted.z3ctable"/>
@@ -17,15 +17,12 @@
   <include package="borg.localrole" />
   <include package="dexterity.localrolesfield"/>
   <include package="plone.app.lockingbehavior"/>
-  <include package="collective.dexteritytextindexer" />
-  <include package="collective.z3cform.select2" />
 
   <include package=".browser" />
   <include package=".behaviors" />
   <include package=".content" />
   <include package=".form" />
   <include package=".services" />
-  <include package=".upgrades" />
 
   <include file="permissions.zcml" />
 

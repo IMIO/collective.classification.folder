@@ -3,7 +3,8 @@
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from collective.classification.folder import _
-from collective.classification.folder.browser.widget import FolderAutocompleteMultiFieldWidget
+from collective.classification.folder.browser.widget import FolderAjaxSelectFieldWidget
+from collective.classification.folder.browser.widget import SourceAjaxSelectFieldWidget
 from collective.classification.folder.content.vocabularies import ClassificationFolderSourceBinder
 from collective.classification.tree.behaviors.classification import IClassificationCategory
 from collective.classification.tree.behaviors.classification import IClassificationCategoryMarker
@@ -12,8 +13,8 @@ from imio.helpers.content import uuidToObject
 from plone import schema
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
+from plone.base.utils import base_hasattr
 from plone.indexer.decorator import indexer
-from Products.CMFPlone.utils import base_hasattr
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
@@ -27,10 +28,11 @@ class IClassificationFolderMarker(IClassificationCategoryMarker):
 class IClassificationFolder(IClassificationCategory):
     """ """
 
-    form.widget(classification_folders=FolderAutocompleteMultiFieldWidget)
+    form.widget(classification_categories=SourceAjaxSelectFieldWidget)
+    form.widget(classification_folders=FolderAjaxSelectFieldWidget)
     classification_folders = schema.List(
-        title=_(u"Classification folders"),
-        description=_(u"List of folders / subfolders in which this content is filed"),
+        title=_("Classification folders"),
+        description=_("List of folders / subfolders in which this content is filed"),
         value_type=schema.Choice(
             source=ClassificationFolderSourceBinder(),
         ),

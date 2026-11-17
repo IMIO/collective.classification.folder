@@ -2,11 +2,11 @@
    If you want to learn more about writing documentation, please check out: http://docs.plone.org/about/documentation_styleguide.html
    This text does not appear on pypi or github. It is a comment.
 
-.. image:: https://travis-ci.org/collective/collective.classification.folder.svg?branch=master
-    :target: https://travis-ci.org/collective/collective.classification.folder
+.. image:: https://github.com/IMIO/collective.classification.folder/actions/workflows/main.yml/badge.svg
+    :target: https://github.com/IMIO/collective.classification.folder/actions/workflows/main.yml
 
-.. image:: https://coveralls.io/repos/github/collective/collective.classification.folder/badge.svg?branch=master
-    :target: https://coveralls.io/github/collective/collective.classification.folder?branch=master
+.. image:: https://coveralls.io/repos/github/IMIO/collective.classification.folder/badge.svg
+    :target: https://coveralls.io/github/IMIO/collective.classification.folder
     :alt: Coveralls
 
 .. image:: https://img.shields.io/pypi/v/collective.classification.folder.svg

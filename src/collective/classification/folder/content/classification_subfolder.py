@@ -18,15 +18,15 @@ class ClassificationSubfolder(Container):
     """ """
 
     __ac_local_roles_block__ = True
-    treating_groups = FieldProperty(IClassificationFolder[u"treating_groups"])
-    recipient_groups = FieldProperty(IClassificationFolder[u"recipient_groups"])
+    treating_groups = FieldProperty(IClassificationFolder["treating_groups"])
+    recipient_groups = FieldProperty(IClassificationFolder["recipient_groups"])
 
     def cf_parent(self):
         """Returns ClassificationFolder"""
         return aq_parent(self)
 
     def get_full_title(self):
-        return u"{0} ⏩ {1}".format(self.cf_parent().Title().decode("utf8"), self.Title().decode("utf8"))
+        return "{0} ⏩ {1}".format(self.cf_parent().Title(), self.Title())
 
     def _increment_internal_reference(self):
         utils.increment_internal_reference("subfolder_number")

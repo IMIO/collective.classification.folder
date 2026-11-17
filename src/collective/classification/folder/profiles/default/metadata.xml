@@ -8,7 +8,5 @@
     <dependency>profile-eea.facetednavigation:default</dependency>
     <dependency>profile-imio.annex:default</dependency>
     <dependency>profile-plone.app.dexterity:default</dependency>
-    <dependency>profile-plone.formwidget.autocomplete:default</dependency>
-    <dependency>profile-collective.z3cform.select2:default</dependency>
   </dependencies>
 </metadata>

@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from ZPublisher.HTTPRequest import HTTPRequest
+from plone import api
 from plone.restapi.deserializer import json_body
 from plone.restapi.services.content import update
-from plone import api
+from ZPublisher.HTTPRequest import HTTPRequest
 
 import json
 
 
 def create_request(base_request, body):
-    request = HTTPRequest(
-        base_request.stdin, base_request._orig_env, base_request.response
-    )
+    request = HTTPRequest(base_request.stdin, base_request._orig_env, base_request.response)
     for attr in base_request.__dict__.keys():
         setattr(request, attr, getattr(base_request, attr))
     request.set("BODY", body)
@@ -24,12 +22,10 @@ class BasePatch(update.ContentPatch):
         children = []
         identifier = data.pop("internal_reference_no", None)
         if not identifier:
-            raise ValueError(u"Missing identifier {0}".format(identifier))
-        elements = api.content.find(
-            context=self.context, internal_reference_no=identifier
-        )
+            raise ValueError("Missing identifier {0}".format(identifier))
+        elements = api.content.find(context=self.context, internal_reference_no=identifier)
         if not elements:
-            raise ValueError(u"There is no value for identifier {0}".format(identifier))
+            raise ValueError("There is no value for identifier {0}".format(identifier))
         self.context = self.context[elements[0].id]
         if "__children__" in data:
             children = data.pop("__children__")
